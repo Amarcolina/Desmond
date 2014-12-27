@@ -1,0 +1,44 @@
+#DebugLog
+!UnityEngine
+
+in
+	Debug.Log(<System.String message>);
+	
+#String
+
+System.String string
+	"debug string"
+	
+#Int
+
+System.Int32 int
+	23
+	
+#Float
+
+System.Single float
+	123.0f
+		
+#Timeline
+
+def System.Single timelineValue 0.0f
+
+start
+	StopCoroutine("<unique timelineCoroutine>");
+	StartCoroutine("<unique timelineCoroutine>");
+	->onStart
+	
+System.Single value	
+	<timelineValue>
+	
+[
+private void <unique timelineCoroutine>(){
+	float startTime = Time.time;
+	while((Time.time - startTime) < <System.Single duration>){
+		<timelineValue> = <UnityEngine.AnimationCurve curve>.Evaluate(Time.time - startTime);
+		->onTick
+		yield return null;
+	}
+	->onFinished
+}
+]

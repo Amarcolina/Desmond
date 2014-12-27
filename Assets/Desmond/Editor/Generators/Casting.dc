@@ -1,0 +1,24 @@
+System.Int32 System.Single
+	<in>
+	
+System.Single System.Int32
+	((float)<in>)
+	
+UnityEngine.Vector2 UnityEngine.Vector3
+	<in>
+	
+UnityEngine.GameObject UnityEngine.Transform
+	(<in>.transform)
+	
+UnityEngine.Transform UnityEngine.GameObject
+	(<in>.gameObject)
+	
+UnityEngine.Collider UnityEngine.RigidBody
+	(<in>.attachedRigidBody)
+	
+UnityEngine.RigidBody UnityEngine.Component
+	<in>
+	
+UnityEngine.Component UnityEngine.Transform
+	(<in>.transform)
+	

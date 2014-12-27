@@ -1,0 +1,19 @@
+#Events/Update
+
+void Update
+	->onUpdate
+
+#Events/Awake
+
+void Awake
+	->onAwake
+
+#Events/Start
+
+void Start
+	->onStart
+
+#Events/OnMouseDown gameObject
+
+void OnMouseDown
+	->onMouseDown

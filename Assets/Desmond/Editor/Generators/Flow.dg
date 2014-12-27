@@ -1,0 +1,100 @@
+#Flow/Conditional
+
+in
+	if(<System.Boolean condition>){
+		->ifTrue
+	}else{
+		->ifFalse
+	}
+	->finally
+	
+in
+	if(<System.Boolean condition>){
+		->ifTrue
+	}
+	->finally
+	
+in
+	if(!<System.Boolean condition>){
+		->ifFalse
+	}
+	->finally
+	
+#Flow/Flip-Flop
+
+def System.Boolean flipFlopState false
+
+in
+	<flipFlopState> = !<flipFlopState>;
+	if(<flipFlopState>){
+		->outA
+	}else{
+		->outB
+	}
+	->finally
+	
+in
+	<flipFlopState> = !<flipFlopState>;
+	if(<flipFlopState>){
+		->outA
+	}
+	->finally
+	
+in
+	<flipFlopState> = !<flipFlopState>;
+	if(!<flipFlopState>){
+		->outB
+	}
+	->finally
+	
+#Flow/Latch
+
+def System.Boolean latchState false
+
+toggle
+	<latchState> = !<latchState>;
+	if(<latchState>){
+		->onSet
+	}else{
+		->onReset
+	}
+	->finally
+	
+set
+	<latchState> = true;
+	->onSet
+	->finally
+	
+reset
+	<latchState> = false;
+	->onReset
+	->finally
+	
+System.Boolean state
+	<latchState>
+	
+#Flow/While
+
+in
+	while(<System.Boolean condition>){
+		->do
+	}
+	->finally
+	
+#Flow/For
+
+def System.Int32 forLoopIndex 0
+
+in
+	for(<forLoopIndex> = <System.Int32 start>; <forLoopIndex>  <System.Int32 ceiling>; <forLoopIndex>++){
+		->do
+	}
+	->finally
+	
+System.Int32 index
+	<forLoopIndex>
+	
+	
+	
+	
+	

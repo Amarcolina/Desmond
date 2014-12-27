@@ -1,0 +1,35 @@
+#Events/OnKeyDown
+
+void Update
+	if(Input.GetKeyDown(<UnityEngine.KeyCode key>)){
+		->onKeyDown
+	}
+
+#Events/OnKeyUp
+
+void Update
+	if(Input.GetKeyUp(<UnityEngine.KeyCode key>)){
+		->onKeyUp
+	}
+	
+#Events/OnKeyHold
+
+void Update
+	if(Input.GetKey(<UnityEngine.KeyCode key>)){
+		->onKeyHold
+	}
+	
+#Input/IsKeyHeld
+
+System.Boolean isHeld
+	Input.GetKey(<UnityEngine.KeyCode keyCode>)
+	
+#Input/WasKeyPressed
+
+System.Boolean wasPressed
+	Input.GetKeyDown(<UnityEngine.KeyCode keyCode>)
+	
+#Input/WasKeyReleased
+
+System.Boolean wasReleased
+	Input.GetKeyUp(<UnityEngine.KeyCode keyCode>)

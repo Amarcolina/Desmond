@@ -1,0 +1,45 @@
+#Math/Int/Addition
+
+System.Int32 sum
+	(<System.Int32 a>+<System.Int32 b>)
+
+#Math/Int/Subtraction
+
+System.Int32 difference
+	(<System.Int32 a>-<System.Int32 b>)
+	
+#Math/Int/Multiplication
+
+System.Int32 product
+	(<System.Int32 a>*<System.Int32 b>)
+	
+#Math/Int/Division
+
+System.Int32 quotient
+	(<System.Int32 a>/<System.Int32 b>)
+	
+	
+#Math/Float/Addition
+
+System.Single sum
+	(<System.Single a>+<System.Single b>)
+
+#Math/Float/Subtraction
+
+System.Single difference
+	(<System.Single a>-<System.Single b>)
+	
+#Math/Float/Multiplication
+
+System.Single product
+	(<System.Single a>*<System.Single b>)
+	
+#Math/Float/Division
+
+System.Single quotient
+	(<System.Single a>/<System.Single b>)
+
+	
+	
+	
+
