@@ -66,8 +66,29 @@ public class TypeConversion {
         }
     }
 
+    public static void addBaseType(string typeName) {
+        //Types can always be converted to their base types with no effort
+        System.Type type = DefaultValueNode.searchForType(typeName);
+        if (type == null) {
+            Debug.LogError("Could not find type [" + typeName + "]");
+            return;
+        }
+        System.Type baseType = type.BaseType;
+        if (baseType != null) {
+            addPair(typeName, baseType.FullName, "<in>");
+        }
+    }
+
     public static void addPair(string typeFrom, string typeTo, string code) {
-        setOfConversions[new TypeToType(typeFrom, typeTo)] = code;
+        TypeToType typeToType = new TypeToType(typeFrom, typeTo);
+        if (setOfConversions.ContainsKey(typeToType)) {
+            return;
+        }
+
+        setOfConversions[typeToType] = code;
+
+        addBaseType(typeFrom);
+        addBaseType(typeTo);
 
         List<string> list;
         if (!typeToTypes.TryGetValue(typeFrom, out list)) {
@@ -90,12 +111,12 @@ public class TypeConversion {
             return true;
         }
 
-        if (outputType == "object" && inputType != "null") {
+        if (outputType == "object" && inputType != "void") {
             outputExpression = inputExpression;
             return true;
         }
 
-        if (inputType == "object" && outputType != "null") {
+        if (inputType == "object" && outputType != "void") {
             outputExpression = "((" + outputType + ")" + inputExpression + ")";
             return true;
         }
