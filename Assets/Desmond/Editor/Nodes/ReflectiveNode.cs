@@ -8,9 +8,9 @@ namespace Desmond {
 public class ReflectiveNode : Node {
     public string typeName;
     public string methodName;
+    public string returnType;
     public string methodDisplayName;
 
-    private System.Type returnType;
     private List<MethodInfo> _methodInfos = null;
 
     private List<MethodInfo> methodInfos {
@@ -27,26 +27,19 @@ public class ReflectiveNode : Node {
         name = type.Name;
 
         _methodInfos = new List<MethodInfo>();
-        returnType = null;
 
         MethodInfo[] allInfos = type.GetMethods();
         foreach (MethodInfo info in allInfos) {
             if (info.Name == methodName) {
-                _methodInfos.Add(info);
-                if (returnType == null) {
-                    returnType = info.ReturnType;
-                } else {
-                    if (returnType != info.ReturnType) {
-                        //For now?????
-                        Debug.LogError("Can not handle overloaded methods with variable return values");
-                    }
+                if (info.ReturnType.FullName == returnType) {
+                    _methodInfos.Add(info);
                 }
             }
         }
+    }
 
-        if (returnType == typeof(void)) {
-            returnType = null;
-        }
+    private bool returnsVoid() {
+        return returnType == "void";
     }
 
     public override void generateElements() {
@@ -55,7 +48,7 @@ public class ReflectiveNode : Node {
         loadMethodInfos();
 
         //if void, then it is executable 
-        if (returnType == null) {
+        if (returnsVoid()) {
             ExecutionInputInfo executionIn = ScriptableObject.CreateInstance<ExecutionInputInfo>();
             executionIn.init(methodName, "void");
             elements.Add(executionIn);
@@ -80,17 +73,16 @@ public class ReflectiveNode : Node {
             InputWithDefaultInfo inputElement = ScriptableObject.CreateInstance<InputWithDefaultInfo>();
             inputElement.init(pair.Key, pair.Value.FullName);
             inputElement.initDefaultValue(this);
-            Debug.Log(inputElement.id + " : " + inputElement.type);
             elements.Add(inputElement);
         }
 
-        if (returnType == null) {
+        if (returnsVoid()) {
             ExecutionOutInfo executionOut = ScriptableObject.CreateInstance<ExecutionOutInfo>();
             executionOut.init("out", "void");
             elements.Add(executionOut);
         } else {
             DataOutInfo returnValue = ScriptableObject.CreateInstance<DataOutInfo>();
-            returnValue.init(methodDisplayName, returnType.FullName);
+            returnValue.init(methodDisplayName, returnType);
             elements.Add(returnValue);
         }
 
@@ -100,9 +92,9 @@ public class ReflectiveNode : Node {
     public override List<ExpressionMethodStruct> getExpressionStructs() {
         List<ExpressionMethodStruct> list = new List<ExpressionMethodStruct>();
 
-        if (returnType != null) {
+        if (!returnsVoid()) {
             ScriptStructKey key = new ScriptStructKey(this, methodDisplayName);
-            ExpressionMethodStruct s = new ExpressionMethodStruct(key, methodDisplayName, returnType.FullName);
+            ExpressionMethodStruct s = new ExpressionMethodStruct(key, methodDisplayName, returnType);
             s.addCode(getExpressionCode());
             list.Add(s);
         }
@@ -124,7 +116,7 @@ public class ReflectiveNode : Node {
         //If return type is void, 2 lines of code
         //  call method with args
         //  ->out to exit
-        if (returnType == null) {
+        if (returnsVoid()) {
             ScriptStructKey key = new ScriptStructKey(this, methodName);
             MethodStruct s = new MethodStruct(key, methodName);
             s.addCode(getExpressionCode() + ";");
