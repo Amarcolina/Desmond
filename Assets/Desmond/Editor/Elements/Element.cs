@@ -63,9 +63,7 @@ public class Element : ScriptableObject {
         return null;
     }
 
-    public virtual bool drawElement() {
-        return false;
-    }
+    public virtual void drawElement() { }
 
     public virtual void drawLink(Element endElement, CurveEnd endA, CurveEnd endB) {
         drawCurve(endA, endB, normalLinkColor);

@@ -30,14 +30,13 @@ public class ExecutionOutInfo : ConnectableElement {
         return _buttonTexture;
     }
 
-    public override bool drawElement() {
+    public override void drawElement() {
         if (_style == null) {
             _style = new GUIStyle();
             _style.alignment = TextAnchor.MiddleRight;
             _style.normal.textColor = new Color(0.8f, 1.0f, 0.8f);
         }
         GUI.Label(rect, id, _style);
-        return false;
     }
 
     public override void drawLink(Element elementB, CurveEnd endA, CurveEnd endB) {

@@ -83,7 +83,7 @@ public class InputWithDefaultInfo : ConnectableElement{
         return _buttonTexture;
     }
 
-    public override bool drawElement() {
+    public override void drawElement() {
         if (_style == null) {
             _style = new GUIStyle();
             _style.alignment = TextAnchor.MiddleLeft;
@@ -95,8 +95,6 @@ public class InputWithDefaultInfo : ConnectableElement{
         if (defaultValue != null && connections[0].Equals(defaultConnection)) {
             defaultValue.drawDefaultProperty(new Rect(rect.x, rect.y + Node.LINE, rect.width, rect.height));
         }
-
-        return false;
     }
 
     public override void drawLink(Element elementB, CurveEnd endA, CurveEnd endB) {
