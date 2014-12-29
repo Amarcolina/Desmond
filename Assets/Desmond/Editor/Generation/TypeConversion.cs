@@ -33,7 +33,7 @@ public class TypeConversion {
     }
 
     public static bool tryCastExpression(string inputType, string inputExpression, string outputType, out string outputExpression) {
-        if (hasLoadedTypeConversions) {
+        if (!hasLoadedTypeConversions) {
             loadTypeConversions();
         }
 
@@ -53,7 +53,7 @@ public class TypeConversion {
             outputExpression = "((" + outputType + ")" + inputExpression + ")";
             return true;
         }
-
+        
         if (outputType == "System.String") {
             if (inputType == "System.Int32" || inputType == "System.Single") {
                 outputExpression = "(" + inputExpression + " + \"\")";
@@ -63,17 +63,12 @@ public class TypeConversion {
             return true;
         }
 
-        Debug.Log(inputType + " ; " + outputType + "[0]" + pattern);
         if (!setOfConversions.TryGetValue(new TypeToType(inputType, outputType), out pattern)) {
-            Debug.Log(inputType + " ; " + outputType + "[1]" + pattern);
             searchForNewPair(inputType, outputType);
-            Debug.Log(inputType + " ; " + outputType + "[2]" + pattern);
             setOfConversions.TryGetValue(new TypeToType(inputType, outputType), out pattern);
-            Debug.Log(inputType + " ; " + outputType + "[3]" + pattern);
         }
 
         if (pattern == "") {
-            Debug.Log(inputType + " ; " + outputType);
             outputExpression = null;
             return false;
         }
@@ -146,10 +141,6 @@ public class TypeConversion {
         TypeToType typeToType = new TypeToType(typeFrom, typeTo);
         if (setOfConversions.ContainsKey(typeToType)) {
             return;
-        }
-
-        if (typeFrom == "UnityEngine.Transform") {
-            Debug.Log(typeFrom + " : " + typeTo);
         }
         
         setOfConversions[typeToType] = code;
