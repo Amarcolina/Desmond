@@ -10,6 +10,7 @@ public class ReflectiveNode : Node {
     public string methodName;
     public string returnType;
     public string methodDisplayName;
+    public bool isStatic;
 
     private List<MethodInfo> _methodInfos = null;
 
@@ -39,13 +40,20 @@ public class ReflectiveNode : Node {
     }
 
     private bool returnsVoid() {
-        return returnType == "void";
+        return returnType == "System.Void";
     }
 
     public override void generateElements() {
         base.generateElements();
 
         loadMethodInfos();
+
+        if (!isStatic) {
+            InputWithDefaultInfo inputElement = ScriptableObject.CreateInstance<InputWithDefaultInfo>();
+            inputElement.init("instance", typeName);
+            inputElement.initDefaultValue(this);
+            elements.Add(inputElement);
+        }
 
         //if void, then it is executable 
         if (returnsVoid()) {
@@ -128,7 +136,13 @@ public class ReflectiveNode : Node {
     }
 
     private string getExpressionCode() {
-        string expression = typeName + "." + methodName + "(";
+        string expression;
+        
+        if(isStatic){
+            expression = typeName + "." + methodName + "(";
+        }else{
+            expression = "<instance>." + methodName + "(";
+        }
 
         MethodInfo chosenMethod = null;
         ParameterInfo[] parameters;
@@ -179,7 +193,6 @@ public class ReflectiveNode : Node {
             }
         }
         expression += ")";
-        Debug.Log(expression);
         return expression;
     }
 
