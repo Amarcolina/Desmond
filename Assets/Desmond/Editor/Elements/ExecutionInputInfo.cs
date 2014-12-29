@@ -18,10 +18,6 @@ public class ExecutionInputInfo : Element {
         return -1;
     }
 
-    public override float getHeight() {
-        return Node.LINE;
-    }
-
     public override Texture2D getButtonTexture() {
         if (_buttonTexture == null) {
             _buttonTexture = Resources.LoadAssetAtPath<Texture2D>("Assets/Desmond/Textures/InputArrow.png");

@@ -31,12 +31,14 @@ public class Element : ScriptableObject {
     public string type;
     public Rect rect;
     public bool visible = true;
+    public Node parentNode;
 
     private Color normalLinkColor = new Color(.8f, .8f, .8f);
 
-    public virtual void init(string id, string type) {
+    public virtual void init(string id, string type, Node parentNode) {
         this.id = id;
         this.type = type;
+        this.parentNode = parentNode;
         hideFlags = HideFlags.HideInHierarchy;
         BoardHandler.addAssetToCurrentBoard(this);
     }
@@ -49,8 +51,12 @@ public class Element : ScriptableObject {
         return -1;
     }
 
-    public virtual float getHeight() {
-        return Node.LINE;
+    public virtual int getHeight() {
+        return 1;
+    }
+
+    public virtual float getWidth() {
+        return EditorStyles.label.CalcSize(new GUIContent(id)).x;
     }
 
     public virtual Texture2D getButtonTexture() {

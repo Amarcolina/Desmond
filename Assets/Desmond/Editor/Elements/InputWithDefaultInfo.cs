@@ -17,13 +17,18 @@ public class InputWithDefaultInfo : ConnectableElement{
     public Element valueElement;
     public ElementConnection defaultConnection;
 
-    public void initDefaultValue(Node parent) {
+    public override void init(string id, string type, Node parentNode) {
+        base.init(id, type, parentNode);
         defaultValue = DefaultValueNode.getDefaultValueNode(type);
         if (defaultValue != null) {
             valueElement = (defaultValue as DefaultValueNode).getElement("out");
-            defaultConnection = new ElementConnection(valueElement, parent, defaultValue as DefaultValueNode);
+            defaultConnection = new ElementConnection(valueElement, parentNode, defaultValue as DefaultValueNode);
             connections.Add(defaultConnection);
         }
+    }
+
+    public override float getWidth() {
+        return Node.SIDE;
     }
 
     public override bool isOnLeft() {
@@ -41,29 +46,33 @@ public class InputWithDefaultInfo : ConnectableElement{
 
     public override bool tryConnect(ElementConnection connection) {
         if (canConnectTo(connection)) {
+            parentNode.requestLayoutUpdate();
             connections.Clear();
             connections.Add(connection);
+            return true;
         }
-        return true;
+        return false;
     }
 
     public override void disconnectFrom(ElementConnection other) {
         connections.Remove(other);
         if (connections.Count == 0) {
             connections.Add(defaultConnection);
+            parentNode.requestLayoutUpdate();
         }
     }
 
     public override void disconnectFromAll() {
         connections.Clear();
         connections.Add(defaultConnection);
+        parentNode.requestLayoutUpdate();
     }
 
-    public override float getHeight() {
+    public override int getHeight() {
         if (defaultValue != null && connections[0].Equals(defaultConnection)) {
-            return Node.LINE * 2;
+            return 2;
         } else {
-            return Node.LINE;
+            return 1;
         }
     }
 
