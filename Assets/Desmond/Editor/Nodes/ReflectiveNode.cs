@@ -141,7 +141,7 @@ public class ReflectiveNode : Node {
         if(isStatic){
             expression = typeName + "." + methodName + "(";
         }else{
-            expression = "<instance>." + methodName + "(";
+            expression = "<" + typeName + " instance>." + methodName + "(";
         }
 
         MethodInfo chosenMethod = null;
