@@ -12,6 +12,7 @@ public class ReflectiveNodeFactory : NodeFactory {
     private string returnType;
     private string methodDisplayName;
     private bool isStatic;
+    private bool isGetSet;
 
     private struct MethodStruct {
         public string methodName;
@@ -30,7 +31,13 @@ public class ReflectiveNodeFactory : NodeFactory {
         foreach (var a in assemblies) {
             foreach (System.Type type in a.GetTypes()) {
                 if (type.Namespace == "UnityEngine") {
+                    PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
                     MethodInfo[] infos = type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+
+                    HashSet<string> propertyNames = new HashSet<string>();
+                    foreach (PropertyInfo propInfo in properties) {
+                        propertyNames.Add(propInfo.Name);
+                    }
 
                     Dictionary<MethodStruct, HashSet<System.Type>> methodToReturnType = new Dictionary<MethodStruct, HashSet<System.Type>>();
                     foreach (MethodInfo info in infos) {
@@ -48,8 +55,21 @@ public class ReflectiveNodeFactory : NodeFactory {
                         bool isStatic = methodStruct.isStatic;
                         HashSet<System.Type> returnTypes = pair.Value;
                         foreach (System.Type returnType in returnTypes) {
+
+                            bool isGetSet = false;
+                            if (returnTypes.Count == 1 && methodName.Length > 4) {
+                                if (propertyNames.Contains(methodName.Substring(4))) {
+                                    isGetSet = true;
+                                }
+                            }
+
                             //Only display return types if there are more than 1 to choose from
-                            ReflectiveNodeFactory factory = new ReflectiveNodeFactory(type.FullName, methodName, returnType, isStatic, returnTypes.Count > 1);
+                            ReflectiveNodeFactory factory = new ReflectiveNodeFactory(type.FullName, 
+                                                                                      methodName, 
+                                                                                      returnType, 
+                                                                                      isStatic, 
+                                                                                      isGetSet, 
+                                                                                      returnTypes.Count > 1);
                             list.Add(factory);
                         }
                     }
@@ -60,21 +80,26 @@ public class ReflectiveNodeFactory : NodeFactory {
         return list;
     }
 
-    public ReflectiveNodeFactory(string typeName, string methodName, System.Type returnType, bool isStatic, bool displayReturnType) {
+    public ReflectiveNodeFactory(string typeName, string methodName, System.Type returnType, bool isStatic, bool isGetSet, bool displayReturnType) {
         this.typeName = typeName;
         this.methodName = methodName;
         this.returnType = returnType.FullName;
         this.isStatic = isStatic;
+        this.isGetSet = isGetSet;
 
         methodDisplayName = methodName;
-        if (methodDisplayName.StartsWith("get_")) {
-            methodDisplayName = methodDisplayName.Replace("get_", "Get");
-            methodDisplayName = StringHelper.capitalize(methodDisplayName, 3);
+
+        if (isGetSet) {
+            if (methodDisplayName.StartsWith("get_")) {
+                methodDisplayName = methodDisplayName.Replace("get_", "Get");
+                methodDisplayName = StringHelper.capitalize(methodDisplayName, 3);
+            }
+            if (methodDisplayName.StartsWith("set_")) {
+                methodDisplayName = methodDisplayName.Replace("set_", "Set");
+                methodDisplayName = StringHelper.capitalize(methodDisplayName, 3);
+            }
         }
-        if (methodDisplayName.StartsWith("set_")) {
-            methodDisplayName = methodDisplayName.Replace("set_", "Set");
-            methodDisplayName = StringHelper.capitalize(methodDisplayName, 3);
-        }
+        
 
         if (displayReturnType) {
             methodDisplayName += " (" + returnType.Name + ")";
@@ -88,6 +113,7 @@ public class ReflectiveNodeFactory : NodeFactory {
         node.returnType = returnType;
         node.methodDisplayName = methodDisplayName;
         node.isStatic = isStatic;
+        node.isGetSet = isGetSet;
         node.generateElements();
         return node;
     }
@@ -95,9 +121,17 @@ public class ReflectiveNodeFactory : NodeFactory {
     public override string getPath() {
         System.Type type = DefaultValueNode.searchForType(typeName);
         if (isStatic) {
-            return "Reflective/" + type.Name + "/Static/" + methodDisplayName;
+            if (isGetSet) {
+                return "Reflective/" + type.Name + "/Static/GetSet/" + methodDisplayName;
+            } else {
+                return "Reflective/" + type.Name + "/Static/Normal/" + methodDisplayName;
+            }
         } else {
-            return "Reflective/" + type.Name + "/Instance/" + methodDisplayName;
+            if (isGetSet) {
+                return "Reflective/" + type.Name + "/Instance/GetSet/" + methodDisplayName;
+            } else {
+                return "Reflective/" + type.Name + "/Instance/Normal/" + methodDisplayName;
+            }
         }
         
     }

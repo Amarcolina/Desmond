@@ -311,7 +311,6 @@ public class ScriptBuilder {
                 }
 
                 ScriptStructKey key = new ScriptStructKey(connectedNode, connectedElement.id);
-                Debug.Log(key);
                 MethodStruct s = connectedBuilder.methodStructs[key];
 
                 if (connectedBuilder != this) {
@@ -344,8 +343,6 @@ public class ScriptBuilder {
 
         while (StringHelper.getBraced(line, out match)) {
             string[] inside = match.Split(' ');
-            Debug.Log(match);
-            Debug.Log(":: " + line);
             //If brace matches <id> pattern
             if (inside.Length == 1) {
                 string id = inside[0];
@@ -385,7 +382,6 @@ public class ScriptBuilder {
             } else {
                 Debug.LogError("woah");
             }
-            Debug.Log(":; " + line);
         }
 
         return line;

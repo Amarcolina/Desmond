@@ -11,6 +11,7 @@ public class ReflectiveNode : Node {
     public string returnType;
     public string methodDisplayName;
     public bool isStatic;
+    public bool isGetSet;
 
     private List<MethodInfo> _methodInfos = null;
 
@@ -46,20 +47,20 @@ public class ReflectiveNode : Node {
     public override void generateElements() {
         base.generateElements();
 
-        loadMethodInfos();
-
-        if (!isStatic) {
-            InputWithDefaultInfo inputElement = ScriptableObject.CreateInstance<InputWithDefaultInfo>();
-            inputElement.init("instance", typeName);
-            inputElement.initDefaultValue(this);
-            elements.Add(inputElement);
-        }
+        loadMethodInfos(); 
 
         //if void, then it is executable 
         if (returnsVoid()) {
             ExecutionInputInfo executionIn = ScriptableObject.CreateInstance<ExecutionInputInfo>();
             executionIn.init(methodName, "void");
             elements.Add(executionIn);
+        }
+
+        if (!isStatic) {
+            InputWithDefaultInfo inputElement = ScriptableObject.CreateInstance<InputWithDefaultInfo>();
+            inputElement.init("instance", typeName);
+            inputElement.initDefaultValue(this);
+            elements.Add(inputElement);
         }
 
         Dictionary<string, System.Type> parameterIdToType = new Dictionary<string, System.Type>();
@@ -139,9 +140,15 @@ public class ReflectiveNode : Node {
         string expression;
         
         if(isStatic){
-            expression = typeName + "." + methodName + "(";
+            expression = typeName + ".";
         }else{
-            expression = "<" + typeName + " instance>." + methodName + "(";
+            expression = "<" + typeName + " instance>.";
+        }
+
+        if (isGetSet) {
+            expression += methodName.Substring(4);
+        } else {
+            expression += methodName + "(";
         }
 
         MethodInfo chosenMethod = null;
@@ -179,6 +186,13 @@ public class ReflectiveNode : Node {
         }
 
         parameters = chosenMethod.GetParameters();
+
+        if (parameters.Length == 0) {
+            return expression;
+        }
+
+        expression += " = ";
+
         for (int i = 0; i < parameters.Length; i++) {
             ParameterInfo parameterInfo = parameters[i];
 
@@ -192,7 +206,11 @@ public class ReflectiveNode : Node {
                 expression += ",";
             }
         }
-        expression += ")";
+
+        if (!isGetSet) {
+            expression += ")";
+        }
+        
         return expression;
     }
 
