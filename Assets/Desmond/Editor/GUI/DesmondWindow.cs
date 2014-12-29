@@ -130,18 +130,6 @@ public class DesmondWindow : EditorWindow {
             Repaint();
         }
 
-        if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.T) {
-            TypeConversion.loadTypeConversion("/Desmond/Editor/Generators/Casting.dc");
-            TypeConversion.autoGenerateConversions();
-        }
-
-        /*
-        if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.C) {
-            ScriptBuilder.buildScript(board.nodesInBoard);
-            ScriptBuilder.writeToFile("/Scripts/Editor/Desmond/Generated.txt");
-        }
-         * */
-
         drawLinks();
 
         BeginWindows();

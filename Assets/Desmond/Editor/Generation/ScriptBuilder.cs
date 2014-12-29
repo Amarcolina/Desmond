@@ -367,18 +367,27 @@ public class ScriptBuilder {
                 ScriptStructKey key = new ScriptStructKey(connectedNode, connectedElement.id);
                 ExpressionMethodStruct s = connectedBuilder.expressionStructs[key];
 
+                string expression;
                 if (s.shouldInline()) {
-                    //Inline the method directly, after recursively coming up with the propper expression
-                    string expression = connectedBuilder.resolveBracedReferences(s, connectedNode, s.codeBlock[0]);
-                    line = StringHelper.replaceBrace(line, expression);
+                    expression = connectedBuilder.resolveBracedReferences(s, connectedNode, s.codeBlock[0]);                
                 } else {
                     if (connectedBuilder != this) {
                         FieldStruct fieldStruct = scriptFields[connectedBuilder];
-                        line = StringHelper.replaceBrace(line, fieldStruct.name + "." + s.methodName + "()");
+                        expression = fieldStruct.name + "." + s.methodName + "()";
                     } else {
-                        line = StringHelper.replaceBrace(line, s.methodName + "()");
+                        expression = s.methodName + "()";
                     }
                 }
+
+                string toType = element.type;
+                string fromType = connectedElement.type;
+
+                string castExpression;
+                if (!TypeConversion.tryCastExpression(fromType, expression, toType, out castExpression)) {
+                    Debug.LogWarning("Could not auto-cast expression [" + expression + "] from type [" + fromType + "] to type [" + toType + "]");
+                }
+
+                line = StringHelper.replaceBrace(line, castExpression);
             } else {
                 Debug.LogError("woah");
             }
