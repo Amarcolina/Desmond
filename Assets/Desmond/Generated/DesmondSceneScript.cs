@@ -2,17 +2,14 @@ using UnityEngine;
 
 
 public class DesmondSceneScript : DesmondSceneBase{
-    public UnityEngine.GameObject defaultGameObject;
-    public UnityEngine.Object Cube;
+    public UnityEngine.GameObject Cube;
+    public UnityEngine.GameObject Cube1;
+    public UnityEngine.GameObject MainCamera;
     
     public void Update(){
+        Debug.Log(Cube.transform.position.magnitude);
         if(Input.GetKeyDown(UnityEngine.KeyCode.Space)){
-            Debug.Log("Hello World!");
+            Cube1.active = MainCamera.active;
         }
-    }
-    
-    public void Destroy(){
-        UnityEngine.Object.Destroy(Cube);
-        Debug.Log("cube was destroyed!");
     }
 }

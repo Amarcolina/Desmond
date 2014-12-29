@@ -71,7 +71,6 @@ public class StringHelper {
     }
 
     public static int findSimilarity(string a, string b) {
-        _lookupTable.Clear();
         return findSimilarity(new KeyValuePair<string, string>(a, b));
     }
 

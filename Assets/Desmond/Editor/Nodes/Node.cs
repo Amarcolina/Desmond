@@ -11,7 +11,6 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver {
 
     public Rect rect;
 
-    public bool isStatic;
     public bool isGameObject;
     public bool isVisible = true;
     public bool isMinimized = false;
