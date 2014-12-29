@@ -46,7 +46,7 @@ public class DefaultObjectNode : DefaultValueNode {
             defaultProperty = defaultObject.FindProperty("value");
         }
         defaultObject.Update();
-        EditorGUI.ObjectField(r, value, getValueType(), true);
+        value = EditorGUI.ObjectField(r, value, getValueType(), true);
         defaultObject.ApplyModifiedProperties();
     }
 }
