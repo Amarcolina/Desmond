@@ -49,8 +49,12 @@ public class Element : ScriptableObject {
         return -1;
     }
 
-    public virtual float getHeight() {
-        return Node.LINE;
+    public virtual int getHeight() {
+        return 1;
+    }
+
+    public virtual float getWidth() {
+        return EditorStyles.label.CalcSize(new GUIContent(id)).x;
     }
 
     public virtual Texture2D getButtonTexture() {

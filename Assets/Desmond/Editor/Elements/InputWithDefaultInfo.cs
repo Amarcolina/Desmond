@@ -59,11 +59,11 @@ public class InputWithDefaultInfo : ConnectableElement{
         connections.Add(defaultConnection);
     }
 
-    public override float getHeight() {
+    public override int getHeight() {
         if (defaultValue != null && connections[0].Equals(defaultConnection)) {
-            return Node.LINE * 2;
+            return 2;
         } else {
-            return Node.LINE;
+            return 1;
         }
     }
 
