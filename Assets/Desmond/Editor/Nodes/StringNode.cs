@@ -38,7 +38,7 @@ public class StringNode : Node{
                 methodIDsSoFar.Add(a.id);
 
                 ExecutionInputInfo element = ScriptableObject.CreateInstance<ExecutionInputInfo>();
-                element.init(a.id, "void");
+                element.init(a.id, "void", this);
                 element.visible = a.staticReference == null || a.staticReference == "";
                 elements.Add(element);
             }
@@ -46,18 +46,17 @@ public class StringNode : Node{
 
         foreach (DataInDescriptor a in descriptor.dataIns.Values) {
             InputWithDefaultInfo element = ScriptableObject.CreateInstance<InputWithDefaultInfo>();
-            element.init(a.id, a.dataType);
-            element.initDefaultValue(this);
+            element.init(a.id, a.dataType, this);
             elements.Add(element);
         }
         foreach (ExitPathDescriptor a in descriptor.exitPaths.Values) {
             ExecutionOutInfo element = ScriptableObject.CreateInstance<ExecutionOutInfo>();
-            element.init(a.id, "void");
+            element.init(a.id, "void", this);
             elements.Add(element);
         }
         foreach (ExpressionDescriptor a in descriptor.expressions.Values) {
             DataOutInfo element = ScriptableObject.CreateInstance<DataOutInfo>();
-            element.init(a.id, a.returnType);
+            element.init(a.id, a.returnType, this);
             elements.Add(element);
         }
     }

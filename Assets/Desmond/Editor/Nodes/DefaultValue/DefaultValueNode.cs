@@ -58,7 +58,7 @@ public class DefaultValueNode : Node {
 
     public override void generateElements() {
         DataOutInfo dataOut = ScriptableObject.CreateInstance<DataOutInfo>();
-        dataOut.init("out", type);
+        dataOut.init("out", type, this);
         elements.Add(dataOut);
     }
 

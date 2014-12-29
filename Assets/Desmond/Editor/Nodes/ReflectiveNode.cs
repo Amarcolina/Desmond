@@ -52,14 +52,13 @@ public class ReflectiveNode : Node {
         //if void, then it is executable 
         if (returnsVoid()) {
             ExecutionInputInfo executionIn = ScriptableObject.CreateInstance<ExecutionInputInfo>();
-            executionIn.init(methodName, "void");
+            executionIn.init(methodDisplayName, "void", this);
             elements.Add(executionIn);
         }
 
         if (!isStatic) {
             InputWithDefaultInfo inputElement = ScriptableObject.CreateInstance<InputWithDefaultInfo>();
-            inputElement.init("instance", typeName);
-            inputElement.initDefaultValue(this);
+            inputElement.init("instance", typeName, this);
             elements.Add(inputElement);
         }
 
@@ -80,18 +79,17 @@ public class ReflectiveNode : Node {
 
         foreach(var pair in parameterIdToType){
             InputWithDefaultInfo inputElement = ScriptableObject.CreateInstance<InputWithDefaultInfo>();
-            inputElement.init(pair.Key, pair.Value.FullName);
-            inputElement.initDefaultValue(this);
+            inputElement.init(pair.Key, pair.Value.FullName, this);
             elements.Add(inputElement);
         }
 
         if (returnsVoid()) {
             ExecutionOutInfo executionOut = ScriptableObject.CreateInstance<ExecutionOutInfo>();
-            executionOut.init("out", "void");
+            executionOut.init("out", "void", this);
             elements.Add(executionOut);
         } else {
             DataOutInfo returnValue = ScriptableObject.CreateInstance<DataOutInfo>();
-            returnValue.init(methodDisplayName, returnType);
+            returnValue.init(methodDisplayName, returnType, this);
             elements.Add(returnValue);
         }
 

@@ -19,6 +19,7 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver {
 
     public List<Element> elements = new List<Element>();
     private Dictionary<string, Element> _idToElement = null;
+    private bool needsToUpdateLayout = true;
 
     public Dictionary<string, Element> idToElement {
         get {
@@ -81,15 +82,17 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver {
             r.y = LINE;
         }
 
+        if (!e.isOnLeft()) {
+            r.x = rect.width - LINE;
+        } else {
+            r.x -= LINE;
+        }
+
         if (global) {
             r.position += rect.position;
         }
 
-        if (!e.isOnLeft()) {
-            r.x += SIDE;
-        } else {
-            r.x -= LINE;
-        }
+        
         return r;
     }
 
@@ -97,60 +100,62 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver {
         return new CurveEnd(getButtonRect(e).center, Vector2.right * (e.isOnLeft() ? -1 : 1));
     }
 
-    public void updateHeight() {
-        bool hasLeft = false;
-        bool hasRight = false;
+    private void updateLayout() {
+        List<float> leftWidths = new List<float>();
+        List<float> rightWidths = new List<float>();
 
-        foreach (Element e in elements) {
-            if (!e.visible) {
+        foreach (Element element in elements) {
+            if (!element.visible) {
                 continue;
             }
 
-            if (e.isOnLeft()) {
-                hasLeft = true;
-            }
-            if (!e.isOnLeft()) {
-                hasRight = true;
+            for (int i = 0; i < element.getHeight(); i++) {
+                if (element.isOnLeft()) {
+                    leftWidths.Add(element.getWidth());
+                } else {
+                    rightWidths.Add(element.getWidth());
+                }
             }
         }
 
-        Rect leftRect = new Rect(LINE, LINE, SIDE, LINE);
-        Rect rightRect = leftRect;
-
-        if (hasLeft) {
-            rightRect.position += new Vector2(SIDE, 0);
-            if (isGameObject) {
-                leftRect.y += LINE;
+        rect.width = 0;
+        for (int i = 0; i < Mathf.Max(leftWidths.Count, rightWidths.Count); i++) {
+            float widthL = 0, widthR = 0;
+            if (i < leftWidths.Count) {
+                widthL = leftWidths[i];
             }
-        } else {
-            rightRect.y += LINE;
+            if (i < rightWidths.Count) {
+                widthR = rightWidths[i];
+            }
+            rect.width = Mathf.Max(rect.width, widthL + widthR);
         }
 
-        foreach (Element e in elements) {
-            if (!e.visible) {
+        float leftY = LINE, rightY = LINE;
+        foreach (Element element in elements) {
+            if (!element.visible) {
                 continue;
             }
 
-            if (e.isOnLeft()) {
-                e.rect = leftRect;
-                leftRect.y += e.getHeight();
+            if (element.isOnLeft()) {
+                element.rect = new Rect(LINE, leftY, element.getWidth(), LINE);
+                leftY += element.getHeight() * LINE;
             } else {
-                e.rect = rightRect;
-                rightRect.y += e.getHeight();
+                element.rect = new Rect(LINE + rect.width - element.getWidth(), rightY, element.getWidth(), LINE);
+                rightY += element.getHeight() * LINE;
             }
         }
 
-        if (hasLeft && hasRight) {
-            rect.width = SIDE * 2 + LINE * 2;
-        } else {
-            rect.width = SIDE + LINE * 2;
-        }
+        rect.width += LINE * 2;
 
         if (isMinimized) {
             rect.height = LINE * 2 + 4;
         } else {
-            rect.height = Mathf.Max(leftRect.y, rightRect.y) + 4;
+            rect.height = Mathf.Max(leftY, rightY) + 4;
         }
+    }
+
+    public void requestLayoutUpdate() {
+        needsToUpdateLayout = true;
     }
 
     public void drawLinks() {
@@ -171,10 +176,18 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver {
     }
 
     public virtual void doWindow(int windowID) {
-        isMinimized = !EditorGUI.Foldout(new Rect(8, 1, LINE, LINE), !isMinimized, GUIContent.none);
+        bool shouldBeMinimized = !EditorGUI.Foldout(new Rect(8, 1, LINE, LINE), !isMinimized, GUIContent.none);
+        if (shouldBeMinimized != isMinimized) {
+            needsToUpdateLayout = true;
+            isMinimized = shouldBeMinimized;
+        }
+
         GUI.DragWindow(new Rect(0, 0, 10000, EditorGUIUtility.singleLineHeight));
 
-        updateHeight();
+        if (needsToUpdateLayout) {
+            updateLayout();
+            needsToUpdateLayout = false;
+        }
 
         if (!isMinimized && isGameObject) {
             DesmondBoard currentBoard = BoardList.getSelectedBoard();
