@@ -135,20 +135,72 @@ public class ReflectiveNode : Node {
     }
 
     private string getExpressionCode() {
-        string expression;
-        
-        if(isStatic){
+        MethodInfo chosenMethod = chooseMethodGivenInputs();
+
+        if (isGetSet) {
+            return getGetSetExpression(chosenMethod);
+        } else {
+            string op = getImplicitOperator();
+            if (op != null && chosenMethod.GetParameters().Length == 2) {
+                return getOperatorExpression(op, chosenMethod);
+            }else{
+                return getMethodExpression(chosenMethod);
+            }
+        }
+    }
+
+    public string getMethodExpression(MethodInfo chosenMethod) {
+        string expression = "";
+
+        if (isStatic) {
             expression = typeName + ".";
-        }else{
+        } else {
             expression = "<" + typeName + " instance>.";
         }
 
-        if (isGetSet) {
-            expression += methodName.Substring(4);
+        expression += methodName + "(" + getCommaDelimitedArguments(chosenMethod) + ")";
+
+        return expression;
+    }
+
+    public string getGetSetExpression(MethodInfo chosenMethod) {
+        string expression = "";
+
+        if (isStatic) {
+            expression = typeName + ".";
         } else {
-            expression += methodName + "(";
+            expression = "<" + typeName + " instance>.";
         }
 
+        //If it's a getter
+        ParameterInfo[] parameters = chosenMethod.GetParameters();
+        if (parameters.Length == 1) {
+            expression += " = ";
+            expression += getParameterExpression(chosenMethod.GetParameters()[0]);
+        } else if (parameters.Length != 0) {
+            Debug.LogError("Getter or Setter method should either have 1 or 0 arguments");
+        }
+
+        return expression;
+    }
+
+    public string getOperatorExpression(string op, MethodInfo chosenMethod) {
+        if (!isStatic) {
+            Debug.LogError("Only static operators should be allowed");
+        }
+
+        string expression = "";
+
+        ParameterInfo[] parameters = chosenMethod.GetParameters();
+
+        expression += getParameterExpression(parameters[0]);
+        expression += " " + op + " ";
+        expression += getParameterExpression(parameters[1]);
+
+        return expression;
+    }
+
+    public MethodInfo chooseMethodGivenInputs() {
         MethodInfo chosenMethod = null;
         ParameterInfo[] parameters;
 
@@ -183,33 +235,55 @@ public class ReflectiveNode : Node {
             return null;
         }
 
-        parameters = chosenMethod.GetParameters();
+        return chosenMethod;
+    }
 
-        if (parameters.Length == 0) {
-            return expression;
-        }
+    public string getCommaDelimitedArguments(MethodInfo method) {
+        string expression = "";
 
-        expression += " = ";
-
+        ParameterInfo[] parameters = method.GetParameters();
         for (int i = 0; i < parameters.Length; i++) {
             ParameterInfo parameterInfo = parameters[i];
 
-            expression += "<";
-            expression += parameterInfo.ParameterType.FullName;
-            expression += " ";
-            expression += parameterInfo.Name;
-            expression += ">";
+            expression += getParameterExpression(parameterInfo);
 
             if (i != parameters.Length - 1) {
                 expression += ",";
             }
         }
 
-        if (!isGetSet) {
-            expression += ")";
-        }
-        
         return expression;
+    }
+
+    public string getParameterExpression(ParameterInfo parameter) {
+        return "<" + parameter.ParameterType.FullName + " " + parameter.Name + ">";
+    }
+
+    public string getImplicitOperator() {
+        if (!methodName.StartsWith("op_")) {
+            return null;
+        }
+        string opName = methodName.Substring(3);
+        if (opName.StartsWith("Equality")) {
+            return "==";
+        }
+        if (opName.StartsWith("Inequality")) {
+            return "!=";
+        }
+        if (opName.StartsWith("Addition")) {
+            return "+";
+        }
+        if (opName.StartsWith("Subtraction")) {
+            return "-";
+        }
+        if (opName.StartsWith("Multiplication")) {
+            return "*";
+        }
+        if (opName.StartsWith("Division")) {
+            return "/";
+        }
+
+        return null;
     }
 
 }
