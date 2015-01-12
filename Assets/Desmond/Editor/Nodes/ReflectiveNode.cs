@@ -124,8 +124,8 @@ public class ReflectiveNode : Node {
         //  call method with args
         //  ->out to exit
         if (returnsVoid()) {
-            ScriptStructKey key = new ScriptStructKey(this, methodName);
-            MethodStruct s = new MethodStruct(key, methodName);
+            ScriptStructKey key = new ScriptStructKey(this, methodDisplayName);
+            MethodStruct s = new MethodStruct(key, methodDisplayName);
             s.addCode(getExpressionCode() + ";");
             s.addCode("->out");
             list.Add(s);
@@ -171,6 +171,8 @@ public class ReflectiveNode : Node {
         } else {
             expression = "<" + typeName + " instance>.";
         }
+
+        expression += methodName.Substring(4);
 
         //If it's a getter
         ParameterInfo[] parameters = chosenMethod.GetParameters();
