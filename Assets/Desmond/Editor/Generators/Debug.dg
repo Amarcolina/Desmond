@@ -23,16 +23,16 @@ System.Single float
 
 def System.Single timelineTime 0.0f
 def System.Single timelineDirection 1.0f
-def System.Single timelineDuration
+def System.Single timelineDuration 0.0f
 
 play
-	direction = 1.0f;
+	<timelineDirection> = 1.0f;
 	StopCoroutine("timelineCoroutine");
 	StartCoroutine("timelineCoroutine");
 
 playFromBegining
-	timelineTime = 0.0f;
-	direction = 1.0f;
+	<timelineTime> = 0.0f;
+	<timelineDirection> = 1.0f;
 	StopCoroutine("timelineCoroutine");
 	StartCoroutine("timelineCoroutine");
 	
@@ -40,18 +40,18 @@ pause
 	StopCoroutine("timelineCoroutine");
 	
 playReverse
-	direction = -1.0f;
+	<timelineDirection> = -1.0f;
 	StopCoroutine("timelineCoroutine");
 	StartCoroutine("timelineCoroutine");
 	
 playReverseFromEnd
-	timelineTime = <timelineDuration>;
-	direction = -1.0f;
+	<timelineTime> = <timelineDuration>;
+	<timelineDirection> = -1.0f;
 	StopCoroutine("timelineCoroutine");
 	StartCoroutine("timelineCoroutine");
 	
 System.Single value	
-	<UnityEngine.AnimationCurve curve>.Evaluate(<timelineTime>);
+	<UnityEngine.AnimationCurve curve>.Evaluate(<timelineTime>)
 	
 void Awake
 	<timelineDuration> = <UnityEngine.AnimationCurve curve>[<UnityEngine.AnimationCurve curve>.length - 1].time;
@@ -60,22 +60,19 @@ void Awake
 private void timelineCoroutine(){
 	bool finished = false;
 	while(!finished){
-		timelineTime += Time.deltaTime * timelineDirection;
-
-		if(direction == 1.0f){
-			if(timelineTime > <timelineDuration>){
-				timelineTime = <timelineDuration>;
+		timelineTime += Time.deltaTime * <timelineDirection>;
+		if(<timelineDirection> == 1.0f){
+			if(<timelineTime> > <timelineDuration>){
+				<timelineTime> = <timelineDuration>;
 				finished = true;
 			}
 		}else{
-			if(timelineTime <= 0.0f){
-				timelineTime = 0.0f;
+			if(<timelineTime> <= 0.0f){
+				<timelineTime> = 0.0f;
 				finished = true;
 			}
 		}
-		
 		->onTick
-		
 		yield return null;
 	}
 	->onFinished

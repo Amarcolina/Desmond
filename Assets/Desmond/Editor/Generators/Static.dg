@@ -37,3 +37,19 @@ public void OnMouseDown(){
 	->out
 }
 ]
+
+#OnTriggerEnter static
+
+[
+public void OnTriggerEnter(Collider other){
+	->out
+}
+]
+
+#OnTriggerExit static
+
+[
+public void OnTriggerExit(Collider other){
+	->out
+}
+]

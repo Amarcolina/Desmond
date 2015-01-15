@@ -17,3 +17,13 @@ void Start
 
 void OnMouseDown
 	->onMouseDown
+	
+#Events/OnTriggerEnter gameObject
+
+void OnTriggerEnter
+	->onTriggerEnter
+	
+#Events/OnTriggerExit gameObject
+
+void OnTriggerExit
+	->onTriggerExit
