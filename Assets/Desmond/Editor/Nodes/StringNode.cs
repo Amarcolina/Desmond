@@ -80,7 +80,9 @@ public class StringNode : Node{
             //0 is worst, negative is better
             int bestMethodRank = -1;
             MethodDescriptor bestMethod = null;
+            bestMethod = methodList[0];
 
+            /*
             foreach (MethodDescriptor d in methodList) {
                 //for every input required, there must be a connection
                 //for every output connected, there must be an exit path
@@ -97,6 +99,7 @@ public class StringNode : Node{
 
                     //A required input is not connected, abort
                     if (!inputVar.isConnected()) {
+                        Debug.Log(1);
                         canChooseMethod = false;
                         break;
                     }
@@ -128,9 +131,10 @@ public class StringNode : Node{
             }
 
             if (bestMethod == null) {
-                Debug.LogError("Could not find suitable method for given connection states!");
+                Debug.LogError(savedDescriptorName + ": Could not find suitable method for given connection states!");
                 return new List<MethodStruct>();
             }
+             * */
 
             ScriptStructKey key = new ScriptStructKey(this, bestMethod.id);
             MethodStruct s = new MethodStruct(key, name + StringHelper.capitalize(bestMethod.id));

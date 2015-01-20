@@ -22,6 +22,8 @@ public class ScriptBuilder {
     public OrderedDictionary<ScriptStructKey, MethodStruct> methodStructs = new OrderedDictionary<ScriptStructKey, MethodStruct>();
     public OrderedDictionary<ScriptStructKey, ExpressionMethodStruct> expressionStructs = new OrderedDictionary<ScriptStructKey, ExpressionMethodStruct>();
 
+    public HashSet<string> namespaceImports = new HashSet<string>();
+
     public Dictionary<string, StringNode> staticMethods = new Dictionary<string, StringNode>();
 
     public GameObject objectInstance;
@@ -34,6 +36,10 @@ public class ScriptBuilder {
             objectToBuilder[instance] = this;
         }
     }
+
+    //##############################################
+    //Public methods
+    //Called from BoardBuilder during board building
 
     public static void clearStaticVariables() {
         nodesVisitedForReferenceCounting.Clear();
@@ -52,6 +58,11 @@ public class ScriptBuilder {
         }
         foreach (ExpressionMethodStruct s in node.getExpressionStructs()) {
             expressionStructs.tryAdd(s.key, s);
+        }
+
+        StringNode stringNode = node as StringNode;
+        if (stringNode) {
+            namespaceImports.UnionWith(stringNode.descriptor.namespaceImports);
         }
     }
 
@@ -109,12 +120,17 @@ public class ScriptBuilder {
         foreach (FieldStruct field in defaultFields) {
             ObjectFieldStruct objectField = field as ObjectFieldStruct;
             if (objectField != null) {
-                SetObjectProperty setPropertyJob = ScriptableObject.CreateInstance<SetObjectProperty>();
+                SetObjectJob setPropertyJob = ScriptableObject.CreateInstance<SetObjectJob>();
                 setPropertyJob.init(objectInstance, scriptName, objectField.name, objectField.value);
                 jobs.Add(setPropertyJob);
             }
+            AnimationCurveFieldStruct animationCurveField = field as AnimationCurveFieldStruct;
+            if (animationCurveField != null) {
+                SetAnimationCurveJob setCurveJob = ScriptableObject.CreateInstance<SetAnimationCurveJob>();
+                setCurveJob.init(objectInstance, scriptName, animationCurveField.name, animationCurveField.value);
+                jobs.Add(setCurveJob);
+            }
         }
-
 
         return jobs;
     }
@@ -189,7 +205,9 @@ public class ScriptBuilder {
         }
     }
 
-//********************************************************************************************
+    //##############################################
+    //Private methods
+    //Called from ScriptBuilder (this) during board building
 
     private Node tryBuildStaticNode(MethodStruct codeStruct) {
         if (codeStruct.staticReference != null && codeStruct.staticReference != "") {
