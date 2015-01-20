@@ -35,6 +35,10 @@ public class ScriptBuilder {
         }
     }
 
+    //##############################################
+    //Public methods
+    //Called from BoardBuilder during board building
+
     public static void clearStaticVariables() {
         nodesVisitedForReferenceCounting.Clear();
         objectToBuilder.Clear();
@@ -113,8 +117,13 @@ public class ScriptBuilder {
                 setPropertyJob.init(objectInstance, scriptName, objectField.name, objectField.value);
                 jobs.Add(setPropertyJob);
             }
+            AnimationCurveFieldStruct animationCurveField = field as AnimationCurveFieldStruct;
+            if (animationCurveField != null) {
+                SetAnimationCurveJob setCurveJob = ScriptableObject.CreateInstance<SetAnimationCurveJob>();
+                setCurveJob.init(objectInstance, scriptName, animationCurveField.name, animationCurveField.value);
+                jobs.Add(setCurveJob);
+            }
         }
-
 
         return jobs;
     }
@@ -189,7 +198,9 @@ public class ScriptBuilder {
         }
     }
 
-//********************************************************************************************
+    //##############################################
+    //Private methods
+    //Called from ScriptBuilder (this) during board building
 
     private Node tryBuildStaticNode(MethodStruct codeStruct) {
         if (codeStruct.staticReference != null && codeStruct.staticReference != "") {
