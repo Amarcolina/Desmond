@@ -3,7 +3,16 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;   
 
-namespace Desmond { 
+namespace Desmond {
+
+public class ObjectFieldStruct : FieldStruct {
+    public Object value;
+
+    public ObjectFieldStruct(ScriptStructKey key, string type, string name, Object value)
+        : base(key, type, name, "") {
+        this.value = value;
+    }
+}
 
 public class DefaultObjectNode : DefaultValueNode {
     public Object value;

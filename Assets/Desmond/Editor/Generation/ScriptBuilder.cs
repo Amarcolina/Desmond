@@ -109,7 +109,7 @@ public class ScriptBuilder {
         foreach (FieldStruct field in defaultFields) {
             ObjectFieldStruct objectField = field as ObjectFieldStruct;
             if (objectField != null) {
-                SetObjectProperty setPropertyJob = ScriptableObject.CreateInstance<SetObjectProperty>();
+                SetObjectJob setPropertyJob = ScriptableObject.CreateInstance<SetObjectJob>();
                 setPropertyJob.init(objectInstance, scriptName, objectField.name, objectField.value);
                 jobs.Add(setPropertyJob);
             }
