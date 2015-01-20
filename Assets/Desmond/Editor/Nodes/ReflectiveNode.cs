@@ -281,7 +281,7 @@ public class ReflectiveNode : Node {
         if (opName.StartsWith("Multiply")) {
             return "*";
         }
-        if (opName.StartsWith("Divison")) {
+        if (opName.StartsWith("Division")) {
             return "/";
         }
 
