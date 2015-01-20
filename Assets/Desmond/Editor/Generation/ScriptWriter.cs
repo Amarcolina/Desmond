@@ -32,6 +32,10 @@ public class ScriptWriter {
         ScriptIndenter scriptIndenter = new ScriptIndenter();
 
         scriptIndenter.addCode("using UnityEngine;");
+        foreach (string namespaceImport in builder.namespaceImports) {
+            scriptIndenter.addCode("using " + namespaceImport + ";");
+        }
+
         scriptIndenter.addCode("");
         scriptIndenter.addCode("");
         scriptIndenter.addCode(classComments);
@@ -53,11 +57,6 @@ public class ScriptWriter {
             }
         }
 
-        foreach (ScriptStruct s in builder.codeStructs) {
-            scriptIndenter.addCode("");
-            scriptIndenter.addCode(s.getLines());
-        }
-
         foreach (ScriptStruct s in builder.methodStructs) {
             if (s.shouldPrint()) {
                 scriptIndenter.addCode("");
@@ -69,6 +68,11 @@ public class ScriptWriter {
                 scriptIndenter.addCode(s.getLines());
                 scriptIndenter.addCode("*/");
             }
+        }
+
+        foreach (ScriptStruct s in builder.codeStructs) {
+            scriptIndenter.addCode("");
+            scriptIndenter.addCode(s.getLines());
         }
 
         foreach (ScriptStruct s in builder.expressionStructs) {

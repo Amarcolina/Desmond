@@ -30,8 +30,9 @@ public class DefaultAnimationCurveNode : DefaultValueNode {
     public override List<ExpressionMethodStruct> getExpressionStructs() {
         List<ExpressionMethodStruct> list = new List<ExpressionMethodStruct>();
 
-        ExpressionMethodStruct s = new ExpressionMethodStruct(getKey(), "default", type);
+        ExpressionMethodStruct s = new ExpressionMethodStruct(getKey(), "defaultCurve", type);
         s.addCode("<out>");
+        s.inlineBehavior = InlineBehavior.FORCE_INLINE;
         list.Add(s);
 
         return list;

@@ -39,9 +39,16 @@ public abstract class ScriptStruct{
     public abstract List<string> getLines();
 }
 
+public enum InlineBehavior {
+    AUTO,
+    FORCE_INLINE,
+    PREVENT_INLINE
+}
+
 public class GenericCodeStruct : ScriptStruct{
     public List<string> codeBlock = new List<string>();
     public string staticReference = "";
+    public InlineBehavior inlineBehavior = InlineBehavior.AUTO;
 
     public GenericCodeStruct(ScriptStructKey key) : base(key) { }
 
@@ -55,7 +62,16 @@ public class GenericCodeStruct : ScriptStruct{
 
     //Only inline if it is only referenced once and is private
     public bool shouldInline() {
-        return references < 2 && !isPublic;
+        if (inlineBehavior == InlineBehavior.AUTO) {
+            return references < 2 && !isPublic;
+        }else if(inlineBehavior == InlineBehavior.FORCE_INLINE){
+            return true;
+        }else if (inlineBehavior == InlineBehavior.PREVENT_INLINE){
+            return false;
+        }
+
+        Debug.LogError("Unexpected enum!");
+        return false;
     }
 
     public bool isEmpty(){
@@ -67,7 +83,7 @@ public class GenericCodeStruct : ScriptStruct{
     }
 
     public override bool shouldPrint() {
-        return isPublic || references > 1;
+        return !shouldInline();
     }
 }
 

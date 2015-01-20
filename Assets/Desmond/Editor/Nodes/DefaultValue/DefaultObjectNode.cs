@@ -36,6 +36,7 @@ public class DefaultObjectNode : DefaultValueNode {
 
         ExpressionMethodStruct s = new ExpressionMethodStruct(getKey(), "default", type);
         s.addCode("<out>");
+        s.inlineBehavior = InlineBehavior.FORCE_INLINE;
         list.Add(s);
 
         return list;

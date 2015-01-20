@@ -22,6 +22,8 @@ public class ScriptBuilder {
     public OrderedDictionary<ScriptStructKey, MethodStruct> methodStructs = new OrderedDictionary<ScriptStructKey, MethodStruct>();
     public OrderedDictionary<ScriptStructKey, ExpressionMethodStruct> expressionStructs = new OrderedDictionary<ScriptStructKey, ExpressionMethodStruct>();
 
+    public HashSet<string> namespaceImports = new HashSet<string>();
+
     public Dictionary<string, StringNode> staticMethods = new Dictionary<string, StringNode>();
 
     public GameObject objectInstance;
@@ -56,6 +58,11 @@ public class ScriptBuilder {
         }
         foreach (ExpressionMethodStruct s in node.getExpressionStructs()) {
             expressionStructs.tryAdd(s.key, s);
+        }
+
+        StringNode stringNode = node as StringNode;
+        if (stringNode) {
+            namespaceImports.UnionWith(stringNode.descriptor.namespaceImports);
         }
     }
 
