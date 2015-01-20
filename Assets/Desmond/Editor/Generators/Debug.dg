@@ -57,7 +57,7 @@ void Awake
 	<timelineDuration> = <UnityEngine.AnimationCurve curve>[<UnityEngine.AnimationCurve curve>.length - 1].time;
 
 [
-private void timelineCoroutine(){
+private IEnumerator timelineCoroutine(){
 	bool finished = false;
 	while(!finished){
 		timelineTime += Time.deltaTime * <timelineDirection>;
