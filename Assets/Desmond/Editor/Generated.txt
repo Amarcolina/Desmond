@@ -1,4 +1,0 @@
-
-public void Awake(){
-Debug.Log(UnityEngine.Color.op_Addition((new Color(0,1,0.213793,0)),UnityEngine.Color.get_blue()));
-}
