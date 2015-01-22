@@ -15,10 +15,11 @@ public class CustomEventEditor {
 
     public void drawEditor(Rect rect) {
         Rect eventSelectionRect = rect;
-        eventSelectionRect.height /= 2;
+        eventSelectionRect.height *= 0.4f;
 
-        Rect eventEditRect = eventSelectionRect;
-        eventEditRect.y += eventEditRect.height;
+        Rect eventEditRect = rect;
+        eventEditRect.y += eventSelectionRect.height;
+        eventEditRect.height *= 0.6f;
 
         GUI.color = new Color(0.7f, 0.7f, 0.7f);
         GUI.Box(eventSelectionRect, "");

@@ -20,6 +20,7 @@ public class DesmondSidebar {
     public void doSidebar(Rect rect) {
         float s = rect.height / 3.0f;
         float h = doWindow(s, boardList.doList);
+        h = doWindow(16, subEditorSelector, h);
         h = doWindow(s * 2.0f, eventEditor.drawEditor, h);
         //h = doWindow(s, boardList.doList, h);
     }
@@ -30,6 +31,23 @@ public class DesmondSidebar {
         d(new Rect(0, 0, width, height));
         GUI.EndGroup();
         return currY + height;
+    }
+
+    private void subEditorSelector(Rect rect) {
+        GUI.color = new Color(0.7f, 0.7f, 0.7f);
+        GUI.Box(rect, "");
+        GUI.color = Color.white;
+
+        rect.width -= 1.0f;
+
+        GUILayout.BeginArea(rect);
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button("Variables", EditorStyles.toolbarButton)) {
+        }
+        if (GUILayout.Button("Custom Events", EditorStyles.toolbarButton)) {
+        }
+        GUILayout.EndHorizontal();
+        GUILayout.EndArea();
     }
 }
 
