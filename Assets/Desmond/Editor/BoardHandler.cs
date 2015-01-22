@@ -207,7 +207,7 @@ public class BoardHandler {
             AssetDatabase.DeleteAsset(board.assetPath);
             reloadAssetBoards();
         }
-        statusKey++;//
+        statusKey++;
     }
 
     public static void addAssetToCurrentBoard(Object obj) {
