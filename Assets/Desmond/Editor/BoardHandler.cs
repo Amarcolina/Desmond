@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Desmond { 
 
 public class BoardHandler {
-    public const string ASSET_BOARDS_PATH = "Assets/Desmond/Boards";
+    public const string ASSET_BOARDS_PATH = "Assets/Desmond/Data/PrefabBoards";
     public const string ASSET_BOARD_FILTER = "t:DesmondBoard";
 
     private static SceneBoardHolder sceneBoardObject = null;

@@ -20,7 +20,7 @@ public class ExecutionInputInfo : Element {
 
     public override Texture2D getButtonTexture() {
         if (_buttonTexture == null) {
-            _buttonTexture = Resources.LoadAssetAtPath<Texture2D>("Assets/Desmond/Textures/InputArrow.png");
+            _buttonTexture = Resources.LoadAssetAtPath<Texture2D>(DesmondWindow.EDITOR_TEXTURE_FOLDER + "InputArrow.png");
         }
         return _buttonTexture;
     }
