@@ -11,28 +11,32 @@ public class CustomEventHolder : ScriptableObject{
 
 public class CustomEventHandler {
     public const string ASSET_CUSTOM_EVENTS_PATH = "Assets/Desmond/Data/CustomEvents";
-    private CustomEventHolder customEventHolder;
+    private static CustomEventHolder customEventHolder;
 
-    public void refreshCustomEventList() {
+    public static void refreshCustomEventList() {
         customEventHolder = AssetDatabase.LoadAssetAtPath(ASSET_CUSTOM_EVENTS_PATH, typeof(CustomEventHolder)) as CustomEventHolder;
 
         if (customEventHolder == null) {
-            AssetDatabase.CreateAsset(ScriptableObject.CreateInstance<CustomEventHolder>(), ASSET_CUSTOM_EVENTS_PATH);
+            customEventHolder = ScriptableObject.CreateInstance<CustomEventHolder>();
+            AssetDatabase.CreateAsset(customEventHolder, ASSET_CUSTOM_EVENTS_PATH);
         }
     }
 
-    public List<CustomEvent> getCustomEvents() {
+    public static List<CustomEvent> getCustomEvents() {
         refreshCustomEventList();
         return customEventHolder.customEvents;
     }
 
-    public void deleteCustomEvent(CustomEvent customEvent) {
+    public static void deleteCustomEvent(CustomEvent customEvent) {
         refreshCustomEventList();
         customEventHolder.customEvents.Remove(customEvent);
         Object.DestroyImmediate(customEvent, true);
     }
 
-    public void addCustomEvent(CustomEvent newEvent){
+    public static void addCustomEvent(string customEventName) {
+        CustomEvent newEvent = ScriptableObject.CreateInstance<CustomEvent>();
+        newEvent.customEventName = customEventName;
+
         refreshCustomEventList();
         customEventHolder.customEvents.Add(newEvent);
         AssetDatabase.AddObjectToAsset(newEvent, customEventHolder);

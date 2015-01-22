@@ -8,17 +8,19 @@ namespace Desmond {
 public class DesmondSidebar {
     public const float width = 200;
     public BoardList boardList;
+    public CustomEventEditor eventEditor;
 
     public delegate void WindowDelegate(Rect r);
 
     public DesmondSidebar() {
         boardList = new BoardList();
+        eventEditor = new CustomEventEditor();
     }
 
     public void doSidebar(Rect rect) {
         float s = rect.height / 3.0f;
-        doWindow(s, boardList.doList);
-        //h = doWindow(s, boardList.doList, h);
+        float h = doWindow(s, boardList.doList);
+        h = doWindow(s, eventEditor.drawEditor, h);
         //h = doWindow(s, boardList.doList, h);
     }
 
