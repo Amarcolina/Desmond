@@ -23,7 +23,7 @@ public class ScriptWriter {
         if (debug) {
             Debug.Log("Writing " + lines.Length + " lines to " + builder.scriptName + ".cs");
         }
-        string filePath = Application.dataPath + "/Desmond/Generated/" + builder.scriptName + ".cs";
+        string filePath = Application.dataPath + "/Desmond/Generated/SceneScripts/" + builder.scriptName + ".cs";
         System.IO.File.WriteAllLines(filePath, lines);
     }
 
