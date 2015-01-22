@@ -20,7 +20,7 @@ public class DesmondSidebar {
     public void doSidebar(Rect rect) {
         float s = rect.height / 3.0f;
         float h = doWindow(s, boardList.doList);
-        h = doWindow(s, eventEditor.drawEditor, h);
+        h = doWindow(s * 2.0f, eventEditor.drawEditor, h);
         //h = doWindow(s, boardList.doList, h);
     }
 

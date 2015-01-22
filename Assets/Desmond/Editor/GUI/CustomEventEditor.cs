@@ -20,40 +20,65 @@ public class CustomEventEditor {
         Rect eventEditRect = eventSelectionRect;
         eventEditRect.y += eventEditRect.height;
 
-        CustomEvent eventToDelete = null;
+        GUI.color = new Color(0.7f, 0.7f, 0.7f);
+        GUI.Box(eventSelectionRect, "");
+        GUI.Box(eventEditRect, "");
+        GUI.color = Color.white;
+
+        eventEditRect.width -= 2.0f;
+        eventSelectionRect.width -= 2.0f;
 
         //Gui for drawing the event selection area
         GUILayout.BeginArea(eventSelectionRect);
-        GUILayout.BeginScrollView(selectScrollPosition);
-
-        foreach (CustomEvent customEvent in CustomEventHandler.getCustomEvents()) {
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button(customEvent.customEventName, EditorStyles.label, GUILayout.MaxWidth(rect.width - BUTTON_WIDTH))) {
-                selected = customEvent;
-            }
-            if (GUILayout.Button("-")) {
-                eventToDelete = customEvent;
-            }
-            GUILayout.EndHorizontal();
+        displaySelectorLayout();
+        GUILayout.EndArea();
+        
+        //Gui for drawing the event edit area
+        GUILayout.BeginArea(eventEditRect);
+        if (selected != null) {
+            displayEditorLayout();
         }
+        GUILayout.EndArea();
+    }
+
+    private void displaySelectorLayout() {
+        selectScrollPosition = GUILayout.BeginScrollView(selectScrollPosition);
 
         if (GUILayout.Button("Add New Custom Event")) {
             CustomEventHandler.addCustomEvent("NewCustomEvent");
         }
 
-        GUILayout.EndScrollView();
-        GUILayout.EndArea();
+        CustomEvent eventToDelete = null;
+        foreach (CustomEvent customEvent in CustomEventHandler.getCustomEvents()) {
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button(customEvent.customEventName, EditorStyles.label)) {
+                selected = customEvent;
+            }
+            if (GUILayout.Button("X", GUILayout.MaxWidth(BUTTON_WIDTH))) {
+                eventToDelete = customEvent;
+            }
+            GUILayout.EndHorizontal();
+        }
 
         if (eventToDelete != null) {
             CustomEventHandler.deleteCustomEvent(eventToDelete);
         }
-        
-        //Gui for drawing the event edit area
-        GUILayout.BeginArea(eventEditRect);
-        GUILayout.BeginScrollView(editScrollPosition);
 
-        selected.customEventName = EditorGUILayout.TextField("Custom Event Name", selected.customEventName);
+        GUILayout.EndScrollView();
+    }
+
+    private void displayEditorLayout() {
+        GUILayout.Label("Custom Event Name");
+        selected.customEventName = EditorGUILayout.TextField(selected.customEventName);
         GUILayout.Label("Custom Event Data");
+
+        if (GUILayout.Button("Add New Input")) {
+            selected.dataTypes.Add("int");
+            selected.dataNames.Add("New Input");
+            selected.dataDefaults.Add(null);
+        }
+
+        editScrollPosition = GUILayout.BeginScrollView(editScrollPosition);
 
         int inputToDelete = -1;
         for (int i = 0; i < selected.dataNames.Count; i++) {
@@ -73,14 +98,7 @@ public class CustomEventEditor {
             selected.dataDefaults.RemoveAt(inputToDelete);
         }
 
-        if (GUILayout.Button("Add New Input")) {
-            selected.dataTypes.Add("int");
-            selected.dataNames.Add("New Input");
-            selected.dataDefaults.Add(null);
-        }
-
         GUILayout.EndScrollView();
-        GUILayout.EndArea();
     }
 }
 
