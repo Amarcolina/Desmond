@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 namespace Desmond { 
 
+/* Describes a member field defined by a Node
+ */
 public class FieldDescriptor{
     public string fieldType;
     public string id;
@@ -17,10 +19,11 @@ public class FieldDescriptor{
     }
 }
 
+/* Describes a data input defined by a node
+ */
 public class DataInDescriptor {
     public string dataType;
     public string id;
-    public bool optional = false;
 
     public DataInDescriptor(string type, string i) {
         dataType = type;
@@ -28,30 +31,41 @@ public class DataInDescriptor {
     }
 }
 
-public class ExpressionDescriptor {
-    public string returnType;
-    public string id;
-    public string expressionCode;
-
-    public ExpressionDescriptor(string type, string i) {
-        returnType = type;
-        id = i;
-    }
-}
-
+/* Describes an execution output defined by a node
+ */
 public class ExitPathDescriptor {
     public string id;
-    public int pathsToExit = 1;
 
     public ExitPathDescriptor(string i) {
         id = i;
     }
 }
 
-public class MethodDescriptor {
+
+/* Describes a data output defined by a node
+ */
+public class DataOutDescriptor {
+    public string returnType;
+    public string id;
+    public string expressionCode;
+
+    public DataOutDescriptor(string type, string i) {
+        returnType = type;
+        id = i;
+    }
+}
+
+public class GenericMethodDescriptor {
+    public List<string> codeBlock = new List<string>();
+    public HashSet<string> methodLocalNames = new HashSet<string>();
+}
+
+/* Describes a method defined by a node.  Multiple MethodDescriptors
+ * can be tied to the same execution input
+ */
+public class MethodDescriptor : GenericMethodDescriptor {
     public string id;
     public string staticReference = null;
-    public List<string> codeBlock = new List<string>();
     public HashSet<string> exitPaths = new HashSet<string>();
     public HashSet<string> inputVars = new HashSet<string>();
 
@@ -60,11 +74,36 @@ public class MethodDescriptor {
     }
 }
 
-public class FunctionDescriptor {
-    public List<string> codeBlock = new List<string>();
-}
-
-
+/*
+ * 
+ * <classLocalName name>
+ *      then <name>
+ * 
+ * <methodLocalName name>
+ *      then <name>
+ * 
+ * $var varType varName (default)
+ * 
+ * $in inType inName
+ * 
+ * $method inputName (forceInline | preventInline | auto) (without arg arg arg)
+ *     code
+ *     code
+ *     
+ * $out outType outName (forceInline | preventInline | auto)
+ *     code
+ * 
+ * $customCode
+ *     code
+ *     code
+ * 
+ * <varName>
+ * 
+ * <inName>
+ * 
+ * ->outName
+ * 
+*/
 public class NodeDescriptor : IPathable{
     private static Dictionary<string, NodeDescriptor> _descriptors = null;
     private static Dictionary<string, NodeDescriptor> _staticDescriptors = null;
@@ -79,7 +118,7 @@ public class NodeDescriptor : IPathable{
 
     public Dictionary<string, FieldDescriptor> fields = new Dictionary<string, FieldDescriptor>();
     public Dictionary<string, DataInDescriptor> dataIns = new Dictionary<string, DataInDescriptor>();
-    public Dictionary<string, ExpressionDescriptor> expressions = new Dictionary<string, ExpressionDescriptor>();
+    public Dictionary<string, DataOutDescriptor> expressions = new Dictionary<string, DataOutDescriptor>();
     public Dictionary<string, ExitPathDescriptor> exitPaths = new Dictionary<string, ExitPathDescriptor>();
     public Dictionary<string, List<MethodDescriptor>> methods = new Dictionary<string, List<MethodDescriptor>>();
 
@@ -87,7 +126,7 @@ public class NodeDescriptor : IPathable{
 
     public HashSet<string> namespaceImports = new HashSet<string>();
 
-    public List<FunctionDescriptor> functions = new List<FunctionDescriptor>();
+    public List<GenericMethodDescriptor> functions = new List<GenericMethodDescriptor>();
 
     public static Dictionary<string, NodeDescriptor> descriptors {
         get {
@@ -124,8 +163,8 @@ public class NodeDescriptor : IPathable{
 
     private static void loadDescriptorsFromFile(string filename) {
         MethodDescriptor method = null;
-        FunctionDescriptor function = null;
-        ExpressionDescriptor expression = null;
+        GenericMethodDescriptor genericMethod = null;
+        DataOutDescriptor expression = null;
         
         NodeDescriptor current = null;
 
@@ -169,9 +208,6 @@ public class NodeDescriptor : IPathable{
                 s = match.Split();
                 if (s.Length >= 2 && !current.dataIns.ContainsKey(s[1])) {
                     DataInDescriptor dataIn = new DataInDescriptor(s[0], s[1]);
-                    if (s.Length >= 3 && s[2] == "optional") {
-                        dataIn.optional = true;
-                    }
 
                     if (method != null) {
                         method.inputVars.Add(s[1]);
@@ -185,9 +221,7 @@ public class NodeDescriptor : IPathable{
             //Matching ->id data out points
             if (lt.StartsWith("->")) {
                 string exitId = lt.Substring(2);
-                if (current.exitPaths.ContainsKey(exitId)) {
-                    current.exitPaths[exitId].pathsToExit++;
-                } else {
+                if (!current.exitPaths.ContainsKey(exitId)) {
                     current.exitPaths[exitId] = new ExitPathDescriptor(exitId);
                 }
                 if (method != null) {
@@ -209,12 +243,12 @@ public class NodeDescriptor : IPathable{
             }
 
             //Match the } that ends a function declaration
-            if (function != null) {
+            if (genericMethod != null) {
                 if (lt == "]") {
-                    function = null;
+                    genericMethod = null;
                     continue;
                 }
-                function.codeBlock.Add(l);
+                genericMethod.codeBlock.Add(l);
 
                 //Match the line after an expression definition
             } else if (expression != null) {
@@ -237,8 +271,8 @@ public class NodeDescriptor : IPathable{
 
                 //Match { the start of a litteral function block
                 if (s[0] == "[") {
-                    function = new FunctionDescriptor();
-                    current.functions.Add(function);
+                    genericMethod = new GenericMethodDescriptor();
+                    current.functions.Add(genericMethod);
                     continue;
                 }
 
@@ -270,7 +304,7 @@ public class NodeDescriptor : IPathable{
                         current.uniqueNames.Add(s[1]);
                         continue;
                     }else{
-                        expression = new ExpressionDescriptor(s[0], s[1]);
+                        expression = new DataOutDescriptor(s[0], s[1]);
                         current.expressions[expression.id] = expression;
                         continue;
                     }

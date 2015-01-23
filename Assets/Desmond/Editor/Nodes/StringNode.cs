@@ -54,7 +54,7 @@ public class StringNode : Node{
             element.init(a.id, "void", this);
             elements.Add(element);
         }
-        foreach (ExpressionDescriptor a in descriptor.expressions.Values) {
+        foreach (DataOutDescriptor a in descriptor.expressions.Values) {
             DataOutInfo element = ScriptableObject.CreateInstance<DataOutInfo>();
             element.init(a.id, a.returnType, this);
             elements.Add(element);
@@ -163,7 +163,7 @@ public class StringNode : Node{
     public override List<ExpressionMethodStruct> getExpressionStructs() {
         List<ExpressionMethodStruct> list = new List<ExpressionMethodStruct>();
 
-        foreach (ExpressionDescriptor d in descriptor.expressions.Values) {
+        foreach (DataOutDescriptor d in descriptor.expressions.Values) {
             ScriptStructKey key = new ScriptStructKey(this, d.id);
             ExpressionMethodStruct s = new ExpressionMethodStruct(key, name + "Get" + StringHelper.capitalize(d.id), d.returnType);
             s.addCode(d.expressionCode);
