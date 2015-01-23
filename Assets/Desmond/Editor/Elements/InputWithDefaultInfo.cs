@@ -78,7 +78,7 @@ public class InputWithDefaultInfo : ConnectableElement{
 
     public override Texture2D getButtonTexture() {
         if (_buttonTexture == null) {
-            _buttonTexture = Resources.LoadAssetAtPath<Texture2D>("Assets/Desmond/Textures/InputDot.png");
+            _buttonTexture = Resources.LoadAssetAtPath<Texture2D>(DesmondWindow.EDITOR_TEXTURE_FOLDER + "InputDot.png");
         }
         return _buttonTexture;
     }

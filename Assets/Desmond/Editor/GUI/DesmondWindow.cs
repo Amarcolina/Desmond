@@ -7,6 +7,8 @@ using System.Reflection;
 namespace Desmond { 
 
 public class DesmondWindow : EditorWindow {
+    public const string EDITOR_TEXTURE_FOLDER = "Assets/Desmond/Editor/Textures/";
+
     private static DesmondWindow _currentWindow;
 
     private DesmondBoard board;
@@ -45,9 +47,9 @@ public class DesmondWindow : EditorWindow {
     }
 
     private static void createWindowStyle() {
-        gridTexture = Resources.LoadAssetAtPath<Texture2D>("Assets/Desmond/Textures/Grid.bmp");
-        Texture2D normalTex = Resources.LoadAssetAtPath<Texture2D>("Assets/Desmond/Textures/WindowNormal.png");
-        Texture2D highlightTex = Resources.LoadAssetAtPath<Texture2D>("Assets/Desmond/Textures/WindowHighlight.png");
+        gridTexture = Resources.LoadAssetAtPath<Texture2D>(EDITOR_TEXTURE_FOLDER + "Grid.bmp");
+        Texture2D normalTex = Resources.LoadAssetAtPath<Texture2D>(EDITOR_TEXTURE_FOLDER + "WindowNormal.png");
+        Texture2D highlightTex = Resources.LoadAssetAtPath<Texture2D>(EDITOR_TEXTURE_FOLDER + "WindowHighlight.png");
         _windowStyle = new GUIStyle();
         _windowStyle.normal.background = normalTex;
         _windowStyle.normal.textColor = Color.black;

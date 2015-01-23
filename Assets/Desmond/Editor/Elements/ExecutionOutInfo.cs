@@ -25,7 +25,7 @@ public class ExecutionOutInfo : ConnectableElement {
 
     public override Texture2D getButtonTexture() {
         if (_buttonTexture == null) {
-            _buttonTexture = Resources.LoadAssetAtPath<Texture2D>("Assets/Desmond/Textures/OutputArrow.png");
+            _buttonTexture = Resources.LoadAssetAtPath<Texture2D>(DesmondWindow.EDITOR_TEXTURE_FOLDER + "OutputArrow.png");
         }
         return _buttonTexture;
     }
