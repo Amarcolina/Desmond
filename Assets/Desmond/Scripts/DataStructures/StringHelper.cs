@@ -14,6 +14,9 @@ public class BraceMatch {
     }
 }
 
+public class MatchFunc {
+}
+
 public class StringHelper {
     private static Dictionary<KeyValuePair<string, string>, int> _lookupTable = new Dictionary<KeyValuePair<string, string>, int>();
 
@@ -24,6 +27,46 @@ public class StringHelper {
             return m.Groups[1].Captures[0].Value;
         }
         return null;
+    }
+
+    public delegate bool StringDelegate(string s);
+
+    public static bool doesMatch(string[] split, params StringDelegate[] delegates) {
+        for (int i = 0; i < delegates.Length; i++) {
+            string value = i < split.Length ? split[i] : null;
+            if (!delegates[i](value)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static List<string[]> getMatchingBraces(string s, params StringDelegate[] ss) {
+        List<string[]> matchesList = new List<string[]>();
+
+        string match;
+        while (getBraced(s, out match)) {
+            string[] matches = match.Split(' ');
+            if (ss.Length == matches.Length) {
+
+                bool didMatchAll = true;
+                for (int i = 0; i < ss.Length; i++) {
+                    string value = i < matches.Length ? matches[i] : null;
+                    if (!ss[i](value)) {
+                        didMatchAll = false;
+                        break;
+                    }
+                }
+
+                if (didMatchAll) {
+                    matchesList.Add(matches);
+                }
+            }
+
+            s = replaceBrace(s, "");
+        }
+
+        return matchesList;
     }
 
     public static bool getBraced(string s, out string match) {

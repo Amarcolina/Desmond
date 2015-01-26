@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Linq;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -169,20 +170,20 @@ public class NodeDescriptor : IPathable{
         NodeDescriptor current = null;
 
         string[] lines = System.IO.File.ReadAllLines(filename);
-        foreach (string l in lines) {
-            string lt = l.Trim();
-            string[] s = lt.Split();
+        foreach (string line in lines) {
+            string trimmedLine = line.Trim();
+            string[] splitLine = trimmedLine.Split();
 
             //Match #name to create a new descriptor
-            if (lt.StartsWith("#")) {
+            if (trimmedLine.StartsWith("#")) {
                 current = new NodeDescriptor();
-                s = lt.Substring(1).Split();
-                current.descriptorName = s[0];
-                for (int i = 1; i < s.Length; i++) {
-                    if (s[i].ToLower() == "static") {
+                splitLine = trimmedLine.Substring(1).Split();
+                current.descriptorName = splitLine[0];
+                for (int i = 1; i < splitLine.Length; i++) {
+                    if (splitLine[i].ToLower() == "static") {
                         current.isStatic = true;
                     }
-                    if (s[i].ToLower() == "gameobject") {
+                    if (splitLine[i].ToLower() == "gameobject") {
                         current.isGameObject = true;
                     }
                 }
@@ -196,31 +197,37 @@ public class NodeDescriptor : IPathable{
                 continue;
             }
 
-            if (lt.StartsWith("!")) {
-                current.namespaceImports.Add(lt.Substring(1).Trim());
+            //Matching code and putting it into a defined method
+            if (!trimmedLine.StartsWith("$")) {
+                if (method != null) {
+                    method.codeBlock.Add(line);
+                    continue;
+                }
+                if (expression != null) {
+                    expression.expressionCode = line;
+                    expression = null;
+                    continue;
+                }
+                if (genericMethod != null) {
+                    genericMethod.codeBlock.Add(line);
+                    continue;
+                }
+            }
+
+            if (trimmedLine.StartsWith("!")) {
+                current.namespaceImports.Add(trimmedLine.Substring(1).Trim());
                 continue;
             }
 
-            //Matching <type id> data in points
-            string match;
-            string copy = l;
-            while (StringHelper.getBraced(copy, out match)) {
-                s = match.Split();
-                if (s.Length >= 2 && !current.dataIns.ContainsKey(s[1])) {
-                    DataInDescriptor dataIn = new DataInDescriptor(s[0], s[1]);
-
-                    if (method != null) {
-                        method.inputVars.Add(s[1]);
-                    }
-
-                    current.dataIns[s[1]] = dataIn;
-                }
-                copy = StringHelper.replaceBrace(copy, "");
+            //matching $in type name
+            if (splitLine[0] == "$in") {
+                current.dataIns[splitLine[2]] = new DataInDescriptor(splitLine[1], splitLine[2]);
+                continue;
             }
 
             //Matching ->id data out points
-            if (lt.StartsWith("->")) {
-                string exitId = lt.Substring(2);
+            if (trimmedLine.StartsWith("->")) {
+                string exitId = trimmedLine.Substring(2);
                 if (!current.exitPaths.ContainsKey(exitId)) {
                     current.exitPaths[exitId] = new ExitPathDescriptor(exitId);
                 }
@@ -229,56 +236,25 @@ public class NodeDescriptor : IPathable{
                 }
             }
 
-            //Matching code and putting it into a defined method
-            if (method != null) {
-                //If we wind up on a line with no indenting whitespace, no more code
-                if (l.TrimStart() == l) {
-                    method = null;
-                } else {
-                    if (lt != "") {
-                        method.codeBlock.Add(l);
-                        continue;
-                    }
-                }
+            //$def type name default
+            if(StringHelper.doesMatch(splitLine, s => s == "$def", s => s != null, s => s != null, s => true)){
+                string defaultValue = splitLine.Length == 4 ? splitLine[3] : "";
+                current.fields[splitLine[2]] = new FieldDescriptor(splitLine[1], splitLine[2], defaultValue);
+                continue;
             }
 
-            //Match the } that ends a function declaration
-            if (genericMethod != null) {
-                if (lt == "]") {
-                    genericMethod = null;
-                    continue;
-                }
-                genericMethod.codeBlock.Add(l);
+            //$customCode
+            if(StringHelper.doesMatch(splitLine, s => s == "$customCode")){
+                genericMethod = new GenericMethodDescriptor();
+                current.functions.Add(genericMethod);
+                continue;
+            }
 
-                //Match the line after an expression definition
-            } else if (expression != null) {
-                expression.expressionCode = lt;
-                expression = null;
-
-            } else {
-                if (lt == "") {
-                    continue;
-                }
-
-                //match def type id default to create a field
-                if (lt.StartsWith("def ")) {
-                    string type = s[1];
-                    string id = s[2];
-                    string value = s.Length == 4 ? s[3] : "";
-                    current.fields[id] = new FieldDescriptor(type, id, value);
-                    continue;
-                }
-
-                //Match { the start of a litteral function block
-                if (s[0] == "[") {
-                    genericMethod = new GenericMethodDescriptor();
-                    current.functions.Add(genericMethod);
-                    continue;
-                }
+            //$method name (inline) (without asd asd asd)
 
                 //Match id the start of an execution block
-                if (s.Length == 1) {
-                    method = new MethodDescriptor(s[0]);
+                if (splitLine.Length == 1) {
+                    method = new MethodDescriptor(splitLine[0]);
                     List<MethodDescriptor> descriptorList;
                     if (!current.methods.TryGetValue(method.id, out descriptorList)) {
                         descriptorList = new List<MethodDescriptor>();
@@ -289,10 +265,10 @@ public class NodeDescriptor : IPathable{
                 }
 
                 //Match type id the start of a data out expression
-                if (s.Length == 2) {
-                    if (s[0] == "void") {
-                        method = new MethodDescriptor(s[1]);
-                        method.staticReference = s[1];
+                if (splitLine.Length == 2) {
+                    if (splitLine[0] == "void") {
+                        method = new MethodDescriptor(splitLine[1]);
+                        method.staticReference = splitLine[1];
                         List<MethodDescriptor> descriptorList;
                         if (!current.methods.TryGetValue(method.id, out descriptorList)) {
                             descriptorList = new List<MethodDescriptor>();
@@ -300,11 +276,11 @@ public class NodeDescriptor : IPathable{
                         }
                         descriptorList.Add(method);
                         continue;
-                    } else if (s[0] == "unique"){
-                        current.uniqueNames.Add(s[1]);
+                    } else if (splitLine[0] == "unique"){
+                        current.uniqueNames.Add(splitLine[1]);
                         continue;
                     }else{
-                        expression = new DataOutDescriptor(s[0], s[1]);
+                        expression = new DataOutDescriptor(splitLine[0], splitLine[1]);
                         current.expressions[expression.id] = expression;
                         continue;
                     }
