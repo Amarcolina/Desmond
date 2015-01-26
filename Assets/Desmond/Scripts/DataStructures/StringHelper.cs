@@ -14,9 +14,6 @@ public class BraceMatch {
     }
 }
 
-public class MatchFunc {
-}
-
 public class StringHelper {
     private static Dictionary<KeyValuePair<string, string>, int> _lookupTable = new Dictionary<KeyValuePair<string, string>, int>();
 

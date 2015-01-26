@@ -1,55 +1,40 @@
 #Update static
 
-[
+$customMethod
 public void Update(){
-	->out
+	->onUpdate
 }
-]
 
 #Awake static
 
-[
+$customMethod
 public void Awake(){
-	->out
+	->onAwake
 }
-]
 
 #Start static
 
-[
+$customMethod
 public void Start(){
-	->out
+	->onStart
 }
-]
-
-#OnDrawGizmos static
-
-[
-public void OnDrawGizmos(){
-	->out
-}
-]
 
 #OnMouseDown static
 
-[
+$customMethod
 public void OnMouseDown(){
-	->out
+	->onMouseDown
 }
-]
 
 #OnTriggerEnter static
 
-[
-public void OnTriggerEnter(Collider other){
-	->out
-}
-]
+$def UnityEngne.Collider savedCollider null
 
-#OnTriggerExit static
-
-[
-public void OnTriggerExit(Collider other){
-	->out
+$customMethod
+public void OnTriggerEnter(Collider <methodLocalName other>){
+	<savedCollider> = <other>
+	->onTriggerEnter
 }
-]
+
+$out UnityEngne.Collider savedCollider
+	<savedCollider>

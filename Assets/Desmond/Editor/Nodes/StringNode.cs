@@ -149,7 +149,7 @@ public class StringNode : Node{
     public override List<GenericCodeStruct> getGenericCodeStructs() {
         List<GenericCodeStruct> list = new List<GenericCodeStruct>();
 
-        foreach (FunctionDescriptor d in descriptor.functions) {
+        foreach (GenericMethodDescriptor d in descriptor.functions) {
             ScriptStructKey key = new ScriptStructKey(this, d.GetHashCode() + "");
             GenericCodeStruct s = new GenericCodeStruct(key);
             s.addCode(d.codeBlock);

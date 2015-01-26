@@ -1,29 +1,27 @@
 #Events/Update
 
-void Update
+$method onUpdate static Update
 	->onUpdate
 
 #Events/Awake
 
-void Awake
+$method onAwake static Awake
 	->onAwake
 
 #Events/Start
 
-void Start
+$method onStart static Start
 	->onStart
 
 #Events/OnMouseDown gameObject
 
-void OnMouseDown
+$method onUpdate static Update
 	->onMouseDown
 	
 #Events/OnTriggerEnter gameObject
 
-void OnTriggerEnter
+$method onTriggerEnter static OnTriggerEnter
 	->onTriggerEnter
 	
-#Events/OnTriggerExit gameObject
-
-void OnTriggerExit
-	->onTriggerExit
+$out savedCollider static OnTriggerEnter
+	<savedCollider>

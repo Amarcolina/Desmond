@@ -1,76 +1,81 @@
 #DebugLog
-!UnityEngine
 
-in
-	Debug.Log(<System.String message>);
+$in System.String message
+
+$method print forceInline
+	Debug.Log(<message>);
 	
 #String
 
-System.String string
+$out System.String stringValue
 	"debug string"
 	
 #Int
 
-System.Int32 int
+$out System.Int32 intValue
 	23
 	
 #Float
 
-System.Single float
+$out System.Single floatValue
 	123.0f
 		
 #Timeline
 !System.Collections
 
-def System.Single timelineTime 0.0f
-def System.Single timelineDirection 1.0f
-def System.Single timelineDuration 0.0f
+$def System.Single timelineTime 0.0f
+$def System.Single timelineDirection 1.0f
+$def System.Single timelineDuration 0.0f
 
-play
+$in UnityEngine.AnimationCurve curve
+
+$classLocalName timelineCoroutine
+
+$method play
 	<timelineDirection> = 1.0f;
-	StopCoroutine("timelineCoroutine");
-	StartCoroutine("timelineCoroutine");
+	StopCoroutine("<timelineCoroutine>");
+	StartCoroutine("<timelineCoroutine>");
 
-playFromBegining
+$method playFromBegining
 	<timelineTime> = 0.0f;
 	<timelineDirection> = 1.0f;
-	StopCoroutine("timelineCoroutine");
-	StartCoroutine("timelineCoroutine");
+	StopCoroutine("<timelineCoroutine>");
+	StartCoroutine("<timelineCoroutine>");
 	
-pause
-	StopCoroutine("timelineCoroutine");
+$method pause
+	StopCoroutine("<timelineCoroutine>");
 	
-playReverse
+$method playReverse
 	<timelineDirection> = -1.0f;
-	StopCoroutine("timelineCoroutine");
-	StartCoroutine("timelineCoroutine");
+	StopCoroutine("<timelineCoroutine>");
+	StartCoroutine("<timelineCoroutine>");
 	
-playReverseFromEnd
+$method playReverseFromEnd
 	<timelineTime> = <timelineDuration>;
 	<timelineDirection> = -1.0f;
-	StopCoroutine("timelineCoroutine");
-	StartCoroutine("timelineCoroutine");
+	StopCoroutine("<timelineCoroutine>");
+	StartCoroutine("<timelineCoroutine>");
 	
-System.Single value	
-	<UnityEngine.AnimationCurve curve>.Evaluate(<timelineTime>)
+$out System.Single value
+	<curve>.Evaluate(<timelineTime>)
 	
-void Awake
-	<timelineDuration> = <UnityEngine.AnimationCurve curve>[<UnityEngine.AnimationCurve curve>.length - 1].time;
+$method onAwake static Awake
+	<timelineDuration> = <curve>[<curve>.length - 1].time;
 
-[
-private IEnumerator timelineCoroutine(){
-	bool finished = false;
-	while(!finished){
+$customMethod
+private IEnumerator <timelineCoroutine>(){
+	bool <methodLocalName finished> = false;
+	while(!<finished>){
 		timelineTime += Time.deltaTime * <timelineDirection>;
 		if(<timelineDirection> == 1.0f){
 			if(<timelineTime> > <timelineDuration>){
 				<timelineTime> = <timelineDuration>;
-				finished = true;
+				<finished> = true;
 			}
 		}else{
 			if(<timelineTime> <= 0.0f){
 				<timelineTime> = 0.0f;
-				finished = true;
+				<finished> = true;
 			}
 		}
 		->onTick
@@ -78,4 +83,3 @@ private IEnumerator timelineCoroutine(){
 	}
 	->onFinished
 }
-]

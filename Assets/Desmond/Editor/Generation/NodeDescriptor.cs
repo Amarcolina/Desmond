@@ -25,10 +25,12 @@ public class FieldDescriptor{
 public class DataInDescriptor {
     public string dataType;
     public string id;
+    public string staticReference;
 
-    public DataInDescriptor(string type, string i) {
-        dataType = type;
-        id = i;
+    public DataInDescriptor(string dataType, string id, string staticReference) {
+        this.dataType = dataType;
+        this.id = id;
+        this.staticReference = staticReference;
     }
 }
 
@@ -42,17 +44,18 @@ public class ExitPathDescriptor {
     }
 }
 
-
 /* Describes a data output defined by a node
  */
 public class DataOutDescriptor {
     public string returnType;
     public string id;
     public string expressionCode;
+    public InlineBehavior inlineBehavior;
 
-    public DataOutDescriptor(string type, string i) {
-        returnType = type;
-        id = i;
+    public DataOutDescriptor(string returnType, string id, InlineBehavior inlineBehavior) {
+        this.returnType = returnType;
+        this.id = id;
+        this.inlineBehavior = inlineBehavior;
     }
 }
 
@@ -67,11 +70,14 @@ public class GenericMethodDescriptor {
 public class MethodDescriptor : GenericMethodDescriptor {
     public string id;
     public string staticReference = null;
-    public HashSet<string> exitPaths = new HashSet<string>();
-    public HashSet<string> inputVars = new HashSet<string>();
+    public HashSet<string> withouts = new HashSet<string>();
+    public InlineBehavior inlineBehavior;
 
-    public MethodDescriptor(string i) {
+    public MethodDescriptor(string i, string staticReference, HashSet<string> withouts, InlineBehavior inlineBehavior) {
         id = i;
+        this.staticReference = staticReference;
+        this.withouts = withouts;
+        this.inlineBehavior = inlineBehavior;
     }
 }
 
@@ -82,12 +88,16 @@ public class MethodDescriptor : GenericMethodDescriptor {
  * 
  * <methodLocalName name>
  *      then <name>
+ *      
+ * <varName>
+ * 
+ * <inName>
  * 
  * $var varType varName (default)
  * 
- * $in inType inName
+ * $in inType inName (static reference)
  * 
- * $method inputName (forceInline | preventInline | auto) (without arg arg arg)
+ * $method inputName (static reference) (forceInline | preventInline | auto) (without arg arg arg)
  *     code
  *     code
  *     
@@ -97,10 +107,6 @@ public class MethodDescriptor : GenericMethodDescriptor {
  * $customCode
  *     code
  *     code
- * 
- * <varName>
- * 
- * <inName>
  * 
  * ->outName
  * 
@@ -197,32 +203,68 @@ public class NodeDescriptor : IPathable{
                 continue;
             }
 
-            //Matching code and putting it into a defined method
-            if (!trimmedLine.StartsWith("$")) {
-                if (method != null) {
-                    method.codeBlock.Add(line);
-                    continue;
-                }
-                if (expression != null) {
-                    expression.expressionCode = line;
-                    expression = null;
-                    continue;
-                }
-                if (genericMethod != null) {
-                    genericMethod.codeBlock.Add(line);
-                    continue;
-                }
-            }
-
             if (trimmedLine.StartsWith("!")) {
                 current.namespaceImports.Add(trimmedLine.Substring(1).Trim());
                 continue;
             }
 
-            //matching $in type name
-            if (splitLine[0] == "$in") {
-                current.dataIns[splitLine[2]] = new DataInDescriptor(splitLine[1], splitLine[2]);
+            string command = splitLine[0];
+            if (command.StartsWith("$")) {
+                method = null;
+                expression = null;
+                genericMethod = null;
+
+                switch (command) {
+                    case "$in": {
+                        current.dataIns[splitLine[2]] = new DataInDescriptor(splitLine[1], splitLine[2], parseStaticOption(splitLine));
+                        break;
+                    }
+                    case "$def": {
+                        string defaultValue = splitLine.Length == 4 ? splitLine[3] : "";
+                        current.fields[splitLine[2]] = new FieldDescriptor(splitLine[1], splitLine[2], defaultValue);
+                        break;
+                    }
+                    case "$customCode": {
+                        genericMethod = new GenericMethodDescriptor();
+                        current.functions.Add(genericMethod);
+                        break;
+                    }
+                    case "$method": {
+                        method = new MethodDescriptor(splitLine[1],
+                                                parseStaticOption(splitLine),
+                                                parseWithoutOption(splitLine),
+                                                parseInlineOption(splitLine, InlineBehavior.AUTO));
+
+                        List<MethodDescriptor> descriptorList;
+                        if (!current.methods.TryGetValue(method.id, out descriptorList)) {
+                            descriptorList = new List<MethodDescriptor>();
+                            current.methods[method.id] = descriptorList;
+                        }
+                        descriptorList.Add(method);
+                        break;
+                    }
+                    case "$out": {
+                        expression = new DataOutDescriptor(splitLine[1],
+                                                    splitLine[2],
+                                                    parseInlineOption(splitLine, InlineBehavior.FORCE_INLINE));
+                        current.expressions[expression.id] = expression;
+                        break;
+                    }
+                    case "$classLocalName": {
+                        current.uniqueNames.Add(splitLine[1]);
+                        break;
+                    }
+                }
                 continue;
+            }
+
+            foreach (string[] match in StringHelper.getMatchingBraces(line, s => s == "methodLocalName", s => s != null)) {
+                if (method != null) {
+                    method.methodLocalNames.Add(match[1]);
+                }
+                if (genericMethod != null) {
+                    method.methodLocalNames.Add(match[1]);
+                }
             }
 
             //Matching ->id data out points
@@ -231,62 +273,61 @@ public class NodeDescriptor : IPathable{
                 if (!current.exitPaths.ContainsKey(exitId)) {
                     current.exitPaths[exitId] = new ExitPathDescriptor(exitId);
                 }
-                if (method != null) {
-                    method.exitPaths.Add(exitId);
-                }
             }
 
-            //$def type name default
-            if(StringHelper.doesMatch(splitLine, s => s == "$def", s => s != null, s => s != null, s => true)){
-                string defaultValue = splitLine.Length == 4 ? splitLine[3] : "";
-                current.fields[splitLine[2]] = new FieldDescriptor(splitLine[1], splitLine[2], defaultValue);
+            if (method != null) {
+                method.codeBlock.Add(line);
                 continue;
             }
 
-            //$customCode
-            if(StringHelper.doesMatch(splitLine, s => s == "$customCode")){
-                genericMethod = new GenericMethodDescriptor();
-                current.functions.Add(genericMethod);
+            if (expression != null) {
+                expression.expressionCode = line;
+                expression = null;
                 continue;
             }
 
-            //$method name (inline) (without asd asd asd)
-
-                //Match id the start of an execution block
-                if (splitLine.Length == 1) {
-                    method = new MethodDescriptor(splitLine[0]);
-                    List<MethodDescriptor> descriptorList;
-                    if (!current.methods.TryGetValue(method.id, out descriptorList)) {
-                        descriptorList = new List<MethodDescriptor>();
-                        current.methods[method.id] = descriptorList;
-                    }
-                    descriptorList.Add(method);
-                    continue;
-                }
-
-                //Match type id the start of a data out expression
-                if (splitLine.Length == 2) {
-                    if (splitLine[0] == "void") {
-                        method = new MethodDescriptor(splitLine[1]);
-                        method.staticReference = splitLine[1];
-                        List<MethodDescriptor> descriptorList;
-                        if (!current.methods.TryGetValue(method.id, out descriptorList)) {
-                            descriptorList = new List<MethodDescriptor>();
-                            current.methods[method.id] = descriptorList;
-                        }
-                        descriptorList.Add(method);
-                        continue;
-                    } else if (splitLine[0] == "unique"){
-                        current.uniqueNames.Add(splitLine[1]);
-                        continue;
-                    }else{
-                        expression = new DataOutDescriptor(splitLine[0], splitLine[1]);
-                        current.expressions[expression.id] = expression;
-                        continue;
-                    }
-                }
+            if (genericMethod != null) {
+                genericMethod.codeBlock.Add(line);
+                continue;
             }
         }
+    }
+
+    private static string parseStaticOption(string[] s) {
+        for (int i = 0; i < s.Length; i++) {
+            if (s[i] == "static") {
+                return s[i + 1];
+            }
+        }
+        return null;
+    }
+
+    private static InlineBehavior parseInlineOption(string[] s, InlineBehavior def) {
+        for (int i = 0; i < s.Length; i++) {
+            string word = s[i];
+            if (word == "forceInline") {
+                return InlineBehavior.FORCE_INLINE;
+            } else if (word == "preventInline") {
+                return InlineBehavior.PREVENT_INLINE;
+            } else if (word == "auto") {
+                return InlineBehavior.AUTO;
+            }
+        }
+        return def;
+    }
+
+    private static HashSet<string> parseWithoutOption(string[] s){
+        HashSet<string> withouts = new HashSet<string>();
+        bool startWithout = false;
+        for (int i = 0; i < s.Length; i++) {
+            if (startWithout) {
+                withouts.Add(s[i]);
+            }
+            if (s[i] == "without") {
+                startWithout = true;
+            }
+        }
+        return withouts;
     }
 }
 
