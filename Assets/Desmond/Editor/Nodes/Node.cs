@@ -49,6 +49,18 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver {
         return idToElement[id];
     }
 
+    public virtual bool getConnectedElement(string id, out ConnectableElement connectedElement) {
+        Element element;
+        if (idToElement.TryGetValue(id, out element)) {
+            connectedElement = element as ConnectableElement;
+            if (connectedElement != null) {
+                return true;
+            }
+        }
+        connectedElement = null;
+        return false;
+    }
+
     public virtual List<FieldStruct> getFieldStructs() {
         return new List<FieldStruct>();
     }
@@ -57,12 +69,16 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver {
         return new List<MethodStruct>();
     }
 
-    public virtual List<GenericCodeStruct> getGenericCodeStructs() {
-        return new List<GenericCodeStruct>();
+    public virtual List<CustomMethodStruct> getCustomMethodStructs() {
+        return new List<CustomMethodStruct>();
     }
 
     public virtual List<ExpressionMethodStruct> getExpressionStructs() {
         return new List<ExpressionMethodStruct>();
+    }
+
+    public virtual HashSet<string> getNamespaceImports() {
+        return new HashSet<string>();
     }
 
     public static Rect rectSlide(Rect r, float amount) {

@@ -6,9 +6,8 @@ using System.Text.RegularExpressions;
 
 namespace Desmond { 
 
-
-
 public class ScriptBuilder {
+    /*
     //Static variables shared by all script builders
     public static HashSet<GenericCodeStruct> nodesVisitedForReferenceCounting = new HashSet<GenericCodeStruct>();
     public static Dictionary<GameObject, ScriptBuilder> objectToBuilder = new Dictionary<GameObject, ScriptBuilder>();
@@ -458,6 +457,7 @@ public class ScriptBuilder {
         }
         return list;
     }
+     * */
 }
 
 }
