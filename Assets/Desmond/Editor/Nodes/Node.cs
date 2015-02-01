@@ -46,19 +46,23 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver {
     }
 
     public virtual Element getElement(string id) {
-        return idToElement[id];
-    }
-
-    public virtual bool getConnectedElement(string id, out ConnectableElement connectedElement) {
         Element element;
         if (idToElement.TryGetValue(id, out element)) {
-            connectedElement = element as ConnectableElement;
-            if (connectedElement != null) {
-                return true;
+            return element;
+        }
+        return null;
+    }
+
+    public virtual List<ElementConnection> getConnections(string id) {
+        List<ElementConnection> elements = new List<ElementConnection>();
+        Element element;
+        if (idToElement.TryGetValue(id, out element)) {
+            ConnectableElement connectableElement = element as ConnectableElement;
+            if (connectableElement != null) {
+                return connectableElement.connections;
             }
         }
-        connectedElement = null;
-        return false;
+        return null;
     }
 
     public virtual List<FieldStruct> getFieldStructs() {

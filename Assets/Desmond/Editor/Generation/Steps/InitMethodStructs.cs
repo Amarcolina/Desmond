@@ -4,48 +4,25 @@ using System.Collections.Generic;
 
 namespace Desmond { 
 
-public class InitMethodStructs {
-    HashSet<MethodStruct> visitedMethods = new HashSet<MethodStruct>();
-
-
-    public void doStep(ref List<Node> nodes, ref Dictionary<GameObject, ScriptStruct> scripts) {
-        foreach (ScriptStruct script in scripts.Values) {
-            foreach (CustomMethodStruct customMethod in script.customMethods) {
+public class InitMethodStructs : GenerationStep{
+    public override void doStep() {
+        foreach (Node node in nodes) {
+            List<CustomMethodStruct> customMethodStructs = node.getCustomMethodStructs();
+            foreach (CustomMethodStruct customMethod in customMethodStructs) {
                 addMethod(customMethod);
             }
         }
     }
 
-    private void addMethod(GenericMethodStruct genericMethod, Dictionary<GameObject, ScriptStruct> scripts) {
-        MethodStruct asMethodStruct = genericMethod as MethodStruct;
-        if (asMethodStruct != null) {
-            if (visitedMethods.Contains(asMethodStruct)) {
-                asMethodStruct.references++;
-                return;
-            }
-            visitedMethods.Add(asMethodStruct);
+    private void addMethod(GenericMethodStruct genericMethod) {
+        genericMethod.references++;
+        if (genericMethod.references > 1) {
+            return;
         }
 
-        Node node = genericMethod.structKey.parentNode;
+        scripts[genericMethod.structKey.parentNode.gameObjectInstance].methods[genericMethod.structKey] = genericMethod;
 
-        foreach (string line in genericMethod.codeBlock) {
-            string trimmedLine = line.Trim();
-            if (trimmedLine.StartsWith("->")) {
-                string outId = trimmedLine.Substring(2);
-
-                ConnectableElement connectedElement;
-                if (node.getConnectedElement(outId, out connectedElement)) {
-                    Node connectedNode = connectedElement.parentNode;
-
-                    ScriptElementKey connectedKey = new ScriptElementKey();
-                    connectedKey.parentNode = connectedNode;
-                    connectedKey.id = connectedElement.id;
-
-                    ScriptStruct connectedScript = scripts[connectedNode.gameObjectInstance];
-
-                }
-            }
-        }
+        forEveryMethodLink(genericMethod, func => addMethod(func));
     }
 }
 
