@@ -7,35 +7,34 @@ namespace Desmond {
 public class WriteScriptFile : GenerationStep {
 
     public override void doStep() {
-
-        foreach (ScriptStruct script in scripts) {
-            List<string> lines = new List<string>();
+        foreach (ScriptStruct script in scripts.Values) {
+            ScriptIndenter indenter = new ScriptIndenter();
 
             foreach (string s in script.namespaceImports) {
-                lines.Add("using " + s + ";");
+                indenter.addCode("using " + s + ";");
             }
 
-            lines.Add("");
-            lines.Add("");
+            indenter.addCode("");
+            indenter.addCode("");
 
-            lines.Add("public class " + script.ToString() + " : DesmondSceneScript {");
+            indenter.addCode("public class " + script.scriptName + " : DesmondSceneScript {");
 
             foreach (FieldStruct field in script.fields.Values) {
-                lines.AddRange(field.generateScriptLines());
+                indenter.addCode(field.generateScriptLines());
             }
 
-            lines.Add("");
+            indenter.addCode("");
 
             foreach (GenericMethodStruct method in script.methods.Values) {
-                lines.AddRange(method.generateScriptLines());
-                lines.Add("");
+                indenter.addCode(method.generateScriptLines());
+                indenter.addCode("");
             }
 
-            lines.Add("}");
-        }
+            indenter.addCode("}");
 
-        string filePath = Application.dataPath + "/Desmond/Generated/SceneScripts/" + builder.scriptName + ".cs";
-        System.IO.File.WriteAllLines(filePath, lines);
+            string filePath = Application.dataPath + "/Desmond/Generated/SceneScripts/" + script.scriptName + ".cs";
+            System.IO.File.WriteAllLines(filePath, indenter.toArray());
+        }
     }
 }
 

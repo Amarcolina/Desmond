@@ -23,6 +23,8 @@ public class ScriptStruct{
 
     public HashSet<string> namespaceImports = new HashSet<string>();
 
+    public string scriptName;
+
     public IEnumerable<CustomMethodStruct> customMethods() {
         foreach (GenericMethodStruct genericMethod in methods.Values) {
             if (genericMethod is CustomMethodStruct) {

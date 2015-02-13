@@ -8,7 +8,7 @@ public class RecordNamespaceImports : GenerationStep {
 
     /* Adds the namespace imports to the scripts based on the nodes they contain
      */
-    public void doStep() {
+    public override void doStep() {
         foreach (Node node in nodes) {
             ScriptStruct scriptStruct = scripts[node.gameObjectInstance];
             scriptStruct.namespaceImports.UnionWith(node.getNamespaceImports());
