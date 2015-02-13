@@ -7,6 +7,10 @@ namespace Desmond {
 public class GenericMethodStruct : ScriptElementStruct{
     public List<string> codeBlock;
     public int references = 0;
+
+    public override List<string> generateScriptLines() {
+        return codeBlock;
+    }
 }
 
 }

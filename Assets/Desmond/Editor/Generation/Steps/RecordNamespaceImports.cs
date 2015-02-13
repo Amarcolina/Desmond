@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Desmond { 
 
-public class RecordNamespaceImports : MonoBehaviour {
+public class RecordNamespaceImports : GenerationStep {
 
     /* Adds the namespace imports to the scripts based on the nodes they contain
      */

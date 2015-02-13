@@ -8,6 +8,21 @@ public abstract class GenerationStep {
     public Dictionary<GameObject, ScriptStruct> scripts;
     public List<Node> nodes;
 
+    private List<object> additionalData;
+
+    protected void addData(object o) {
+        additionalData.Add(o);
+    }
+
+    protected T getData<T>(){
+        foreach (object o in additionalData) {
+            if(o.GetType() == typeof(T)){
+                return (T)o;
+            }
+        }
+        return default(T);
+    }
+
     public abstract void doStep();
 
     public delegate void GenericMethodDelegate(MethodStruct connectedMethod);
@@ -103,6 +118,8 @@ public abstract class GenerationStep {
                     }
                 }
             }
+
+            genericMethod.codeBlock[i] = line;
         }
     }
 
@@ -112,6 +129,44 @@ public abstract class GenerationStep {
             return null;
         };
         forEveryExpressionLink(genericMethod, newFuncton);
+    }
+
+    public delegate void FieldStructDelegate(FieldStruct referencedField);
+    public delegate string FieldStructReplaceDelegate(FieldStruct referencedField);
+
+    public void forEveryFieldLink(GenericMethodStruct genericMethod, FieldStructReplaceDelegate function) {
+        Node node = genericMethod.structKey.parentNode;
+
+        for (int i = 0; i < genericMethod.codeBlock.Count; i++) {
+            string line = genericMethod.codeBlock[i];
+
+            foreach (string[] match in StringHelper.getMatchingBraces(line, s => s != null)) {
+                ScriptStruct script = scripts[node.gameObjectInstance];
+                ScriptElementKey key = new ScriptElementKey(node, match[0]);
+
+                FieldStruct field;
+                
+                if(script.fields.TryGetValue(key, out field)){
+                    string replacementLine = function(field);
+
+                    if (replacementLine != null) {
+                        line = line.Replace("<" + match[0] + ">", replacementLine);
+                    }
+                }else{
+                    Debug.Log("Error");
+                }
+            }
+
+            genericMethod.codeBlock[i] = line;
+        }
+    }
+
+    public void forEveryFieldLink(GenericMethodStruct genericMethod, FieldStructDelegate function) {
+        FieldStructReplaceDelegate newFuncton = delegate(FieldStruct target) {
+            function(target);
+            return null;
+        };
+        forEveryFieldLink(genericMethod, newFuncton);
     }
 }
 

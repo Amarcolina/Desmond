@@ -22,7 +22,7 @@ public class InitMethodStructs : GenerationStep{
 
         scripts[genericMethod.structKey.parentNode.gameObjectInstance].methods[genericMethod.structKey] = genericMethod;
 
-        forEveryMethodLink(genericMethod, func => addMethod(func));
+        forEveryMethodLink(genericMethod, subMethod => addMethod(subMethod));
     }
 }
 
