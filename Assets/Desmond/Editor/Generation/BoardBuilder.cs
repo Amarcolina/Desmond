@@ -6,6 +6,37 @@ using System.Collections.Generic;
 namespace Desmond { 
 
 public class BoardBuilder {
+
+    public static List<PostCompilationJob> buildBoard(List<DesmondBoard> boards) {
+        List<GenerationStep> steps = new List<GenerationStep>();
+
+        steps.Add(new InitScriptStructs());
+        steps.Add(new RecordNamespaceImports());
+        steps.Add(new InitFields());
+        steps.Add(new InitMethodStructs());
+        steps.Add(new ResolveScriptLocalNames());
+        steps.Add(new FinalizeExpressionMethods());
+        steps.Add(new WriteScriptFile());
+
+        GenerationStep previousStep = null;
+        foreach (GenerationStep step in steps) {
+            if (previousStep == null) {
+                //Todo: actually make this work
+                step.nodes = new List<Node>();
+                step.scripts = new Dictionary<GameObject, ScriptStruct>();
+            } else {
+                step.nodes = previousStep.nodes;
+                step.scripts = previousStep.scripts;
+            }
+            step.doStep();
+            previousStep = step;
+        }
+    }
+
+
+
+
+
     public static List<PostCompilationJob> buildSceneBoards() {
         DesmondSceneBase[] scriptBases = GameObject.FindObjectsOfType<DesmondSceneBase>();
         foreach (DesmondSceneBase scriptBase in scriptBases) {
