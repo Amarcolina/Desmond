@@ -84,24 +84,8 @@ public class DefaultValueNode : Node {
         return null;
     }
 
-    public override List<ExpressionMethodStruct> getExpressionStructs() {
-        return new List<ExpressionMethodStruct>();
-    }
-
-    public override List<FieldStruct> getFieldStructs() {
-        return new List<FieldStruct>();
-    }
-
-    public override List<MethodStruct> getMethodStructs() {
-        return new List<MethodStruct>();
-    }
-
-    public override List<GenericCodeStruct> getGenericCodeStructs() {
-        return new List<GenericCodeStruct>();
-    }
-
-    public ScriptStructKey getKey() {
-        return new ScriptStructKey(this, "out");
+    public ScriptElementKey getKey() {
+        return new ScriptElementKey(this, "out");
     }
 
     public virtual void drawDefaultProperty(Rect r) {

@@ -8,8 +8,8 @@ namespace Desmond {
 public class ObjectFieldStruct : FieldStruct {
     public Object value;
 
-    public ObjectFieldStruct(ScriptStructKey key, string type, string name, Object value)
-        : base(key, type, name, "") {
+    public ObjectFieldStruct(ScriptElementKey key, string type, string name, Object value)
+        : base(key, type, name) {
         this.value = value;
     }
 }
@@ -40,14 +40,6 @@ public class DefaultObjectNode : DefaultValueNode {
         list.Add(s);
 
         return list;
-    }
-
-    public override List<MethodStruct> getMethodStructs() {
-        return new List<MethodStruct>();
-    }
-
-    public override List<GenericCodeStruct> getGenericCodeStructs() {
-        return new List<GenericCodeStruct>();
     }
 
     public override void drawDefaultProperty(Rect r) {

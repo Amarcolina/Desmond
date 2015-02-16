@@ -65,7 +65,7 @@ public class StringNode : Node{
         List<FieldStruct> list = new List<FieldStruct>();
         
         foreach (FieldDescriptor d in descriptor.fields.Values) {
-            ScriptStructKey key = new ScriptStructKey(this, d.id);
+            ScriptElementKey key = new ScriptElementKey(this, d.id);
             list.Add(new FieldStruct(key, d.fieldType, d.id, d.defaultValue));
         }
 
@@ -136,7 +136,7 @@ public class StringNode : Node{
             }
              * */
 
-            ScriptStructKey key = new ScriptStructKey(this, bestMethod.id);
+            ScriptElementKey key = new ScriptElementKey(this, bestMethod.id);
             MethodStruct s = new MethodStruct(key, name + StringHelper.capitalize(bestMethod.id));
             s.addCode(bestMethod.codeBlock);
             s.staticReference = bestMethod.staticReference;
@@ -146,12 +146,12 @@ public class StringNode : Node{
         return list;
     }
 
-    public override List<GenericCodeStruct> getGenericCodeStructs() {
-        List<GenericCodeStruct> list = new List<GenericCodeStruct>();
+    public override List<CustomMethodStruct> getCustomMethodStructs() {
+        List<CustomMethodStruct> list = new List<CustomMethodStruct>();
 
         foreach (GenericMethodDescriptor d in descriptor.functions) {
-            ScriptStructKey key = new ScriptStructKey(this, d.GetHashCode() + "");
-            GenericCodeStruct s = new GenericCodeStruct(key);
+            ScriptElementKey key = new ScriptElementKey(this, d.GetHashCode() + "");
+            CustomMethodStruct s = new CustomMethodStruct(key);
             s.addCode(d.codeBlock);
 
             list.Add(s);
@@ -164,7 +164,7 @@ public class StringNode : Node{
         List<ExpressionMethodStruct> list = new List<ExpressionMethodStruct>();
 
         foreach (DataOutDescriptor d in descriptor.expressions.Values) {
-            ScriptStructKey key = new ScriptStructKey(this, d.id);
+            ScriptElementKey key = new ScriptElementKey(this, d.id);
             ExpressionMethodStruct s = new ExpressionMethodStruct(key, name + "Get" + StringHelper.capitalize(d.id), d.returnType);
             s.addCode(d.expressionCode);
             list.Add(s);

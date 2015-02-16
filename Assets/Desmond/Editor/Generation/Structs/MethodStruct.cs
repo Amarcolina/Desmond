@@ -12,6 +12,10 @@ public class MethodStruct : GenericMethodStruct {
     public bool isPublic = false;
     public string methodName = "undefined";
 
+    public MethodStruct(ScriptElementKey key, string methodName) : base(key) {
+        this.methodName = methodName;
+    }
+
     public virtual bool shouldBeInlined() {
         if(isPublic){
             return false;

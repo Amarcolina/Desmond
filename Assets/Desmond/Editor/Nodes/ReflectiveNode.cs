@@ -100,21 +100,13 @@ public class ReflectiveNode : Node {
         List<ExpressionMethodStruct> list = new List<ExpressionMethodStruct>();
 
         if (!returnsVoid()) {
-            ScriptStructKey key = new ScriptStructKey(this, methodDisplayName);
+            ScriptElementKey key = new ScriptElementKey(this, methodDisplayName);
             ExpressionMethodStruct s = new ExpressionMethodStruct(key, methodDisplayName, returnType);
             s.addCode(getExpressionCode());
             list.Add(s);
         }
 
         return list;
-    }
-
-    public override List<FieldStruct> getFieldStructs() {
-        return new List<FieldStruct>();
-    }
-
-    public override List<GenericCodeStruct> getGenericCodeStructs() {
-        return new List<GenericCodeStruct>();
     }
 
     public override List<MethodStruct> getMethodStructs() {
@@ -124,7 +116,7 @@ public class ReflectiveNode : Node {
         //  call method with args
         //  ->out to exit
         if (returnsVoid()) {
-            ScriptStructKey key = new ScriptStructKey(this, methodDisplayName);
+            ScriptElementKey key = new ScriptElementKey(this, methodDisplayName);
             MethodStruct s = new MethodStruct(key, methodDisplayName);
             s.addCode(getExpressionCode() + ";");
             s.addCode("->out");

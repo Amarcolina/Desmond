@@ -27,7 +27,7 @@ public class DefaultEnumNode : DefaultValueNode {
     public override List<ExpressionMethodStruct> getExpressionStructs() {
         List<ExpressionMethodStruct> list = new List<ExpressionMethodStruct>();
 
-        ScriptStructKey key = new ScriptStructKey(this, "out");
+        ScriptElementKey key = new ScriptElementKey(this, "out");
         ExpressionMethodStruct s = new ExpressionMethodStruct(key, "default", type);
         s.addCode(getValueType().FullName + "." + enumNames[enumValue]);
         list.Add(s);

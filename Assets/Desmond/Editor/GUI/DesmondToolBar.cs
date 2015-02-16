@@ -46,7 +46,8 @@ public class DesmondToolbar {
                 EditorGUI.EndDisabledGroup();
             } else if(board.boardType == DesmondBoardType.PREFAB_BOARD){
                 if (GUILayout.Button("Generate Prefab Script", EditorStyles.toolbarButton)) {
-                    BoardBuilder.buildPrefabBoard(board);
+                    Debug.LogWarning("Not implemented right now!");
+                    //BoardBuilder.buildBoards(board);
                 }
             }
         }

@@ -7,9 +7,12 @@ namespace Desmond {
 
 public class BoardBuilder {
 
-    public static List<PostCompilationJob> buildBoards(List<DesmondBoard> boards) {
-        List<GenerationStep> steps = new List<GenerationStep>();
+    public static List<GenerationStep> steps = new List<GenerationStep>();
 
+    public static List<PostCompilationJob> buildSceneBoards() {
+        steps.Clear();
+
+        steps.Add(new InitSceneBoards());
         steps.Add(new InitScriptStructs());
         steps.Add(new RecordNamespaceImports());
         steps.Add(new GenerateStaticNodes());
@@ -19,10 +22,14 @@ public class BoardBuilder {
         steps.Add(new FinalizeExpressionMethods());
         steps.Add(new WriteScriptFile());
 
+        return doSteps();
+    }
+
+    private static List<PostCompilationJob> doSteps() {
         GenerationStep previousStep = null;
         foreach (GenerationStep step in steps) {
             if (previousStep == null) {
-                step.boards = boards;
+                step.boards = new List<DesmondBoard>();
                 step.nodes = new List<Node>();
                 step.scripts = new Dictionary<GameObject, ScriptStruct>();
             } else {
@@ -37,6 +44,7 @@ public class BoardBuilder {
         return null;
     }
 
+    /*
     public static List<PostCompilationJob> buildSceneBoards() {
         DesmondSceneBase[] scriptBases = GameObject.FindObjectsOfType<DesmondSceneBase>();
         foreach (DesmondSceneBase scriptBase in scriptBases) {
@@ -185,6 +193,7 @@ public class BoardBuilder {
 
         AssetDatabase.Refresh();
     }
+     * */
 }
 
 }

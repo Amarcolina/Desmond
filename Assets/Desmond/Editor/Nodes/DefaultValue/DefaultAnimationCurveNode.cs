@@ -7,9 +7,9 @@ namespace Desmond {
 public class AnimationCurveFieldStruct : FieldStruct {
     public AnimationCurve value;
 
-    public AnimationCurveFieldStruct(ScriptStructKey key, string type, string name, AnimationCurve value)
-        : base(key, type, name, "") {
+    public AnimationCurveFieldStruct(ScriptElementKey key, string type, string name, AnimationCurve value) : base(key, type, name){
         this.value = value;
+        this.defaultValue = value;
     }
 }
 

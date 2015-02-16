@@ -17,6 +17,10 @@ public struct ScriptElementKey {
 public abstract class ScriptElementStruct {
     public ScriptElementKey structKey;
 
+    public ScriptElementStruct(ScriptElementKey key) {
+        structKey = key;
+    }
+
     public override int GetHashCode() {
         return structKey.GetHashCode();
     }
