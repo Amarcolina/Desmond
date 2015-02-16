@@ -5,6 +5,7 @@ using System.Collections.Generic;
 namespace Desmond {
 
 public abstract class GenerationStep {
+    public List<DesmondBoard> boards;
     public Dictionary<GameObject, ScriptStruct> scripts;
     public List<Node> nodes;
 

@@ -7,7 +7,7 @@ namespace Desmond {
 
 public class BoardBuilder {
 
-    public static List<PostCompilationJob> buildBoard(List<DesmondBoard> boards) {
+    public static List<PostCompilationJob> buildBoards(List<DesmondBoard> boards) {
         List<GenerationStep> steps = new List<GenerationStep>();
 
         steps.Add(new InitScriptStructs());
@@ -21,21 +21,20 @@ public class BoardBuilder {
         GenerationStep previousStep = null;
         foreach (GenerationStep step in steps) {
             if (previousStep == null) {
-                //Todo: actually make this work
+                step.boards = boards;
                 step.nodes = new List<Node>();
                 step.scripts = new Dictionary<GameObject, ScriptStruct>();
             } else {
+                step.boards = previousStep.boards;
                 step.nodes = previousStep.nodes;
                 step.scripts = previousStep.scripts;
             }
             step.doStep();
             previousStep = step;
         }
+
+        return null;
     }
-
-
-
-
 
     public static List<PostCompilationJob> buildSceneBoards() {
         DesmondSceneBase[] scriptBases = GameObject.FindObjectsOfType<DesmondSceneBase>();
