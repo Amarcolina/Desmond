@@ -11,20 +11,27 @@ public class InitScriptStructs : GenerationStep {
      */
     public override void doStep() {
         HashSet<GameObject> gameObjects = new HashSet<GameObject>();
-        foreach (Node node in nodes) {
-            gameObjects.Add(node.gameObjectInstance);
-        }
-
+        LoadingBarUtil.beginChunk(nodes.Count, "", "Couting nodes : ", () => {
+            foreach (Node node in nodes) {
+                gameObjects.Add(node.gameObjectInstance);
+                LoadingBarUtil.recordProgress(node.ToString());
+            }
+        });
+        
         foreach (GameObject gameObject in gameObjects) {
             ScriptStruct newScriptStruct = new ScriptStruct();
             newScriptStruct.parentObject = gameObject;
             scripts[gameObject] = newScriptStruct;
         }
 
-        foreach (Node node in nodes) {
-            ScriptStruct scriptStruct = scripts[node.gameObjectInstance];
-            scriptStruct.nodes.Add(node);
-        }
+        LoadingBarUtil.beginChunk(nodes.Count, "", "Initializing nodes : ", () => {
+            foreach (Node node in nodes) {
+                ScriptStruct scriptStruct = scripts[node.gameObjectInstance];
+                scriptStruct.nodes.Add(node);
+                LoadingBarUtil.recordProgress(node.ToString());
+            }
+        });
+        
     }
 }
 

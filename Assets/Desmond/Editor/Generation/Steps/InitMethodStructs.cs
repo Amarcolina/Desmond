@@ -6,12 +6,15 @@ namespace Desmond {
 
 public class InitMethodStructs : GenerationStep{
     public override void doStep() {
-        foreach (Node node in nodes) {
-            List<CustomMethodStruct> customMethodStructs = node.getCustomMethodStructs();
-            foreach (CustomMethodStruct customMethod in customMethodStructs) {
-                addMethod(customMethod);
+        LoadingBarUtil.beginChunk(nodes.Count, "", "Initializing Methods : ", () => {
+            foreach (Node node in nodes) {
+                List<CustomMethodStruct> customMethodStructs = node.getCustomMethodStructs();
+                foreach (CustomMethodStruct customMethod in customMethodStructs) {
+                    addMethod(customMethod);
+                }
+                LoadingBarUtil.recordProgress(node.ToString());
             }
-        }
+        });
     }
 
     private void addMethod(GenericMethodStruct genericMethod) {

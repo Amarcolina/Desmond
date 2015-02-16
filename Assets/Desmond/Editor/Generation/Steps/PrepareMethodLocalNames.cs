@@ -13,38 +13,46 @@ public class PrepareMethodLocalNames : GenerationStep {
     public override void doStep() {
         PreparedMethodLocalNameTable data = new PreparedMethodLocalNameTable();
 
-        foreach (ScriptStruct script in scripts.Values) {
-            Dictionary<int, string> uniqueIdToName = new Dictionary<int, string>();
-            int idCounter = 1;
-            foreach (GenericMethodStruct method in script.methods.Values) {
-                Dictionary<string, int> nameToId = new Dictionary<string, int>();
+        LoadingBarUtil.beginChunk(scripts.Count, "", "", () => {
+            foreach (ScriptStruct script in scripts.Values) {
+                Dictionary<int, string> uniqueIdToName = new Dictionary<int, string>();
+                int idCounter = 1;
 
-                for (int i = 0; i < method.codeBlock.Count; i++) {
-                    string line = method.codeBlock[i];
+                LoadingBarUtil.beginChunk(script.methods.Values.Count, "", "Preparing method local names : ", () => {
+                    foreach (GenericMethodStruct method in script.methods.Values) {
+                        Dictionary<string, int> nameToId = new Dictionary<string, int>();
 
-                    foreach (string[] match in StringHelper.getMatchingBraces(line, s => s == "methodLocalName", s => s != null)) {
-                        string name = match[1];
-                        if (nameToId.ContainsKey(name)) {
-                            Debug.LogError("Mutiple definitions of the same name!");
-                        } else {
-                            nameToId[name] = idCounter;
-                            uniqueIdToName[idCounter] = name;
-                            line.Replace("<" + match[0] + " " + match[1] + ">", "<methodLocalId " + idCounter + ">");
-                            idCounter++;
+                        for (int i = 0; i < method.codeBlock.Count; i++) {
+                            string line = method.codeBlock[i];
+
+                            foreach (string[] match in StringHelper.getMatchingBraces(line, s => s == "methodLocalName", s => s != null)) {
+                                string name = match[1];
+                                if (nameToId.ContainsKey(name)) {
+                                    Debug.LogError("Mutiple definitions of the same name!");
+                                } else {
+                                    nameToId[name] = idCounter;
+                                    uniqueIdToName[idCounter] = name;
+                                    line.Replace("<" + match[0] + " " + match[1] + ">", "<methodLocalId " + idCounter + ">");
+                                    idCounter++;
+                                }
+                            }
+
+                            foreach (string[] match in StringHelper.getMatchingBraces(line, s => nameToId.ContainsKey(s))) {
+                                string name = match[0];
+                                line.Replace("<" + name + ">", "<methodLocalId " + nameToId + ">");
+                            }
+
+                            method.codeBlock[i] = line;
                         }
-                    }
 
-                    foreach (string[] match in StringHelper.getMatchingBraces(line, s => nameToId.ContainsKey(s))) {
-                        string name = match[0];
-                        line.Replace("<" + name + ">", "<methodLocalId " + nameToId + ">");
+                        LoadingBarUtil.recordProgress(method.ToString());
                     }
+                });
 
-                    method.codeBlock[i] = line;
-                }
+                data.uniqueIdToName[script] = uniqueIdToName;
             }
-
-            data.uniqueIdToName[script] = uniqueIdToName;
-        }
+        });
+        
 
         addData(data);
     }

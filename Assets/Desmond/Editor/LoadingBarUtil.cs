@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-public class LoeadingBarUtil : MonoBehaviour
+public class LoadingBarUtil : MonoBehaviour
 {
     private static List<int> chunks = new List<int>();
     private static List<int> progress = new List<int>();

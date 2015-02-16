@@ -14,55 +14,63 @@ public class ResolveScriptLocalNames : GenerationStep {
     public override void doStep() {
         ScriptLocalGeneratedNames data = new ScriptLocalGeneratedNames();
 
-        foreach (ScriptStruct script in scripts.Values) {
-            Dictionary<ScriptElementKey, string> elementToFinal = new Dictionary<ScriptElementKey, string>();
-            takenNames.Clear();
+        LoadingBarUtil.beginChunk(scripts.Count, "", "", () => {
+            foreach (ScriptStruct script in scripts.Values) {
+                Dictionary<ScriptElementKey, string> elementToFinal = new Dictionary<ScriptElementKey, string>();
+                takenNames.Clear();
 
-            foreach (GenericMethodStruct method in script.methods.Values) {
-                //Generates names of named methods
-                MethodStruct namedMethod = method as MethodStruct;
-                if (namedMethod != null) {
-                    namedMethod.methodName = generateUniqueName(namedMethod.structKey.id);
-                }
-
-                //Generate requestes scriptLocal names
-                for (int i = 0; i < method.codeBlock.Count; i++){
-                    string line = method.codeBlock[i];
-
-                    foreach (string[] match in StringHelper.getMatchingBraces(line, s => s == "scriptLocalName", s => s != null)) {
-                        string id = match[1];
-
-                        ScriptElementKey key = new ScriptElementKey(method.structKey.parentNode, id);
-                        if (elementToFinal.ContainsKey(key)) {
-                            Debug.LogError("Mutiple definitions of the same key!");
+                LoadingBarUtil.beginChunk(script.methods.Values.Count, "", "Resolving script local names : ", () => {
+                    foreach (GenericMethodStruct method in script.methods.Values) {
+                        //Generates names of named methods
+                        MethodStruct namedMethod = method as MethodStruct;
+                        if (namedMethod != null) {
+                            namedMethod.methodName = generateUniqueName(namedMethod.structKey.id);
                         }
 
-                        string uniqueName = generateUniqueName(id);
-                        elementToFinal[key] = uniqueName;
-                        line.Replace("<" + match[0] + " " + match[1] + ">", uniqueName);
-                    }
+                        //Generate requestes scriptLocal names
+                        for (int i = 0; i < method.codeBlock.Count; i++) {
+                            string line = method.codeBlock[i];
 
-                    foreach (string[] match in StringHelper.getMatchingBraces(line, s => s != null)) {
-                        string id = match[0];
+                            foreach (string[] match in StringHelper.getMatchingBraces(line, s => s == "scriptLocalName", s => s != null)) {
+                                string id = match[1];
 
-                        ScriptElementKey key = new ScriptElementKey(method.structKey.parentNode, id);
-                        if (!elementToFinal.ContainsKey(key)) {
-                            continue; //fail silently cause it might be something else
+                                ScriptElementKey key = new ScriptElementKey(method.structKey.parentNode, id);
+                                if (elementToFinal.ContainsKey(key)) {
+                                    Debug.LogError("Mutiple definitions of the same key!");
+                                }
+
+                                string uniqueName = generateUniqueName(id);
+                                elementToFinal[key] = uniqueName;
+                                line.Replace("<" + match[0] + " " + match[1] + ">", uniqueName);
+                            }
+
+                            foreach (string[] match in StringHelper.getMatchingBraces(line, s => s != null)) {
+                                string id = match[0];
+
+                                ScriptElementKey key = new ScriptElementKey(method.structKey.parentNode, id);
+                                if (!elementToFinal.ContainsKey(key)) {
+                                    continue; //fail silently cause it might be something else
+                                }
+
+                                line.Replace("<" + id + ">", elementToFinal[key]);
+                            }
+
+                            method.codeBlock[i] = line;
                         }
 
-                        line.Replace("<" + id + ">", elementToFinal[key]);
+                        LoadingBarUtil.recordProgress(method.ToString());
                     }
+                });
+                
 
-                    method.codeBlock[i] = line;
+                foreach (FieldStruct field in script.fields.Values) {
+                    field.name = generateUniqueName(field.structKey.id);
                 }
-            }
 
-            foreach (FieldStruct field in script.fields.Values) {
-                field.name = generateUniqueName(field.structKey.id);
+                data.allScriptsGeneratedNames[script] = takenNames;
             }
-
-            data.allScriptsGeneratedNames[script] = takenNames;
-        }
+        });
+        
 
         addData(data);
     }

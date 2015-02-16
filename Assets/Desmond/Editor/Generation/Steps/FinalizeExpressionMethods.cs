@@ -7,13 +7,20 @@ namespace Desmond {
 public class FinalizeExpressionMethods : GenerationStep {
 
     public override void doStep() {
-        foreach (ScriptStruct script in scripts.Values) {
-            foreach (GenericMethodStruct genericMethod in script.methods.Values) {
-                forEveryExpressionLink(genericMethod, linkedExpression => {
-                    return calculateExpressionText(linkedExpression);
+        LoadingBarUtil.beginChunk(scripts.Count, "", "", () => {
+            foreach (ScriptStruct script in scripts.Values) {
+                LoadingBarUtil.beginChunk(script.methods.Values.Count, "", "", () => {
+                    foreach (GenericMethodStruct genericMethod in script.methods.Values) {
+                        LoadingBarUtil.recordProgress("Finalizing expression method : " + genericMethod.ToString());
+                        forEveryExpressionLink(genericMethod, linkedExpression => {
+                            return calculateExpressionText(linkedExpression);
+                        });
+                    }
                 });
+
             }
-        }
+        });
+
     }
 
     public string calculateExpressionText(ExpressionMethodStruct expression) {
@@ -24,7 +31,7 @@ public class FinalizeExpressionMethods : GenerationStep {
         Assert.equals(expression.codeBlock.Count, 1);
 
         //Make sure expression is completely parsed (done recursively) before inlining
-        forEveryExpressionLink(expression, linkedExpression => calculateExpressionText(linkedExpression));  
+        forEveryExpressionLink(expression, linkedExpression => calculateExpressionText(linkedExpression));
 
         return expression.codeBlock[0];
     }

@@ -9,10 +9,13 @@ public class RecordNamespaceImports : GenerationStep {
     /* Adds the namespace imports to the scripts based on the nodes they contain
      */
     public override void doStep() {
-        foreach (Node node in nodes) {
-            ScriptStruct scriptStruct = scripts[node.gameObjectInstance];
-            scriptStruct.namespaceImports.UnionWith(node.getNamespaceImports());
-        }
+        LoadingBarUtil.beginChunk(nodes.Count, "", "Recording namespace imports", () => {
+            foreach (Node node in nodes) {
+                ScriptStruct scriptStruct = scripts[node.gameObjectInstance];
+                scriptStruct.namespaceImports.UnionWith(node.getNamespaceImports());
+                LoadingBarUtil.recordProgress(node.ToString());
+            }
+        });
     }
 }
 
