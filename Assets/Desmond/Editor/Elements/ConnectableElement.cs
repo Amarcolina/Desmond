@@ -6,14 +6,14 @@ namespace Desmond {
 
 [System.Serializable]
 public struct ElementConnection {
-    public Element connectedElement;
+    public Element destinationElement;
     public Node originNode;
-    public Node connectedNode;
+    public Node destinationNode;
 
-    public ElementConnection(Element e, Node o, Node n) {
-        connectedElement = e;
-        originNode = o;
-        connectedNode = n;
+    public ElementConnection(Element destinationElement, Node originNode, Node destinationNode) {
+        this.destinationElement = destinationElement;
+        this.originNode = originNode;
+        this.destinationNode = destinationNode;
     }
 }
 
@@ -22,14 +22,14 @@ public class ConnectableElement : Element {
 
     public void OnDestroy() {
         foreach (ElementConnection connection in connections) {
-            if (connection.connectedElement != null) {
-                DestroyImmediate(connection.connectedElement);
+            if (connection.destinationElement != null) {
+                DestroyImmediate(connection.destinationElement);
             }
-            if (connection.connectedNode != null) {
-                DestroyImmediate(connection.connectedNode);
+            if (connection.destinationNode != null) {
+                DestroyImmediate(connection.destinationNode);
             }
             if (connection.originNode != null) {
-                DestroyImmediate(connection.connectedNode);
+                DestroyImmediate(connection.destinationNode);
             }
         }
     }

@@ -36,8 +36,8 @@ public class InputWithDefaultInfo : ConnectableElement{
     }
 
     public override bool canConnectTo(ElementConnection connection) {
-        return (connection.connectedElement is DataOutInfo) && ((type == connection.connectedElement.type) ||
-               TypeConversion.canConvertTo(connection.connectedElement.type, type)); 
+        return (connection.destinationElement is DataOutInfo) && ((type == connection.destinationElement.type) ||
+               TypeConversion.canConvertTo(connection.destinationElement.type, type)); 
     }
 
     public override int getMaxConnections() {

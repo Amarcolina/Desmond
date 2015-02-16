@@ -42,7 +42,7 @@ public abstract class GenerationStep {
 
                 List<ElementConnection> connections = node.getConnections(outId);
                 foreach (ElementConnection connection in connections) {
-                    Element connectedElement = connection.connectedElement;
+                    Element connectedElement = connection.destinationElement;
                     Node connectedNode = connectedElement.parentNode;
 
                     ScriptElementKey connectedKey = new ScriptElementKey();
@@ -97,7 +97,7 @@ public abstract class GenerationStep {
                         Debug.LogError("Incorrect number of arguments for " + match[0] + " in node " + node);
                     }
 
-                    Element connectedElement = connections[0].connectedElement;
+                    Element connectedElement = connections[0].destinationElement;
                     Node connectedNode = connectedElement.parentNode;
 
                     ScriptElementKey connectedKey = new ScriptElementKey();

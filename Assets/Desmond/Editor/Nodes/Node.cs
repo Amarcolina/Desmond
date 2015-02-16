@@ -182,9 +182,9 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver {
         foreach (ConnectableElement a in elements.FindAll(element => element is ConnectableElement)) {
             CurveEnd endA = getCurveEnd(a);
             foreach(ElementConnection connection in a.connections.FindAll(connection => connection.originNode == this)){
-                if (connection.connectedNode.isVisible) {
-                    CurveEnd endB = connection.connectedNode.getCurveEnd(connection.connectedElement);
-                    a.drawLink(connection.connectedElement, endA, endB);
+                if (connection.destinationNode.isVisible) {
+                    CurveEnd endB = connection.destinationNode.getCurveEnd(connection.destinationElement);
+                    a.drawLink(connection.destinationElement, endA, endB);
                 }
             }
         }

@@ -12,6 +12,7 @@ public class BoardBuilder {
 
         steps.Add(new InitScriptStructs());
         steps.Add(new RecordNamespaceImports());
+        steps.Add(new GenerateStaticNodes());
         steps.Add(new InitFields());
         steps.Add(new InitMethodStructs());
         steps.Add(new ResolveScriptLocalNames());
@@ -65,9 +66,9 @@ public class BoardBuilder {
                                 finalNodes.Add(connection.originNode);
                                 linkedNodes.Add(connection.originNode);
                             }
-                            if (!linkedNodes.Contains(connection.connectedNode)) {
-                                finalNodes.Add(connection.connectedNode);
-                                linkedNodes.Add(connection.connectedNode);
+                            if (!linkedNodes.Contains(connection.destinationNode)) {
+                                finalNodes.Add(connection.destinationNode);
+                                linkedNodes.Add(connection.destinationNode);
                             }
                         }
                     }
@@ -153,9 +154,9 @@ public class BoardBuilder {
                             finalNodes.Add(connection.originNode);
                             linkedNodes.Add(connection.originNode);
                         }
-                        if (!linkedNodes.Contains(connection.connectedNode)) {
-                            finalNodes.Add(connection.connectedNode);
-                            linkedNodes.Add(connection.connectedNode);
+                        if (!linkedNodes.Contains(connection.destinationNode)) {
+                            finalNodes.Add(connection.destinationNode);
+                            linkedNodes.Add(connection.destinationNode);
                         }
                     }
                 }

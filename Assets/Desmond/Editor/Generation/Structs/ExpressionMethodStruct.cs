@@ -5,7 +5,8 @@ using System.Collections.Generic;
 namespace Desmond { 
 
 public class ExpressionMethodStruct : MethodStruct {
-    string returnType;
+    public string returnType;
+    public string staticReference = null;
 
     public override bool shouldBeInlined() {
         if (codeBlock.Count != 1) {
