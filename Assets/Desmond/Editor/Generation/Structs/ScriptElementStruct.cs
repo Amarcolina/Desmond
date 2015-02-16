@@ -12,6 +12,10 @@ public struct ScriptElementKey {
         this.parentNode = parentNode;
         this.id = id;
     }
+
+    public override string ToString() {
+        return parentNode.ToString() + ":" + id;
+    }
 }
 
 public abstract class ScriptElementStruct {
@@ -30,6 +34,10 @@ public abstract class ScriptElementStruct {
     }
 
     public abstract List<string> generateScriptLines();
+
+    public override string ToString() {
+        return structKey.ToString();
+    }
 }
 
 }

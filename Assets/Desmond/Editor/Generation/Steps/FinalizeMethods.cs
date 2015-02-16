@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Desmond {
 
-public class FinalizeExpressionMethods : GenerationStep {
+public class FinalizeMethods : GenerationStep {
 
     public override void doStep() {
         LoadingBarUtil.beginChunk(scripts.Count, "", "", () => {
@@ -12,32 +12,27 @@ public class FinalizeExpressionMethods : GenerationStep {
                 LoadingBarUtil.beginChunk(script.methods.Values.Count, "", "", () => {
                     foreach (GenericMethodStruct genericMethod in script.methods.Values) {
                         LoadingBarUtil.recordProgress("Finalizing expression method : " + genericMethod.ToString());
-                        forEveryExpressionLink(genericMethod, linkedExpression => {
-                            return calculateExpressionText(linkedExpression);
+                        forEveryMethodLink(genericMethod, linkedMethod => {
+                            return calculateMethodLines(linkedMethod);
                         });
                     }
                 });
 
             }
         });
-
     }
 
-    public string calculateExpressionText(ExpressionMethodStruct expression) {
-        if (!expression.shouldBeInlined()) {
-            return expression.methodName + "()";
+    public List<string> calculateMethodLines(MethodStruct method) {
+        if (!method.shouldBeInlined()) {
+            List<string> ret = new List<string>();
+            ret.Add(method.methodName + "();");
+            return ret;
         }
-
-        Debug.Log(":::::");
-        foreach(string line in expression.codeBlock){
-            Debug.Log(line);
-        }
-        Assert.equals(expression.codeBlock.Count, 1);
 
         //Make sure expression is completely parsed (done recursively) before inlining
-        forEveryExpressionLink(expression, linkedExpression => calculateExpressionText(linkedExpression));
+        forEveryMethodLink(method, linkedMethod => calculateMethodLines(linkedMethod));
 
-        return expression.codeBlock[0];
+        return method.codeBlock;
     }
 }
 

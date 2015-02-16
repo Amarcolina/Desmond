@@ -180,6 +180,10 @@ public class NodeDescriptor : IPathable{
             string trimmedLine = line.Trim();
             string[] splitLine = trimmedLine.Split();
 
+            if (trimmedLine == "") {
+                continue;
+            }
+
             //Match #name to create a new descriptor
             if (trimmedLine.StartsWith("#")) {
                 current = new NodeDescriptor();

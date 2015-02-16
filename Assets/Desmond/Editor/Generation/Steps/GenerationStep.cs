@@ -50,9 +50,13 @@ public abstract class GenerationStep {
                     connectedKey.id = connectedElement.id;
 
                     ScriptStruct connectedScript = scripts[connectedNode.gameObjectInstance];
-                    MethodStruct connectedMethod = connectedScript.methods[connectedKey] as MethodStruct;
 
-                    if (connectedMethod == null) {
+                    GenericMethodStruct connectedGenericMethod;
+                    Assert.that(connectedScript.methods.TryGetValue(connectedKey, out connectedGenericMethod), "Method " + connectedKey + " was not found on script " + connectedScript);
+                    MethodStruct connectedMethod = connectedGenericMethod as MethodStruct;
+                    Assert.that(connectedMethod != null, "Method must be of type MethodStruct");
+
+                    if (connectedGenericMethod == null) {
                         Debug.LogError("Error");
                     }
 

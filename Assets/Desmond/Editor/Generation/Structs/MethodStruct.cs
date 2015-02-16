@@ -38,6 +38,7 @@ public class MethodStruct : GenericMethodStruct {
 
     public override List<string> generateScriptLines() {
         List<string> scriptLines = new List<string>();
+        Debug.Log(this + " : " + references);
         if ((shouldBeInlined() || references == 0) && !isPublic) {
             return scriptLines;
         }

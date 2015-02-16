@@ -20,8 +20,11 @@ public class BoardBuilder {
         steps.Add(new GenerateStaticNodes());
         steps.Add(new InitFields());
         steps.Add(new InitMethodStructs());
+        steps.Add(new CountMethodReferences());
+        steps.Add(new CountExpressionReferences());
         steps.Add(new ResolveScriptLocalNames());
         steps.Add(new FinalizeExpressionMethods());
+        steps.Add(new FinalizeMethods());
         steps.Add(new WriteScriptFile());
 
         return doSteps();

@@ -16,8 +16,10 @@ public class Assert {
     }
 
     public static void equals(object a, object b, string message = "") {
-        if (a != b) {
-            throw new AssertionFailed(message);
+        Debug.Log(a + " : " + a.GetHashCode());
+        Debug.Log(b + " : " + b.GetHashCode());
+        if (!a.Equals(b)) {
+            throw new AssertionFailed(a + " did not equal " + b);
         }
     }
 }
