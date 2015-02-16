@@ -81,12 +81,12 @@ public class LoadingBarUtil : MonoBehaviour
     public static void recordProgress(string infoString = "")
     {
         progress[progress.Count - 1]++;
-        if (stopwatch.ElapsedMilliseconds > 17)
-        {
+        //if (stopwatch.ElapsedMilliseconds > 0)
+        //{
             displayBar(infoString);
-            stopwatch.Reset();
-            stopwatch.Start();
-        }
+            //stopwatch.Reset();
+            //stopwatch.Start();
+        //}
     }
 
     private static void displayBar(string info = "")
@@ -109,6 +109,8 @@ public class LoadingBarUtil : MonoBehaviour
 
         infoString += info;
 
+        UnityEngine.Debug.Log(titleString + " : " + infoString);
+        //System.Threading.Thread.Sleep(1000);
         if (EditorUtility.DisplayCancelableProgressBar(titleString, infoString, percent))
         {
             throw new System.Exception("User canceled operation");

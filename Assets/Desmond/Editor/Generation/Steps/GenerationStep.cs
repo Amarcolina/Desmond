@@ -9,7 +9,7 @@ public abstract class GenerationStep {
     public Dictionary<GameObject, ScriptStruct> scripts;
     public List<Node> nodes;
 
-    private List<object> additionalData;
+    private List<object> additionalData = new List<object>();
 
     protected void addData(object o) {
         additionalData.Add(o);

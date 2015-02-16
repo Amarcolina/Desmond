@@ -13,6 +13,9 @@ public class InitScriptStructs : GenerationStep {
         HashSet<GameObject> gameObjects = new HashSet<GameObject>();
         LoadingBarUtil.beginChunk(nodes.Count, "", "Couting nodes : ", () => {
             foreach (Node node in nodes) {
+                if (node.gameObjectInstance == null) {
+                    node.gameObjectInstance = BoardHandler.getSceneBoardHolder().gameObject;
+                }
                 gameObjects.Add(node.gameObjectInstance);
                 LoadingBarUtil.recordProgress(node.ToString());
             }
@@ -20,6 +23,7 @@ public class InitScriptStructs : GenerationStep {
         
         foreach (GameObject gameObject in gameObjects) {
             ScriptStruct newScriptStruct = new ScriptStruct();
+            newScriptStruct.scriptName = "TestScript";
             newScriptStruct.parentObject = gameObject;
             scripts[gameObject] = newScriptStruct;
         }
@@ -31,7 +35,8 @@ public class InitScriptStructs : GenerationStep {
                 LoadingBarUtil.recordProgress(node.ToString());
             }
         });
-        
+
+        Debug.Log(scripts.Count);
     }
 }
 

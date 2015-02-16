@@ -40,6 +40,7 @@ public class ConnectableElement : Element {
 
     public virtual bool tryConnect(ElementConnection connection) {
         if (!canConnectTo(connection)) {
+            Debug.Log(this);
             return false;
         }
 

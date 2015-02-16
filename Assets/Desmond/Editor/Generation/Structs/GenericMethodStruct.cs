@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Desmond {
 
 public class GenericMethodStruct : ScriptElementStruct{
-    public List<string> codeBlock;
+    public List<string> codeBlock = new List<string>();
     public int references = 0;
 
     public GenericMethodStruct(ScriptElementKey key) : base(key) { }

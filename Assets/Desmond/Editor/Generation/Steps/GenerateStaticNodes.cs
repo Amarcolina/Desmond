@@ -19,28 +19,39 @@ public class GenerateStaticNodes : GenerationStep {
         LoadingBarUtil.beginChunk(nodes.Count, "", "Generating Static Nodes : ", () => {
             foreach (Node node in nodes) {
                 foreach (MethodStruct method in node.getMethodStructs()) {
-                    Node staticNode = getStaticNode(node.gameObjectInstance, method.staticReference);
-                    Element destinationElement = node.getElement(method.structKey.id);
-                    ConnectableElement originElement = staticNode.getElement("out") as ConnectableElement;
-                    Assert.that(originElement != null, "Element must exist and be of type ConnectableElement");
+                    if (method.staticReference != null) {
+                        Node staticNode = getStaticNode(node.gameObjectInstance, method.staticReference);
+                        Element destinationElement = node.getElement(method.structKey.id);
+                        ConnectableElement originElement = staticNode.getElement(method.structKey.id) as ConnectableElement;
+                        Debug.Log(destinationElement.GetType());
+                        Assert.that(originElement is ConnectableElement, "Element must exist and be of type ConnectableElement");
+                        Assert.that(destinationElement is ExecutionInputInfo, "Destination must be of type execution input!");
 
-                    ElementConnection proposedConnection = new ElementConnection(destinationElement, staticNode, node);
-                    Assert.that(originElement.tryConnect(proposedConnection), "static connection must not fail");
+                        ElementConnection proposedConnection = new ElementConnection(destinationElement, staticNode, node);
+                        Assert.that(originElement.tryConnect(proposedConnection), "static connection must not fail");
+                    }
                 }
-
+                
                 foreach (ExpressionMethodStruct expression in node.getExpressionStructs()) {
-                    Node staticNode = getStaticNode(node.gameObjectInstance, expression.staticReference);
-                    Element destinationElement = staticNode.getElement("out");
-                    ConnectableElement originElement = node.getElement(expression.structKey.id) as ConnectableElement;
-                    Assert.that(originElement != null, "Element must exist and be of type ConnectableElement");
+                    if (expression.staticReference != null) {
+                        Node staticNode = getStaticNode(node.gameObjectInstance, expression.staticReference);
+                        Element destinationElement = staticNode.getElement("out");
+                        ConnectableElement originElement = node.getElement(expression.structKey.id) as ConnectableElement;
+                        Assert.that(originElement != null, "Element must exist and be of type ConnectableElement");
 
-                    ElementConnection proposedConnection = new ElementConnection(destinationElement, staticNode, node);
-                    Assert.that(originElement.tryConnect(proposedConnection), "static connection must not fail");
+                        ElementConnection proposedConnection = new ElementConnection(destinationElement, staticNode, node);
+                        Assert.that(originElement.tryConnect(proposedConnection), "static connection must not fail");
+                    }
                 }
 
                 LoadingBarUtil.recordProgress(node.ToString());
             }
         });
+
+        nodes.AddRange(unanchoredStaticNodes.Values);
+        foreach (var d in anchoredStaticNodes) {
+            nodes.AddRange(d.Value.Values);
+        }
 
     }
 
@@ -58,7 +69,7 @@ public class GenerateStaticNodes : GenerationStep {
         Node node;
         if (!nameToNode.TryGetValue(staticReference, out node)) {
             node = nameToFactory[staticReference].createNode();
-            node.gameObjectInstance = null;
+            node.gameObjectInstance = anchor;
             nameToNode[staticReference] = node;
         }
         return node;

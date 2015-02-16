@@ -12,6 +12,7 @@ public class WriteScriptFile : GenerationStep {
             foreach (ScriptStruct script in scripts.Values) {
                 LoadingBarUtil.beginChunk(4, "", "", () => {
                     ScriptIndenter indenter = new ScriptIndenter();
+                    indenter.addCode("/*");
 
                     LoadingBarUtil.recordProgress("Namespace imports");
                     foreach (string s in script.namespaceImports) {
@@ -37,6 +38,8 @@ public class WriteScriptFile : GenerationStep {
                     }
 
                     indenter.addCode("}");
+
+                    indenter.addCode("*/");
 
                     LoadingBarUtil.recordProgress("Writing to disk");
                     string filePath = Application.dataPath + "/Desmond/Generated/SceneScripts/" + script.scriptName + ".cs";

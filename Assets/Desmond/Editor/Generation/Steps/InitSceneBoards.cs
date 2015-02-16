@@ -15,6 +15,10 @@ public class InitSceneBoards : GenerationStep {
         });
 
         boards = BoardHandler.getSceneBoards();
+
+        foreach (DesmondBoard board in boards) {
+            nodes.AddRange(board.nodesInBoard);
+        }
     }
 }
 

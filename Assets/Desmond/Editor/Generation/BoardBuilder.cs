@@ -12,6 +12,8 @@ public class BoardBuilder {
     public static List<PostCompilationJob> buildSceneBoards() {
         steps.Clear();
 
+        Debug.Log("here at least?");
+
         steps.Add(new InitSceneBoards());
         steps.Add(new InitScriptStructs());
         steps.Add(new RecordNamespaceImports());

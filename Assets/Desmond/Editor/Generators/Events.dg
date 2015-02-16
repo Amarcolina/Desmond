@@ -5,7 +5,7 @@ $method onUpdate static Update
 
 #Events/Awake
 
-$method onAwake static Awake
+$method onAwakeEvent static Awake
 	->onAwake
 
 #Events/Start

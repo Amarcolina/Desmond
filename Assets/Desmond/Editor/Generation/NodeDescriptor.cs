@@ -104,7 +104,7 @@ public class MethodDescriptor : GenericMethodDescriptor {
  * $out outType outName (forceInline | preventInline | auto)
  *     code
  * 
- * $customCode
+ * $customMethod
  *     code
  *     code
  * 
@@ -224,7 +224,7 @@ public class NodeDescriptor : IPathable{
                         current.fields[splitLine[2]] = new FieldDescriptor(splitLine[1], splitLine[2], defaultValue);
                         break;
                     }
-                    case "$customCode": {
+                    case "$customMethod": {
                         genericMethod = new GenericMethodDescriptor();
                         current.functions.Add(genericMethod);
                         break;
@@ -254,6 +254,10 @@ public class NodeDescriptor : IPathable{
                         current.uniqueNames.Add(splitLine[1]);
                         break;
                     }
+                    default: {
+                        Debug.LogWarning("Unexpected declaration " + command);
+                        break;
+                    }
                 }
                 continue;
             }
@@ -263,7 +267,7 @@ public class NodeDescriptor : IPathable{
                     method.methodLocalNames.Add(match[1]);
                 }
                 if (genericMethod != null) {
-                    method.methodLocalNames.Add(match[1]);
+                    genericMethod.methodLocalNames.Add(match[1]);
                 }
             }
 
