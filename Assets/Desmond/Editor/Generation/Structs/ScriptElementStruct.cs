@@ -33,6 +33,8 @@ public abstract class ScriptElementStruct {
         return structKey.Equals(obj);
     }
 
+    public abstract bool shouldBeWritten();
+
     public abstract List<string> generateScriptLines();
 
     public override string ToString() {

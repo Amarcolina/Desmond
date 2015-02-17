@@ -16,6 +16,10 @@ public class MethodStruct : GenericMethodStruct {
         this.methodName = methodName;
     }
 
+    public override bool shouldBeWritten() {
+        return references > 0 || isPublic;
+    }
+
     public virtual bool shouldBeInlined() {
         if(isPublic){
             return false;

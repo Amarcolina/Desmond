@@ -10,6 +10,10 @@ public class GenericMethodStruct : ScriptElementStruct{
 
     public GenericMethodStruct(ScriptElementKey key) : base(key) { }
 
+    public override bool shouldBeWritten() {
+        return references > 0;
+    }
+
     public override List<string> generateScriptLines() {
         return codeBlock;
     }

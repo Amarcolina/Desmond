@@ -18,14 +18,12 @@ public class FieldStruct : ScriptElementStruct{
         this.defaultValue = defaultValue;
     }
 
-
+    public override bool shouldBeWritten() {
+        return references > 0 || isPublic;
+    }
 
     public override List<string> generateScriptLines() {
         List<string> scriptLines = new List<string>();
-        if (references == 0 && !isPublic) {
-            return scriptLines;
-        }
-
         string line;
         line  = "private ";
         line += type + " ";

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -25,14 +26,14 @@ public class WriteScriptFile : GenerationStep {
                     indenter.addCode("public class " + script.scriptName + " : DesmondSceneScript {");
 
                     LoadingBarUtil.recordProgress("Fields");
-                    foreach (FieldStruct field in script.fields.Values) {
+                    foreach (FieldStruct field in script.fields.Values.Where(f => f.shouldBeWritten())) {
                         indenter.addCode(field.generateScriptLines());
                     }
 
                     indenter.addCode("");
 
                     LoadingBarUtil.recordProgress("Methods");
-                    foreach (GenericMethodStruct method in script.methods.Values) {
+                    foreach (GenericMethodStruct method in script.methods.Values.Where(m => m.shouldBeWritten())) {
                         indenter.addCode(method.generateScriptLines());
                     }
 

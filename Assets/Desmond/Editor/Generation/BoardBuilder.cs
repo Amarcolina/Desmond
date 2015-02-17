@@ -20,6 +20,7 @@ public class BoardBuilder {
         steps.Add(new InitFields());
         steps.Add(new CountMethodReferences());
         steps.Add(new CountExpressionReferences());
+        steps.Add(new CountFieldReferences());
         steps.Add(new ResolveScriptLocalNames());
         steps.Add(new FinalizeFields());
         steps.Add(new FinalizeExpressionMethods());
