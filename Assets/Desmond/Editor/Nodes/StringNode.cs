@@ -173,6 +173,10 @@ public class StringNode : Node{
         return list;
     }
 
+    public override HashSet<string> getNamespaceImports() {
+        return descriptor.namespaceImports;
+    }
+
     public override void OnBeforeSerialize() {
         base.OnBeforeSerialize();
         if (descriptor != null) {

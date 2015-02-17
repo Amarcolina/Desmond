@@ -14,7 +14,7 @@ public class FieldStruct : ScriptElementStruct{
 
     public FieldStruct(ScriptElementKey key, string type, string name, object defaultValue = null) : base(key){
         this.type = type;
-        this.name = name;
+        this.name = "fooooy";
         this.defaultValue = defaultValue;
     }
 

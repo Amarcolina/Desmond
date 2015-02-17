@@ -19,9 +19,9 @@ public class DefaultAnimationCurveNode : DefaultValueNode {
     public override List<FieldStruct> getFieldStructs() {
         List<FieldStruct> list = new List<FieldStruct>();
 
-        string name = "DefaultCurve";
+        string name = "defaultCurve";
 
-        AnimationCurveFieldStruct s = new AnimationCurveFieldStruct(getKey(), type, name, value);
+        AnimationCurveFieldStruct s = new AnimationCurveFieldStruct(new ScriptElementKey(this, name), type, name, value);
         s.isPublic = true;
         list.Add(s);
         return list;
@@ -31,7 +31,7 @@ public class DefaultAnimationCurveNode : DefaultValueNode {
         List<ExpressionMethodStruct> list = new List<ExpressionMethodStruct>();
 
         ExpressionMethodStruct s = new ExpressionMethodStruct(getKey(), "defaultCurve", type);
-        s.addCode("<out>");
+        s.addCode("<defaultCurve>");
         s.inlineBehavior = InlineBehavior.FORCE_INLINE;
         list.Add(s);
 

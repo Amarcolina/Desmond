@@ -26,7 +26,7 @@ $out System.Single floatValue
 
 $def System.Single timelineTime 0.0f
 $def System.Single timelineDirection 1.0f
-$def System.Single timelineDuration 0.0f
+$def System.Single timelineDuration 100.0f
 
 $in UnityEngine.AnimationCurve curve
 
@@ -60,7 +60,7 @@ $method playReverseFromEnd
 $out System.Single value
 	<curve>.Evaluate(<timelineTime>)
 	
-$method onAwake static Awake
+$method onAwakeEvent static Awake
 	<timelineDuration> = <curve>[<curve>.length - 1].time;
 
 $customMethod
