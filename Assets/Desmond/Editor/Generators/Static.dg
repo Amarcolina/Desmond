@@ -36,5 +36,5 @@ public void OnTriggerEnter(Collider <methodLocalName other>){
 	->out
 }
 
-$expression UnityEngne.Collider savedCollider
+$out UnityEngne.Collider savedCollider
 	<savedCollider>

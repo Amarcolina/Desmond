@@ -35,8 +35,6 @@ public class InitScriptStructs : GenerationStep {
                 LoadingBarUtil.recordProgress(node.ToString());
             }
         });
-
-        Debug.Log(scripts.Count);
     }
 }
 

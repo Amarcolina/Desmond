@@ -12,17 +12,16 @@ public class BoardBuilder {
     public static List<PostCompilationJob> buildSceneBoards() {
         steps.Clear();
 
-        Debug.Log("here at least?");
-
         steps.Add(new InitSceneBoards());
         steps.Add(new InitScriptStructs());
         steps.Add(new RecordNamespaceImports());
         steps.Add(new GenerateStaticNodes());
-        steps.Add(new InitFields());
         steps.Add(new InitMethodStructs());
+        steps.Add(new InitFields());
         steps.Add(new CountMethodReferences());
         steps.Add(new CountExpressionReferences());
         steps.Add(new ResolveScriptLocalNames());
+        steps.Add(new FinalizeFields());
         steps.Add(new FinalizeExpressionMethods());
         steps.Add(new FinalizeMethods());
         steps.Add(new WriteScriptFile());

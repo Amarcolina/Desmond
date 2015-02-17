@@ -34,7 +34,6 @@ public class WriteScriptFile : GenerationStep {
                     LoadingBarUtil.recordProgress("Methods");
                     foreach (GenericMethodStruct method in script.methods.Values) {
                         indenter.addCode(method.generateScriptLines());
-                        indenter.addCode("");
                     }
 
                     indenter.addCode("}");

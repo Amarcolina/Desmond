@@ -29,7 +29,7 @@ public abstract class GenerationStep {
     public delegate void GenericMethodDelegate(MethodStruct connectedMethod);
     public delegate List<string> GenericMethodReplaceDelegate(MethodStruct connectedMethod);
 
-    public void forEveryMethodLink(GenericMethodStruct genericMethod, GenericMethodReplaceDelegate function) {
+    public void forEveryMethodLink(GenericMethodStruct genericMethod, GenericMethodReplaceDelegate function, bool shouldReplace = true) {
         Node node = genericMethod.structKey.parentNode;
 
         for (int i = genericMethod.codeBlock.Count - 1; i >= 0; i--) {
@@ -38,9 +38,9 @@ public abstract class GenerationStep {
                 string outId = trimmedLine.Substring(2);
 
                 List<string> totalReplacementLines = new List<string>();
-                bool shouldReplace = false;
 
                 List<ElementConnection> connections = node.getConnections(outId);
+                Assert.that(connections != null, "Connections " + outId + " could not be found");
                 foreach (ElementConnection connection in connections) {
                     Element connectedElement = connection.destinationElement;
                     Node connectedNode = connectedElement.parentNode;
@@ -56,13 +56,8 @@ public abstract class GenerationStep {
                     MethodStruct connectedMethod = connectedGenericMethod as MethodStruct;
                     Assert.that(connectedMethod != null, "Method must be of type MethodStruct");
 
-                    if (connectedGenericMethod == null) {
-                        Debug.LogError("Error");
-                    }
-
                     List<string> replacementLines = function(connectedMethod);
                     if (replacementLines != null) {
-                        shouldReplace = true;
                         totalReplacementLines.AddRange(replacementLines); 
                     }
                 }
@@ -80,7 +75,7 @@ public abstract class GenerationStep {
             function(target);
             return null;
         };
-        forEveryMethodLink(genericMethod, newFuncton);
+        forEveryMethodLink(genericMethod, newFuncton, false);
     }
 
     public delegate void ExpressionMethodDelegate(ExpressionMethodStruct connectedExpression);
@@ -158,7 +153,7 @@ public abstract class GenerationStep {
                         line = line.Replace("<" + match[0] + ">", replacementLine);
                     }
                 }else{
-                    Debug.Log("Error");
+                    Debug.LogWarning(key + " is not a field?");
                 }
             }
 

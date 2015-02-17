@@ -14,7 +14,7 @@ public class FinalizeMethods : GenerationStep {
                         LoadingBarUtil.recordProgress("Finalizing expression method : " + genericMethod.ToString());
                         forEveryMethodLink(genericMethod, linkedMethod => {
                             return calculateMethodLines(linkedMethod);
-                        });
+                        }, true);
                     }
                 });
 
@@ -30,7 +30,7 @@ public class FinalizeMethods : GenerationStep {
         }
 
         //Make sure expression is completely parsed (done recursively) before inlining
-        forEveryMethodLink(method, linkedMethod => calculateMethodLines(linkedMethod));
+        forEveryMethodLink(method, linkedMethod => calculateMethodLines(linkedMethod), true);
 
         return method.codeBlock;
     }

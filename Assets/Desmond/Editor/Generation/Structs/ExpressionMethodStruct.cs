@@ -6,7 +6,6 @@ namespace Desmond {
 
 public class ExpressionMethodStruct : MethodStruct {
     public string returnType;
-    public string staticReference = null;
 
     public ExpressionMethodStruct(ScriptElementKey key, string methodName, string returnType) : base(key, methodName) {
         this.returnType = returnType;

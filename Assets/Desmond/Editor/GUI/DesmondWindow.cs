@@ -107,8 +107,8 @@ public class DesmondWindow : EditorWindow {
 
             GUI.EndGroup();
         } catch (System.Exception e){
-            Debug.LogError(e);
             Close();
+            throw e;
         }
     }
 

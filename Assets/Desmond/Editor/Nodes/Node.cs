@@ -54,7 +54,6 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver {
     }
 
     public virtual List<ElementConnection> getConnections(string id) {
-        List<ElementConnection> elements = new List<ElementConnection>();
         Element element;
         if (idToElement.TryGetValue(id, out element)) {
             ConnectableElement connectableElement = element as ConnectableElement;
@@ -62,6 +61,7 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver {
                 return connectableElement.connections;
             }
         }
+        Debug.LogWarning("Could not find connectable element with id " + id);
         return null;
     }
 

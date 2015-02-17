@@ -38,7 +38,6 @@ public class MethodStruct : GenericMethodStruct {
 
     public override List<string> generateScriptLines() {
         List<string> scriptLines = new List<string>();
-        Debug.Log(this + " : " + references);
         if ((shouldBeInlined() || references == 0) && !isPublic) {
             return scriptLines;
         }
@@ -50,6 +49,7 @@ public class MethodStruct : GenericMethodStruct {
         scriptLines.Add(header);
         scriptLines.AddRange(codeBlock);
         scriptLines.Add("}");
+        scriptLines.Add("");
 
         return scriptLines;
     }
