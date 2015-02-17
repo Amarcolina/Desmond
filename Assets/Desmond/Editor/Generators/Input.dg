@@ -2,7 +2,7 @@
 
 $in UnityEngine.KeyCode key
 
-$method onUpdate static Update
+$method onUpdateEvent static Update
 	if(Input.GetKeyDown(<key>)){
 		->onKeyDown
 	}
@@ -11,7 +11,7 @@ $method onUpdate static Update
 
 $in UnityEngine.KeyCode key
 
-$method onUpdate static Update
+$method onUpdateEvent static Update
 	if(Input.GetKeyUp(<key>)){
 		->onKeyUp
 	}
@@ -20,7 +20,7 @@ $method onUpdate static Update
 
 $in UnityEngine.KeyCode key
 
-$method onUpdate static Update
+$method onUpdateEvent static Update
 	if(Input.GetKey(<key>)){
 		->onKeyHold
 	}

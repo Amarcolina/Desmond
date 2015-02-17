@@ -21,9 +21,6 @@ public class ExpressionMethodStruct : MethodStruct {
 
     public override List<string> generateScriptLines() {
         List<string> scriptLines = new List<string>();
-        if ((shouldBeInlined() || references == 0) && !isPublic) {
-            return scriptLines;
-        }
 
         string header = isPublic ? "public " : "private ";
         header += returnType + " ";

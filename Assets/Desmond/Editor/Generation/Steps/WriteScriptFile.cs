@@ -34,6 +34,10 @@ public class WriteScriptFile : GenerationStep {
 
                     LoadingBarUtil.recordProgress("Methods");
                     foreach (GenericMethodStruct method in script.methods.Values.Where(m => m.shouldBeWritten())) {
+                        MethodStruct m = method as MethodStruct;
+                        if (m != null && m.shouldBeInlined()) {
+                            continue;
+                        }
                         indenter.addCode(method.generateScriptLines());
                     }
 

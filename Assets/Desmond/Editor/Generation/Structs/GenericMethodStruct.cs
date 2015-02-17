@@ -15,7 +15,9 @@ public class GenericMethodStruct : ScriptElementStruct{
     }
 
     public override List<string> generateScriptLines() {
-        return codeBlock;
+        List<string> scriptLines = new List<string>(codeBlock);
+        scriptLines.Add("");
+        return scriptLines;
     }
 
     public void addCode(string line) {
