@@ -1,6 +1,6 @@
 #Events/Update
 
-$method onUpdate static Update
+$method onUpdateEvent static Update
 	->onUpdate
 
 #Events/Awake
@@ -10,17 +10,17 @@ $method onAwakeEvent static Awake
 
 #Events/Start
 
-$method onStart static Start
+$method onStartEvent static Start
 	->onStart
 
 #Events/OnMouseDown gameObject
 
-$method onUpdate static Update
+$method onMouseDownEvent static Update
 	->onMouseDown
 	
 #Events/OnTriggerEnter gameObject
 
-$method onTriggerEnter static OnTriggerEnter
+$method onTriggerEnterEvent static OnTriggerEnter
 	->onTriggerEnter
 	
 $out savedCollider static OnTriggerEnter

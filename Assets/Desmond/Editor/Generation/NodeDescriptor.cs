@@ -266,7 +266,7 @@ public class NodeDescriptor : IPathable{
                 continue;
             }
 
-            foreach (string[] match in StringHelper.getMatchingBraces(line, s => s == "methodLocalName", s => s != null)) {
+            foreach (string[] match in StringHelper.getMatchingBraces(trimmedLine, s => s == "methodLocalName", s => s != null)) {
                 if (method != null) {
                     method.methodLocalNames.Add(match[1]);
                 }
@@ -284,18 +284,18 @@ public class NodeDescriptor : IPathable{
             }
 
             if (method != null) {
-                method.codeBlock.Add(line);
+                method.codeBlock.Add(trimmedLine);
                 continue;
             }
 
             if (expression != null) {
-                expression.expressionCode = line;
+                expression.expressionCode = trimmedLine;
                 expression = null;
                 continue;
             }
 
             if (genericMethod != null) {
-                genericMethod.codeBlock.Add(line);
+                genericMethod.codeBlock.Add(trimmedLine);
                 continue;
             }
         }

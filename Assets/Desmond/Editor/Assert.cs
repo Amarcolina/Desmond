@@ -11,7 +11,7 @@ public class Assert {
 
     public static void that(bool condition, string message = "") {
         if (!condition) {
-            throw new AssertionFailed(message);
+            throw new AssertionFailed(message);//
         }
     }
 
