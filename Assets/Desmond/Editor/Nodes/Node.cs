@@ -85,6 +85,10 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver {
         return new HashSet<string>();
     }
 
+    public virtual HashSet<string> getUniqueNames() {
+        return new HashSet<string>();
+    }
+
     public static Rect rectSlide(Rect r, float amount) {
         float x = amount > 0 ? r.x + amount : r.x;
         float width = r.width - Mathf.Abs(amount);

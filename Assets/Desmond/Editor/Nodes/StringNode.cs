@@ -177,6 +177,10 @@ public class StringNode : Node{
         return descriptor.namespaceImports;
     }
 
+    public override HashSet<string> getUniqueNames() {
+        return descriptor.uniqueNames;
+    }
+
     public override void OnBeforeSerialize() {
         base.OnBeforeSerialize();
         if (descriptor != null) {

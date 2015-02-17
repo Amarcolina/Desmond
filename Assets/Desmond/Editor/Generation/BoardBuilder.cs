@@ -22,6 +22,7 @@ public class BoardBuilder {
         steps.Add(new CountExpressionReferences());
         steps.Add(new CountFieldReferences());
         steps.Add(new ResolveScriptLocalNames());
+        steps.Add(new PrepareMethodLocalNames());
         steps.Add(new FinalizeFields());
         steps.Add(new FinalizeExpressionMethods());
         steps.Add(new FinalizeMethods());

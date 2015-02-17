@@ -24,7 +24,6 @@ public class PrepareMethodLocalNames : GenerationStep {
 
                         for (int i = 0; i < method.codeBlock.Count; i++) {
                             string line = method.codeBlock[i];
-
                             foreach (string[] match in StringHelper.getMatchingBraces(line, s => s == "methodLocalName", s => s != null)) {
                                 string name = match[1];
                                 if (nameToId.ContainsKey(name)) {
@@ -32,14 +31,14 @@ public class PrepareMethodLocalNames : GenerationStep {
                                 } else {
                                     nameToId[name] = idCounter;
                                     uniqueIdToName[idCounter] = name;
-                                    line.Replace("<" + match[0] + " " + match[1] + ">", "<methodLocalId " + idCounter + ">");
+                                    line = line.Replace("<" + match[0] + " " + match[1] + ">", "<methodLocalId " + idCounter + ">");
                                     idCounter++;
                                 }
                             }
 
                             foreach (string[] match in StringHelper.getMatchingBraces(line, s => nameToId.ContainsKey(s))) {
                                 string name = match[0];
-                                line.Replace("<" + name + ">", "<methodLocalId " + nameToId + ">");
+                                line = line.Replace("<" + name + ">", "<methodLocalId " + nameToId[name] + ">");
                             }
 
                             method.codeBlock[i] = line;

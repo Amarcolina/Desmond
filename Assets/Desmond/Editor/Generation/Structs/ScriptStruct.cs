@@ -20,6 +20,7 @@ public class ScriptStruct{
 
     public Dictionary<ScriptElementKey, GenericMethodStruct> methods = new Dictionary<ScriptElementKey, GenericMethodStruct>();
     public Dictionary<ScriptElementKey, FieldStruct> fields = new Dictionary<ScriptElementKey, FieldStruct>();
+    public Dictionary<ScriptElementKey, string> scriptLocalNames = new Dictionary<ScriptElementKey, string>(); 
 
     public HashSet<string> namespaceImports = new HashSet<string>();
 

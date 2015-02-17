@@ -19,6 +19,12 @@ public class ResolveScriptLocalNames : GenerationStep {
                 Dictionary<ScriptElementKey, string> elementToFinal = new Dictionary<ScriptElementKey, string>();
                 takenNames.Clear();
 
+                foreach (Node node in nodes) {
+                    foreach (string name in node.getUniqueNames()) {
+                        elementToFinal[new ScriptElementKey(node, name)] = generateUniqueName(name);
+                    }
+                }
+
                 LoadingBarUtil.beginChunk(script.methods.Values.Count, "", "Resolving script local names : ", () => {
                     foreach (GenericMethodStruct method in script.methods.Values) {
                         //Generates names of named methods
@@ -31,19 +37,6 @@ public class ResolveScriptLocalNames : GenerationStep {
                         for (int i = 0; i < method.codeBlock.Count; i++) {
                             string line = method.codeBlock[i];
 
-                            foreach (string[] match in StringHelper.getMatchingBraces(line, s => s == "scriptLocalName", s => s != null)) {
-                                string id = match[1];
-
-                                ScriptElementKey key = new ScriptElementKey(method.structKey.parentNode, id);
-                                if (elementToFinal.ContainsKey(key)) {
-                                    Debug.LogError("Mutiple definitions of the same key!");
-                                }
-
-                                string uniqueName = generateUniqueName(id);
-                                elementToFinal[key] = uniqueName;
-                                line.Replace("<" + match[0] + " " + match[1] + ">", uniqueName);
-                            }
-
                             foreach (string[] match in StringHelper.getMatchingBraces(line, s => s != null)) {
                                 string id = match[0];
 
@@ -52,7 +45,7 @@ public class ResolveScriptLocalNames : GenerationStep {
                                     continue; //fail silently cause it might be something else
                                 }
 
-                                line.Replace("<" + id + ">", elementToFinal[key]);
+                                line = line.Replace("<" + id + ">", elementToFinal[key]);
                             }
 
                             method.codeBlock[i] = line;
@@ -70,7 +63,6 @@ public class ResolveScriptLocalNames : GenerationStep {
                 data.allScriptsGeneratedNames[script] = takenNames;
             }
         });
-        
 
         addData(data);
     }
