@@ -24,7 +24,7 @@ public class CountMethodReferences : GenerationStep {
             return;
         }
 
-        scripts[genericMethod.structKey.parentNode.gameObjectInstance].methods[genericMethod.structKey] = genericMethod;
+        getScript(genericMethod.structKey.parentNode.gameObjectInstance).methods[genericMethod.structKey] = genericMethod;
 
         forEveryMethodLink(genericMethod, subMethod => countMethodReferences(subMethod));
     }

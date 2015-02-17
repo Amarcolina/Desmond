@@ -34,14 +34,8 @@ public class BoardBuilder {
         LoadingBarUtil.beginChunk(steps.Count, "Building Scripts: ", "", () => {
             GenerationStep previousStep = null;
             foreach (GenerationStep step in steps) {
-                if (previousStep == null) {
-                    step.boards = new List<DesmondBoard>();
-                    step.nodes = new List<Node>();
-                    step.scripts = new Dictionary<GameObject, ScriptStruct>();
-                } else {
-                    step.boards = previousStep.boards;
-                    step.nodes = previousStep.nodes;
-                    step.scripts = previousStep.scripts;
+                if (previousStep != null) {
+                    step.init(previousStep);
                 }
                 LoadingBarUtil.beginChunk(1, step.ToString(), "", () => {
                     step.doStep();

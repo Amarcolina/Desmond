@@ -25,12 +25,12 @@ public class InitScriptStructs : GenerationStep {
             ScriptStruct newScriptStruct = new ScriptStruct();
             newScriptStruct.scriptName = "TestScript";
             newScriptStruct.parentObject = gameObject;
-            scripts[gameObject] = newScriptStruct;
+            setScript(gameObject, newScriptStruct);
         }
 
         LoadingBarUtil.beginChunk(nodes.Count, "", "Initializing nodes : ", () => {
             foreach (Node node in nodes) {
-                ScriptStruct scriptStruct = scripts[node.gameObjectInstance];
+                ScriptStruct scriptStruct = getScript(node.gameObjectInstance);
                 scriptStruct.nodes.Add(node);
                 LoadingBarUtil.recordProgress(node.ToString());
             }

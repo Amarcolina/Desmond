@@ -11,7 +11,7 @@ public class InitFields : GenerationStep {
             foreach (Node node in nodes) {
                 List<FieldStruct> fields = node.getFieldStructs();
                 foreach (FieldStruct field in fields) {
-                    scripts[field.structKey.parentNode.gameObjectInstance].fields[field.structKey] = field;
+                    getScript(field.structKey.parentNode.gameObjectInstance).fields[field.structKey] = field;
                 }
                 LoadingBarUtil.recordProgress(node.ToString());
             }

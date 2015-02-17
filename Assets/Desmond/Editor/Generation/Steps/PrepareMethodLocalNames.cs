@@ -13,8 +13,8 @@ public class PrepareMethodLocalNames : GenerationStep {
     public override void doStep() {
         PreparedMethodLocalNameTable data = new PreparedMethodLocalNameTable();
 
-        LoadingBarUtil.beginChunk(scripts.Count, "", "", () => {
-            foreach (ScriptStruct script in scripts.Values) {
+        LoadingBarUtil.beginChunk(scriptCount, "", "", () => {
+            foreach (ScriptStruct script in scripts) {
                 Dictionary<int, string> uniqueIdToName = new Dictionary<int, string>();
                 int idCounter = 1;
 

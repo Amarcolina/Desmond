@@ -9,8 +9,8 @@ public class WriteScriptFile : GenerationStep {
 
     public override void doStep() {
 
-        LoadingBarUtil.beginChunk(scripts.Count, "", "Writing Script : ", () => {
-            foreach (ScriptStruct script in scripts.Values) {
+        LoadingBarUtil.beginChunk(scriptCount, "", "Writing Script : ", () => {
+            foreach (ScriptStruct script in scripts) {
                 LoadingBarUtil.beginChunk(4, "", "", () => {
                     ScriptIndenter indenter = new ScriptIndenter();
                     indenter.addCode("/*");

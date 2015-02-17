@@ -11,7 +11,7 @@ public class RecordNamespaceImports : GenerationStep {
     public override void doStep() {
         LoadingBarUtil.beginChunk(nodes.Count, "", "Recording namespace imports", () => {
             foreach (Node node in nodes) {
-                ScriptStruct scriptStruct = scripts[node.gameObjectInstance];
+                ScriptStruct scriptStruct = getScript(node.gameObjectInstance);
                 scriptStruct.namespaceImports.UnionWith(node.getNamespaceImports());
                 LoadingBarUtil.recordProgress(node.ToString());
             }

@@ -30,7 +30,7 @@ public class InitMethodStructs : GenerationStep{
     }
 
     private void addMethod(GenericMethodStruct genericMethod) {
-        scripts[genericMethod.structKey.parentNode.gameObjectInstance].methods[genericMethod.structKey] = genericMethod;
+        getScript(genericMethod.structKey.parentNode.gameObjectInstance).methods[genericMethod.structKey] = genericMethod;
     }
 }
 

@@ -14,8 +14,8 @@ public class ResolveScriptLocalNames : GenerationStep {
     public override void doStep() {
         ScriptLocalGeneratedNames data = new ScriptLocalGeneratedNames();
 
-        LoadingBarUtil.beginChunk(scripts.Count, "", "", () => {
-            foreach (ScriptStruct script in scripts.Values) {
+        LoadingBarUtil.beginChunk(scriptCount, "", "", () => {
+            foreach (ScriptStruct script in scripts) {
                 Dictionary<ScriptElementKey, string> elementToFinal = new Dictionary<ScriptElementKey, string>();
                 takenNames.Clear();
 

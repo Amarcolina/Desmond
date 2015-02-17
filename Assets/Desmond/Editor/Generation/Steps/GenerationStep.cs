@@ -5,11 +5,55 @@ using System.Collections.Generic;
 namespace Desmond {
 
 public abstract class GenerationStep {
-    public List<DesmondBoard> boards;
-    public Dictionary<GameObject, ScriptStruct> scripts;
-    public List<Node> nodes;
+    protected List<DesmondBoard> boards = new List<DesmondBoard>();
 
-    private List<object> additionalData = new List<object>();
+    private Dictionary<GameObject, ScriptStruct> anchoredScripts = new Dictionary<GameObject,ScriptStruct>();
+    private ScriptStruct unanchoredScript = null;
+
+    protected List<Node> nodes = new List<Node>();
+
+    protected List<object> additionalData = new List<object>();
+
+    public void init(GenerationStep previous) {
+        boards = previous.boards;
+        anchoredScripts = previous.anchoredScripts;
+        unanchoredScript = previous.unanchoredScript;
+        nodes = previous.nodes;
+        additionalData = previous.additionalData;
+    }
+
+    protected int scriptCount {
+        get {
+            return anchoredScripts.Count + (unanchoredScript == null ? 0 : 1);
+        }
+    }
+
+    protected IEnumerable<ScriptStruct> scripts {
+        get {
+            if (unanchoredScript != null) {
+                yield return unanchoredScript;
+            }
+            foreach (ScriptStruct s in anchoredScripts.Values) {
+                yield return s;
+            }
+        }
+    }
+
+    protected ScriptStruct getScript(GameObject anchor) {
+        if (anchor == null) {
+            return unanchoredScript;
+        } else {
+            return anchoredScripts[anchor];
+        }
+    }
+
+    protected void setScript(GameObject anchor, ScriptStruct script) {
+        if (anchor == null) {
+            unanchoredScript = script;
+        } else {
+            anchoredScripts[anchor] = script;
+        }
+    }
 
     protected void addData(object o) {
         additionalData.Add(o);
@@ -49,7 +93,7 @@ public abstract class GenerationStep {
                     connectedKey.parentNode = connectedNode;
                     connectedKey.id = connectedElement.id;
 
-                    ScriptStruct connectedScript = scripts[connectedNode.gameObjectInstance];
+                    ScriptStruct connectedScript = getScript(connectedNode.gameObjectInstance);
 
                     GenericMethodStruct connectedGenericMethod;
                     Assert.that(connectedScript.methods.TryGetValue(connectedKey, out connectedGenericMethod), "Method " + connectedKey + " was not found on script " + connectedScript);
@@ -103,7 +147,7 @@ public abstract class GenerationStep {
                     connectedKey.parentNode = connectedNode;
                     connectedKey.id = connectedElement.id;
 
-                    ScriptStruct connectedScript = scripts[connectedNode.gameObjectInstance];
+                    ScriptStruct connectedScript = getScript(connectedNode.gameObjectInstance);
 
                     ExpressionMethodStruct expressionMethod = connectedScript.methods[connectedKey] as ExpressionMethodStruct;
 
@@ -141,7 +185,7 @@ public abstract class GenerationStep {
             string line = genericMethod.codeBlock[i];
 
             foreach (string[] match in StringHelper.getMatchingBraces(line, s => s != null)) {
-                ScriptStruct script = scripts[node.gameObjectInstance];
+                ScriptStruct script = getScript(node.gameObjectInstance);
                 ScriptElementKey key = new ScriptElementKey(node, match[0]);
 
                 FieldStruct field;

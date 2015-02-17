@@ -8,8 +8,8 @@ namespace Desmond {
 public class CountExpressionReferences : GenerationStep {
 
     public override void doStep() {
-        LoadingBarUtil.beginChunk(scripts.Count, "", "", () => {
-            foreach (ScriptStruct script in scripts.Values) {
+        LoadingBarUtil.beginChunk(scriptCount, "", "", () => {
+            foreach (ScriptStruct script in scripts) {
                 LoadingBarUtil.beginChunk(script.methods.Values.Count, "", "Initializing Expression Method : ", () => {
                     foreach (GenericMethodStruct method in script.methods.Values.Where(m => m.shouldBeWritten())) {
                         forEveryExpressionLink(method, expression => {
