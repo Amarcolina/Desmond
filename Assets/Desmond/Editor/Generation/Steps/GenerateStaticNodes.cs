@@ -23,7 +23,6 @@ public class GenerateStaticNodes : GenerationStep {
                         Node staticNode = getStaticNode(node.gameObjectInstance, method.staticReference);
                         Element destinationElement = node.getElement(method.structKey.id);
                         ConnectableElement originElement = staticNode.getElement(method.structKey.id) as ConnectableElement;
-                        Debug.Log(destinationElement.GetType());
                         Assert.that(originElement is ConnectableElement, "Element must exist and be of type ConnectableElement");
                         Assert.that(destinationElement is ExecutionInputInfo, "Destination must be of type execution input!");
 

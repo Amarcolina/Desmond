@@ -28,10 +28,6 @@ public class FinalizeExpressionMethods : GenerationStep {
             return expression.methodName + "()";
         }
 
-        Debug.Log(":::::");
-        foreach(string line in expression.codeBlock){
-            Debug.Log(line);
-        }
         Assert.equals(expression.codeBlock.Count, 1);
 
         //Make sure expression is completely parsed (done recursively) before inlining

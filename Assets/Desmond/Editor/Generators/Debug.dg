@@ -1,4 +1,5 @@
 #DebugLog
+!UnityEngine
 
 $in System.String message
 

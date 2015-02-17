@@ -148,6 +148,7 @@ public abstract class GenerationStep {
                     connectedKey.id = connectedElement.id;
 
                     ScriptStruct connectedScript = getScript(connectedNode.gameObjectInstance);
+                    Assert.that(connectedScript != null, "Connected script cannot be null");
 
                     ExpressionMethodStruct expressionMethod = connectedScript.methods[connectedKey] as ExpressionMethodStruct;
 

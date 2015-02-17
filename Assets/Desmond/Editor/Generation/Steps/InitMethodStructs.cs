@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Desmond { 
-
+    //
 public class InitMethodStructs : GenerationStep{
     public override void doStep() {
         LoadingBarUtil.beginChunk(nodes.Count, "", "Initializing Methods : ", () => {
