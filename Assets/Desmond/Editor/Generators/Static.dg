@@ -1,28 +1,28 @@
 #Update static
 
 $customMethod
-public void Update(){
+void Update(){
 	->onUpdateEvent
 }
 
 #Awake static
 
 $customMethod
-public void Awake(){
+void Awake(){
 	->onAwakeEvent
 }
 
 #Start static
 
 $customMethod
-public void Start(){
+void Start(){
 	->onStartEvent
 }
 
 #OnMouseDown static
 
 $customMethod
-public void OnMouseDown(){
+void OnMouseDown(){
 	->onMouseDownEvent
 }
 
@@ -31,7 +31,7 @@ public void OnMouseDown(){
 $def UnityEngine.Collider savedCollider null
 
 $customMethod
-public void OnTriggerEnter(Collider <methodLocalName other>){
+void OnTriggerEnter(Collider <methodLocalName other>){
 	<savedCollider> = <other>
 	->onTriggerEnterEvent
 }
