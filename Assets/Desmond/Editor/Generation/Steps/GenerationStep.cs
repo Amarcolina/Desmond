@@ -197,8 +197,6 @@ public abstract class GenerationStep {
                     if (replacementLine != null) {
                         line = line.Replace("<" + match[0] + ">", replacementLine);
                     }
-                }else{
-                    Debug.LogWarning(key + " is not a field?");
                 }
             }
 

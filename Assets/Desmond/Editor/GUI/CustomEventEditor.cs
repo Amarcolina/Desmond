@@ -90,7 +90,7 @@ public class CustomEventEditor {
                 inputToDelete = i;
             }
             GUILayout.EndHorizontal();
-            EditorGUILayout.ObjectField(null, typeof(GameObject));
+            EditorGUILayout.ObjectField(null, typeof(GameObject), true);
         }
 
         if (inputToDelete != -1) {
