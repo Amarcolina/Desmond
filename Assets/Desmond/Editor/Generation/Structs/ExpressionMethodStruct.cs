@@ -36,6 +36,7 @@ public class ExpressionMethodStruct : MethodStruct {
         }
         
         scriptLines.Add("}");
+        scriptLines.Add("");
 
         return scriptLines;
     }

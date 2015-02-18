@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Desmond {
 
 public class PreparedMethodLocalNameTable {
-    public Dictionary<ScriptStruct, Dictionary<int, string>> uniqueIdToName = new Dictionary<ScriptStruct, Dictionary<int, string>>();
+    public Dictionary<ScriptStruct, Dictionary<string, string>> uniqueIdToName = new Dictionary<ScriptStruct, Dictionary<string, string>>();
 }
 
 public class PrepareMethodLocalNames : GenerationStep {
@@ -15,7 +15,7 @@ public class PrepareMethodLocalNames : GenerationStep {
 
         LoadingBarUtil.beginChunk(scriptCount, "", "", () => {
             foreach (ScriptStruct script in scripts) {
-                Dictionary<int, string> uniqueIdToName = new Dictionary<int, string>();
+                Dictionary<string, string> uniqueIdToName = new Dictionary<string, string>();
                 int idCounter = 1;
 
                 LoadingBarUtil.beginChunk(script.methods.Values.Count, "", "Preparing method local names : ", () => {
@@ -30,7 +30,7 @@ public class PrepareMethodLocalNames : GenerationStep {
                                     Debug.LogError("Mutiple definitions of the same name!");
                                 } else {
                                     nameToId[name] = idCounter;
-                                    uniqueIdToName[idCounter] = name;
+                                    uniqueIdToName[idCounter.ToString()] = name;
                                     line = line.Replace("<" + match[0] + " " + match[1] + ">", "<methodLocalId " + idCounter + ">");
                                     idCounter++;
                                 }

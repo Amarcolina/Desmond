@@ -26,6 +26,7 @@ public class BoardBuilder {
         steps.Add(new FinalizeFields());
         steps.Add(new FinalizeExpressionMethods());
         steps.Add(new FinalizeMethods());
+        steps.Add(new FinalizeMethodLocalNames());
         steps.Add(new WriteScriptFile());
 
         return doSteps();
