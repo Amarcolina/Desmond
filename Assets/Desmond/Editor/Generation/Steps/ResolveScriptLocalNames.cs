@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -26,7 +27,7 @@ public class ResolveScriptLocalNames : GenerationStep {
                 }
 
                 LoadingBarUtil.beginChunk(script.methods.Values.Count, "", "Resolving script local names : ", () => {
-                    foreach (GenericMethodStruct method in script.methods.Values) {
+                    foreach (GenericMethodStruct method in script.methods.Values.Where(m => m.shouldBeWritten())) {
                         //Generates names of named methods
                         MethodStruct namedMethod = method as MethodStruct;
                         if (namedMethod != null) {
@@ -56,7 +57,7 @@ public class ResolveScriptLocalNames : GenerationStep {
                 });
                 
 
-                foreach (FieldStruct field in script.fields.Values) {
+                foreach (FieldStruct field in script.fields.Values.Where(f => f.shouldBeWritten())) {
                     field.name = generateUniqueName(field.structKey.id);
                 }
 
