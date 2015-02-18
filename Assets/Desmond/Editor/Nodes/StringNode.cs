@@ -77,64 +77,31 @@ public class StringNode : Node{
 
         foreach (List<MethodDescriptor> methodList in descriptor.methods.Values) {
 
-            //0 is worst, negative is better
-            int bestMethodRank = -1;
             MethodDescriptor bestMethod = null;
-            bestMethod = methodList[0];
 
-            /*
             foreach (MethodDescriptor d in methodList) {
-                //for every input required, there must be a connection
-                //for every output connected, there must be an exit path
-                //preffer methods with the fewest exit paths
 
                 bool canChooseMethod = true;
+                foreach (string without in d.withouts) {
+                    ConnectableElement element = getElement(without) as ConnectableElement;
+                    Assert.that(element != null, "Element " + without + " must exist and be a connectable element");
 
-                foreach (string inputVarId in d.inputVars) {
-                    InputWithDefaultInfo inputVar = getElement(inputVarId) as InputWithDefaultInfo;
-                    if (inputVar == null) {
-                        Debug.LogError("ID's did not match up!");
-                        return null;
-                    }
-
-                    //A required input is not connected, abort
-                    if (!inputVar.isConnected()) {
-                        Debug.Log(1);
+                    if (element.isConnected()) {
                         canChooseMethod = false;
                         break;
                     }
                 }
 
-                foreach(ExitPathDescriptor exitPath in descriptor.exitPaths.Values){
-                    ExecutionOutInfo exitElement = getElement(exitPath.id) as ExecutionOutInfo;
-                    if (exitElement == null) {
-                        Debug.LogError("ID's did not match up!");
-                        return null;
-                    }
-
-                    if (exitElement.isConnected()) {
-                        if (!d.exitPaths.Contains(exitElement.id)) {
-                            canChooseMethod = false;
-                            break;
-                        }
-                    }
-                }
-
-                if(!canChooseMethod){
+                if (!canChooseMethod) {
                     continue;
                 }
 
-                if (bestMethod == null || d.exitPaths.Count < bestMethodRank) {
+                if (bestMethod == null || d.withouts.Count > bestMethod.withouts.Count) {
                     bestMethod = d;
-                    bestMethodRank = d.exitPaths.Count;
                 }
             }
 
-            if (bestMethod == null) {
-                Debug.LogError(savedDescriptorName + ": Could not find suitable method for given connection states!");
-                return new List<MethodStruct>();
-            }
-             * */
+            Assert.that(bestMethod != null, savedDescriptorName + ": Could not find suitable method for given connection states!");
 
             ScriptElementKey key = new ScriptElementKey(this, bestMethod.id);
             MethodStruct s = new MethodStruct(key, name + StringHelper.capitalize(bestMethod.id));
