@@ -5,7 +5,9 @@ using System.Collections.Generic;
 
 namespace Desmond {
 
-public class Node : ScriptableObject, ISerializationCallbackReceiver {
+public interface IDeepNode : IDeepDesmondBoard { }
+
+public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepNode {
     public const int LINE = 16;
     public const int SIDE = 100;
 

@@ -10,7 +10,9 @@ public enum DesmondBoardType {
     FUNCTION_BOARD
 }
 
-public class DesmondBoard : ScriptableObject, IPathable {
+public interface IDeepDesmondBoard : IDeepObject { }
+
+public class DesmondBoard : ScriptableObject, IPathable, IDeepDesmondBoard {
     [System.NonSerialized]
     public string assetPath;
 
