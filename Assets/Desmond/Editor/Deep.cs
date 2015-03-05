@@ -6,85 +6,69 @@ using System.Collections.Generic;
 namespace Desmond { 
 
 public interface IDeepObject {
+    IEnumerable ownedObjects();
 }
 
 public static class Deep {
+    private static HashSet<Object> ownedObjects = new HashSet<Object>();
 
-    public static T copy<T>(T obj) where T : Object{
-        return copySurface(obj, -1);
+    public static void collectOwnedObjects(Object obj) {
+        ownedObjects.Add(obj);
+        IDeepObject deepObject = obj as IDeepObject;
+        if (deepObject != null) {
+            foreach (Object ownedObject in deepObject.ownedObjects()) {
+                collectOwnedObjects(ownedObject);
+            }
+        }
     }
 
-    public static T copySurface<T>(T obj, int levelsDeep = 1) where T : Object {
-        Assert.that(obj is IDeepObject);
-        System.Type objType = obj.GetType();
-
-        Dictionary<T, T> oldToNew = new Dictionary<T, T>();
-        T newObj = copyInternal(obj, objType, oldToNew, levelsDeep);
-        return newObj;
-    }
-
-    private static T copyInternal<T>(T obj, System.Type objType, Dictionary<T, T> oldToNew, int levelsDown) where T : Object{
-        if (oldToNew.ContainsKey(obj)) {
-            return oldToNew[obj];
+    public static Dictionary<Object, Object> copy(){
+        Dictionary<Object, Object> oldToNew = new Dictionary<Object, Object>();
+        foreach (Object ownedObject in ownedObjects) {
+            Object newObj = Object.Instantiate(ownedObject);
+            newObj.name = ownedObject.name;
+            oldToNew[ownedObject] = newObj;
         }
 
-        T newObj = Object.Instantiate(obj) as T;
-        oldToNew[obj] = newObj;
-
-        if (levelsDown != 0) {
-            SerializedObject sObj = new SerializedObject(newObj);
+        foreach (Object newObject in oldToNew.Values) {
+            SerializedObject sObj = new SerializedObject(newObject);
             SerializedProperty it = sObj.GetIterator();
 
             while (it.Next(true)) {
                 if (it.propertyType == SerializedPropertyType.ObjectReference) {
-                    Debug.Log(it.name);
                     Object reference = it.objectReferenceValue;
-                    if (reference != null && reference.GetType() == objType) {
-                        it.objectReferenceValue = copyInternal(it.objectReferenceValue as T, objType, oldToNew, levelsDown - 1);
+                    if (reference != null && oldToNew.ContainsKey(reference)) {
+                        it.objectReferenceValue = oldToNew[it.objectReferenceValue];
                     }
                 }
             }
 
             sObj.ApplyModifiedProperties();
         }
-        
-        return newObj;
+
+        ownedObjects.Clear();
+
+        return oldToNew;
     }
 
-    public static void destroy<T>(T obj) where T : Object{
-        destroySurface(obj, -1);
+    public static T copy<T>(T t) where T : Object {
+        ownedObjects.Clear();
+        collectOwnedObjects(t);
+        Dictionary<Object, Object> objs = copy();
+        return objs[t] as T;
     }
 
-    public static void destroySurface<T>(T obj, int levelsDeep = 1) where T : Object{
-        Assert.that(obj is IDeepObject);
-        System.Type objType = obj.GetType();
-
-        HashSet<T> destroyedObjects = new HashSet<T>();
-        destroyInternal(obj, objType, destroyedObjects, levelsDeep);
-    }
-
-    private static void destroyInternal<T>(T obj, System.Type objType, HashSet<T> destroyedObjects, int levelsDown) where T : Object{
-        if (obj == null || destroyedObjects.Contains(obj)) {
-            return;
+    public static void destroy(){
+        foreach (Object obj in ownedObjects) {
+            Object.DestroyImmediate(obj);
         }
+        ownedObjects.Clear();
+    }
 
-        destroyedObjects.Add(obj);
-
-        if (levelsDown != 0) {
-            SerializedObject sObj = new SerializedObject(obj);
-            SerializedProperty it = sObj.GetIterator();
-
-            while (it.Next(true)) {
-                if (it.propertyType == SerializedPropertyType.ObjectReference) {
-                    Object reference = it.objectReferenceValue;
-                    if (reference != null && reference.GetType() == objType) {
-                        destroyInternal(reference as T, objType, destroyedObjects, levelsDown - 1);
-                    }
-                }
-            }
-        }
-
-        Object.DestroyImmediate(obj);
+    public static void destroy(Object obj) {
+        ownedObjects.Clear();
+        collectOwnedObjects(obj);
+        destroy();
     }
 }
 

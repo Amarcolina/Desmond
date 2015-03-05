@@ -26,9 +26,7 @@ public struct ElementPair{
     }
 }
 
-public interface IDeepElement : IDeepNode { }
-
-public class Element : ScriptableObject, IDeepElement {
+public class Element : ScriptableObject {
     public string id;
     public string type;
     public Rect rect;

@@ -10,9 +10,7 @@ public enum DesmondBoardType {
     FUNCTION_BOARD
 }
 
-public interface IDeepDesmondBoard : IDeepObject { }
-
-public class DesmondBoard : ScriptableObject, IPathable, IDeepDesmondBoard {
+public class DesmondBoard : ScriptableObject, IPathable, IDeepObject {
     [System.NonSerialized]
     public string assetPath;
 
@@ -39,6 +37,10 @@ public class DesmondBoard : ScriptableObject, IPathable, IDeepDesmondBoard {
             default:
                 return "ERROR";
         }
+    }
+
+    public IEnumerable ownedObjects() {
+        return (IEnumerable)nodesInBoard;
     }
 }
 

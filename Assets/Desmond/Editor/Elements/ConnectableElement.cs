@@ -17,7 +17,7 @@ public struct ElementConnection {
     }
 }
 
-public class ConnectableElement : Element {
+public class ConnectableElement : Element{
     public List<ElementConnection> connections = new List<ElementConnection>();
 
     public void OnDestroy() {

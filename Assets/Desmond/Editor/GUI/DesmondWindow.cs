@@ -136,10 +136,9 @@ public class DesmondWindow : EditorWindow {
 
         BeginWindows();
         drawNodes();
-        EndWindows();
-
         handleContextClick();
         drawComponentList();
+        EndWindows();
 
         if (selectedElement!=null && Event.current.type == EventType.MouseUp && Event.current.button == 0) {
             selectedElement = null;
@@ -182,12 +181,12 @@ public class DesmondWindow : EditorWindow {
     public void deleteNode(object node) {
         Assert.that(node is Node);
         board.nodesInBoard.Remove(node as Node);
-        Deep.destroySurface(node as Node);
+        Deep.destroy(node as Node);
     }
 
     public void duplicateNode(object node) {
         Assert.that(node is Node);
-        Node newNode = Deep.copySurface(node as Node);
+        Node newNode = Deep.copy(node as Node);
         board.nodesInBoard.Add(newNode);
     }
 

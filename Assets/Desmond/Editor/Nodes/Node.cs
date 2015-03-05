@@ -5,9 +5,7 @@ using System.Collections.Generic;
 
 namespace Desmond {
 
-public interface IDeepNode : IDeepDesmondBoard { }
-
-public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepNode {
+public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObject {
     public const int LINE = 16;
     public const int SIDE = 100;
 
@@ -22,6 +20,10 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepNode 
     public List<Element> elements = new List<Element>();
     private Dictionary<string, Element> _idToElement = null;
     private bool needsToUpdateLayout = true;
+
+    public IEnumerable ownedObjects() {
+        return (IEnumerable)elements;
+    }
 
     public Dictionary<string, Element> idToElement {
         get {
