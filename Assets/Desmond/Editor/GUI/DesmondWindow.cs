@@ -136,8 +136,10 @@ public class DesmondWindow : EditorWindow {
 
         BeginWindows();
         drawNodes();
-        drawComponentList();
         EndWindows();
+
+        handleContextClick();
+        drawComponentList();
 
         if (selectedElement!=null && Event.current.type == EventType.MouseUp && Event.current.button == 0) {
             selectedElement = null;
@@ -153,6 +155,40 @@ public class DesmondWindow : EditorWindow {
                 node.drawLinks();
             }
         }
+    }
+
+    public void handleContextClick() {
+        if (Event.current.type != EventType.ContextClick) {
+            return;
+        }
+
+        foreach (Node node in board.nodesInBoard) {
+            if (node.isVisible) {
+                if (node.rect.Contains(Event.current.mousePosition)) {
+                    GenericMenu contextMenu = new GenericMenu();
+                    contextMenu.AddItem(new GUIContent("Delete"), false, deleteNode, node);
+                    contextMenu.AddItem(new GUIContent("Duplicate"), false, duplicateNode, node);
+                    contextMenu.ShowAsContext();
+                    return;
+                }
+            }
+        }
+
+        _hasNodeListOpen = true;
+        _nodeListRect = new Rect(Event.current.mousePosition.x - 8, Event.current.mousePosition.y - 20, 250, 350);
+        nodeList.open();
+    }
+
+    public void deleteNode(object node) {
+        Assert.that(node is Node);
+        board.nodesInBoard.Remove(node as Node);
+        Deep.destroySurface(node as Node);
+    }
+
+    public void duplicateNode(object node) {
+        Assert.that(node is Node);
+        Node newNode = Deep.copySurface(node as Node);
+        board.nodesInBoard.Add(newNode);
     }
 
     public void drawNodes() {
@@ -172,12 +208,6 @@ public class DesmondWindow : EditorWindow {
     }
 
     public void drawComponentList() {
-        if (Event.current.type == EventType.MouseDown && Event.current.button == 1) {
-            _hasNodeListOpen = true;
-            _nodeListRect = new Rect(Event.current.mousePosition.x - 8, Event.current.mousePosition.y - 20, 250, 350);
-            nodeList.open();
-        }
-
         if (_hasNodeListOpen) {
             nodeList.size = new Vector2(250, 350);
             _nodeListRect = GUI.Window(0, _nodeListRect, nodeList.drawListWindow, "");

@@ -10,32 +10,25 @@ public interface IDeepObject {
 
 public static class Deep {
 
-    public static Object copy(Object obj) {
+    public static T copy<T>(T obj) where T : Object{
+        return copySurface(obj, -1);
+    }
+
+    public static T copySurface<T>(T obj, int levelsDeep = 1) where T : Object {
         Assert.that(obj is IDeepObject);
         System.Type objType = obj.GetType();
 
-        Object newObj = copyInternal(obj, objType, -1);
-        oldToNew.Clear();
-
+        Dictionary<T, T> oldToNew = new Dictionary<T, T>();
+        T newObj = copyInternal(obj, objType, oldToNew, levelsDeep);
         return newObj;
     }
 
-    public static Object copySurface(Object obj) {
-        Assert.that(obj is IDeepObject);
-        System.Type objType = obj.GetType();
-
-        Object newObj = copyInternal(obj, objType, 1);
-        oldToNew.Clear();
-        return newObj;
-    }
-
-    private static Dictionary<Object, Object> oldToNew = new Dictionary<Object, Object>();
-    private static Object copyInternal(Object obj, System.Type objType, int levelsDown) {
+    private static T copyInternal<T>(T obj, System.Type objType, Dictionary<T, T> oldToNew, int levelsDown) where T : Object{
         if (oldToNew.ContainsKey(obj)) {
             return oldToNew[obj];
         }
 
-        Object newObj = Object.Instantiate(obj);
+        T newObj = Object.Instantiate(obj) as T;
         oldToNew[obj] = newObj;
 
         if (levelsDown != 0) {
@@ -44,9 +37,10 @@ public static class Deep {
 
             while (it.Next(true)) {
                 if (it.propertyType == SerializedPropertyType.ObjectReference) {
+                    Debug.Log(it.name);
                     Object reference = it.objectReferenceValue;
                     if (reference != null && reference.GetType() == objType) {
-                        it.objectReferenceValue = copyInternal(it.objectReferenceValue, objType, levelsDown - 1);
+                        it.objectReferenceValue = copyInternal(it.objectReferenceValue as T, objType, oldToNew, levelsDown - 1);
                     }
                 }
             }
@@ -57,26 +51,19 @@ public static class Deep {
         return newObj;
     }
 
-    public static void destroy(Object obj) {
+    public static void destroy<T>(T obj) where T : Object{
+        destroySurface(obj, -1);
+    }
+
+    public static void destroySurface<T>(T obj, int levelsDeep = 1) where T : Object{
         Assert.that(obj is IDeepObject);
         System.Type objType = obj.GetType();
 
-        destroyInternal(obj, objType, -1);
-        destroyedObjects.Clear();
+        HashSet<T> destroyedObjects = new HashSet<T>();
+        destroyInternal(obj, objType, destroyedObjects, levelsDeep);
     }
 
-    public static void destroySurface(Object obj) {
-        Assert.that(obj is IDeepObject);
-        System.Type objType = obj.GetType();
-
-        destroyInternal(obj, objType, 1);
-        destroyedObjects.Clear();
-    }
-
-    private static HashSet<Object> destroyedObjects = new HashSet<Object>();
-    private static void destroyInternal(Object obj, System.Type objType, int levelsDown) {
-        
-
+    private static void destroyInternal<T>(T obj, System.Type objType, HashSet<T> destroyedObjects, int levelsDown) where T : Object{
         if (obj == null || destroyedObjects.Contains(obj)) {
             return;
         }
@@ -91,7 +78,7 @@ public static class Deep {
                 if (it.propertyType == SerializedPropertyType.ObjectReference) {
                     Object reference = it.objectReferenceValue;
                     if (reference != null && reference.GetType() == objType) {
-                        destroyInternal(reference, objType, levelsDown - 1);
+                        destroyInternal(reference as T, objType, destroyedObjects, levelsDown - 1);
                     }
                 }
             }
