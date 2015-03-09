@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Desmond {
 
-public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObject {
+public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObject, IValidatable {
     public const int LINE = 16;
     public const int SIDE = 100;
 
@@ -25,6 +25,20 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObjec
         return (IEnumerable)elements;
     }
 
+    public virtual bool validate() {
+        if (elements.Count == 0) {
+            return false;
+        }
+
+        for (int i = elements.Count - 1; i >= 0; i--) {
+            if (!elements[i].validate()) {
+                elements.RemoveAt(i);
+            }
+        }
+
+        return true;
+    }
+
     public Dictionary<string, Element> idToElement {
         get {
             if (_idToElement == null) {
@@ -38,7 +52,7 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObjec
     }
 
     public virtual void generateElements() {
-        BoardHandler.addAssetToCurrentBoard(this);  
+        BoardHandler.addAssetToCurrentBoard(this);
     }
 
     public void OnDestroy() {
@@ -96,7 +110,7 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObjec
             r.position += rect.position;
         }
 
-        
+
         return r;
     }
 
@@ -165,7 +179,7 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObjec
     public void drawLinks() {
         foreach (ConnectableElement a in elements.FindAll(element => element is ConnectableElement)) {
             CurveEnd endA = getCurveEnd(a);
-            foreach(ElementConnection connection in a.connections.FindAll(connection => connection.originNode == this)){
+            foreach (ElementConnection connection in a.connections.FindAll(connection => connection.originNode == this)) {
                 if (connection.connectedNode.isVisible) {
                     CurveEnd endB = connection.connectedNode.getCurveEnd(connection.connectedElement);
                     a.drawLink(connection.connectedElement, endA, endB);

@@ -10,7 +10,7 @@ public enum DesmondBoardType {
     FUNCTION_BOARD
 }
 
-public class DesmondBoard : ScriptableObject, IPathable, IDeepObject {
+public class DesmondBoard : ScriptableObject, IPathable, IDeepObject, IValidatable {
     [System.NonSerialized]
     public string assetPath;
 
@@ -41,6 +41,25 @@ public class DesmondBoard : ScriptableObject, IPathable, IDeepObject {
 
     public IEnumerable ownedObjects() {
         return (IEnumerable)nodesInBoard;
+    }
+
+    public bool validate() {
+        if (nodesInBoard == null) {
+            nodesInBoard = new List<Node>();
+        }
+
+        if (scriptName == null || scriptName == "") {
+            scriptName = "DefaultScriptName";
+        }
+
+        for (int i = nodesInBoard.Count - 1; i >= 0; i--) {
+            if (!nodesInBoard[i].validate()) {
+                nodesInBoard.RemoveAt(i);
+                continue;
+            }
+        }
+
+        return true;
     }
 }
 

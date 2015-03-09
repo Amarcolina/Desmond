@@ -34,6 +34,28 @@ public class ConnectableElement : Element{
         }
     }
 
+    public override bool validate() {
+        if (!base.validate()) {
+            return false;
+        }
+
+        for (int i = connections.Count - 1; i >= 0; i--) {
+            ElementConnection c = connections[i];
+            if (c.connectedNode == null || c.connectedElement == null) {
+                connections.RemoveAt(i);
+                continue;
+            }
+
+            if (c.originNode == null) {
+                c.originNode = parentNode;
+            }
+
+            connections[i] = c;
+        }
+
+        return true;
+    }
+
     public virtual bool canConnectTo(ElementConnection connection) {
         return false;
     }
