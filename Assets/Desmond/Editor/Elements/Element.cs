@@ -26,7 +26,7 @@ public struct ElementPair{
     }
 }
 
-public class Element : ScriptableObject {
+public class Element : ScriptableObject, IValidatable {
     public string id;
     public string type;
     public Rect rect;
@@ -41,6 +41,22 @@ public class Element : ScriptableObject {
         this.parentNode = parentNode;
         hideFlags = HideFlags.HideInHierarchy;
         BoardHandler.addAssetToCurrentBoard(this);
+    }
+
+    public virtual bool validate() {
+        if (parentNode == null) {
+            return false;
+        }
+
+        if (id == null || id == "") {
+            return false;
+        }
+
+        if (type == null || type == "") {
+            return false;
+        }
+
+        return true;
     }
 
     public virtual bool isOnLeft() {

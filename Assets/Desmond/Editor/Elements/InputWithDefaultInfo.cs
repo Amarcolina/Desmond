@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Desmond { 
 
-public class InputWithDefaultInfo : ConnectableElement{
+public class InputWithDefaultInfo : ConnectableElement, IDeepObject{
     private Color dataLinkColor = new Color(.4f, .4f, .9f);
     private Color dataLinkCastColor = new Color(.8f, .4f, .8f);
     private Color dataLinkUnsafeColor = new Color(1.0f, .4f, .4f);
@@ -25,6 +25,25 @@ public class InputWithDefaultInfo : ConnectableElement{
             defaultConnection = new ElementConnection(valueElement, parentNode, defaultValue as DefaultValueNode);
             connections.Add(defaultConnection);
         }
+    }
+
+    public override bool validate() {
+        if (!base.validate()) {
+            return false;
+        }
+
+        if (defaultValue != null) {
+            if (defaultConnection.connectedNode == null || defaultConnection.connectedElement == null) {
+                return false;
+            }
+
+            if (connections.Count == 0) {
+                connections.Add(defaultConnection);
+                parentNode.requestLayoutUpdate();
+            }
+        }
+
+        return true;
     }
 
     public override float getWidth() {
@@ -105,6 +124,10 @@ public class InputWithDefaultInfo : ConnectableElement{
         } else {
             drawCurve(endA, endB, dataLinkCastColor);
         }
+    }
+
+    public IEnumerable ownedObjects() {
+        yield return defaultValue;
     }
 }
 
