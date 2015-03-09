@@ -18,14 +18,6 @@ public class DesmondBoard : ScriptableObject, IPathable, IDeepObject, IValidatab
     public List<Node> nodesInBoard = new List<Node>();
     public string scriptName;
 
-    public void OnDestroy() {
-        foreach(Node node in nodesInBoard){
-            if (node != null) {
-                DestroyImmediate(node);
-            }
-        }
-    }
-
     public string getPath() {
         switch (boardType) {
             case DesmondBoardType.SCENE_BOARD:
@@ -53,7 +45,8 @@ public class DesmondBoard : ScriptableObject, IPathable, IDeepObject, IValidatab
         }
 
         for (int i = nodesInBoard.Count - 1; i >= 0; i--) {
-            if (!nodesInBoard[i].validate()) {
+            if (nodesInBoard[i] == null || !nodesInBoard[i].validate()) {
+                Debug.LogWarning("Removing node " + nodesInBoard[i] + " because it failed to validate!");
                 nodesInBoard.RemoveAt(i);
                 continue;
             }

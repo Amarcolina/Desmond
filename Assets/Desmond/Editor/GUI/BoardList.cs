@@ -22,7 +22,9 @@ public class BoardList : ISerializationCallbackReceiver{
 
     private void rebuildList() {
         _listDisplay = new HierarchicalList<DesmondBoard>(BoardHandler.getAllBoards(), false);
-        _listDisplay.select(selected);
+        if(selected != null && selected.validate()){
+            _listDisplay.select(selected);
+        }
     }
 
     public BoardList() {
@@ -91,7 +93,10 @@ public class BoardList : ISerializationCallbackReceiver{
         if (instance._listDisplay != null) {
             if (instance._listDisplay.highlighted != null) {
                 if (Event.current.type == EventType.Layout) {
-                    instance.selected = instance._listDisplay.highlighted.data;
+                    DesmondBoard boardToSelect = instance._listDisplay.highlighted.data;
+                    if (boardToSelect != instance.selected && boardToSelect.validate()) {
+                        instance.selected = boardToSelect;
+                    }
                 }
             }
         }

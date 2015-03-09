@@ -32,6 +32,7 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObjec
 
         for (int i = elements.Count - 1; i >= 0; i--) {
             if (!elements[i].validate()) {
+                Debug.LogWarning("Removing element " + elements[i] + " because it failed to validate!");
                 elements.RemoveAt(i);
             }
         }
@@ -53,14 +54,6 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObjec
 
     public virtual void generateElements() {
         BoardHandler.addAssetToCurrentBoard(this);
-    }
-
-    public void OnDestroy() {
-        foreach (Element element in elements) {
-            if (element != null) {
-                DestroyImmediate(element, true);
-            }
-        }
     }
 
     public virtual Element getElement(string id) {

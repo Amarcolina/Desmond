@@ -20,20 +20,6 @@ public struct ElementConnection {
 public class ConnectableElement : Element{
     public List<ElementConnection> connections = new List<ElementConnection>();
 
-    public void OnDestroy() {
-        foreach (ElementConnection connection in connections) {
-            if (connection.connectedElement != null) {
-                DestroyImmediate(connection.connectedElement);
-            }
-            if (connection.connectedNode != null) {
-                DestroyImmediate(connection.connectedNode);
-            }
-            if (connection.originNode != null) {
-                DestroyImmediate(connection.connectedNode);
-            }
-        }
-    }
-
     public override bool validate() {
         if (!base.validate()) {
             return false;

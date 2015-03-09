@@ -27,6 +27,25 @@ public class InputWithDefaultInfo : ConnectableElement, IDeepObject{
         }
     }
 
+    public override bool validate() {
+        if (!base.validate()) {
+            return false;
+        }
+
+        if (defaultValue != null) {
+            if (defaultConnection.connectedNode == null || defaultConnection.connectedElement == null) {
+                return false;
+            }
+
+            if (connections.Count == 0) {
+                connections.Add(defaultConnection);
+                parentNode.requestLayoutUpdate();
+            }
+        }
+
+        return true;
+    }
+
     public override float getWidth() {
         return Node.SIDE;
     }

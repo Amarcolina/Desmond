@@ -72,6 +72,8 @@ public class DesmondWindow : EditorWindow {
             _currentWindow = (DesmondWindow)EditorWindow.GetWindow(typeof(DesmondWindow));
             _currentWindow.autoRepaintOnSceneChange = true;
             _currentWindow.minSize = new Vector2(800, 440);
+        } else if (_currentWindow.board != null) {
+            _currentWindow.board.validate();
         }
         return _currentWindow;
     }
@@ -107,8 +109,8 @@ public class DesmondWindow : EditorWindow {
 
             GUI.EndGroup();
         } catch (System.Exception e){
-            Debug.LogError(e);
             Close();
+            throw e;
         }
     }
 
@@ -182,6 +184,7 @@ public class DesmondWindow : EditorWindow {
         Assert.that(node is Node);
         board.nodesInBoard.Remove(node as Node);
         Deep.destroy(node as Node);
+        board.validate();
     }
 
     public void duplicateNode(object node) {
