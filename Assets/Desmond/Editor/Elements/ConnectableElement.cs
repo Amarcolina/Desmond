@@ -17,21 +17,29 @@ public struct ElementConnection {
     }
 }
 
-public class ConnectableElement : Element {
+public class ConnectableElement : Element{
     public List<ElementConnection> connections = new List<ElementConnection>();
 
-    public void OnDestroy() {
-        foreach (ElementConnection connection in connections) {
-            if (connection.destinationElement != null) {
-                DestroyImmediate(connection.destinationElement);
-            }
-            if (connection.destinationNode != null) {
-                DestroyImmediate(connection.destinationNode);
-            }
-            if (connection.originNode != null) {
-                DestroyImmediate(connection.destinationNode);
-            }
+    public override bool validate() {
+        if (!base.validate()) {
+            return false;
         }
+
+        for (int i = connections.Count - 1; i >= 0; i--) {
+            ElementConnection c = connections[i];
+            if (c.destinationNode == null || c.destinationNode == null) {
+                connections.RemoveAt(i);
+                continue;
+            }
+
+            if (c.originNode == null) {
+                c.originNode = parentNode;
+            }
+
+            connections[i] = c;
+        }
+
+        return true;
     }
 
     public virtual bool canConnectTo(ElementConnection connection) {

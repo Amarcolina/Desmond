@@ -10,21 +10,13 @@ public enum DesmondBoardType {
     FUNCTION_BOARD
 }
 
-public class DesmondBoard : ScriptableObject, IPathable {
+public class DesmondBoard : ScriptableObject, IPathable, IDeepObject, IValidatable {
     [System.NonSerialized]
     public string assetPath;
 
     public DesmondBoardType boardType = DesmondBoardType.SCENE_BOARD;
     public List<Node> nodesInBoard = new List<Node>();
     public string scriptName;
-
-    public void OnDestroy() {
-        foreach(Node node in nodesInBoard){
-            if (node != null) {
-                DestroyImmediate(node);
-            }
-        }
-    }
 
     public string getPath() {
         switch (boardType) {
@@ -37,6 +29,30 @@ public class DesmondBoard : ScriptableObject, IPathable {
             default:
                 return "ERROR";
         }
+    }
+
+    public IEnumerable ownedObjects() {
+        return (IEnumerable)nodesInBoard;
+    }
+
+    public bool validate() {
+        if (nodesInBoard == null) {
+            nodesInBoard = new List<Node>();
+        }
+
+        if (scriptName == null || scriptName == "") {
+            scriptName = "DefaultScriptName";
+        }
+
+        for (int i = nodesInBoard.Count - 1; i >= 0; i--) {
+            if (nodesInBoard[i] == null || !nodesInBoard[i].validate()) {
+                Debug.LogWarning("Removing node " + nodesInBoard[i] + " because it failed to validate!");
+                nodesInBoard.RemoveAt(i);
+                continue;
+            }
+        }
+
+        return true;
     }
 }
 
