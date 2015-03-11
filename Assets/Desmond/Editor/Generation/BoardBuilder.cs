@@ -28,6 +28,7 @@ public class BoardBuilder {
         steps.Add(new FinalizeMethods());
         steps.Add(new FinalizeMethodLocalNames());
         steps.Add(new WriteScriptFile());
+        steps.Add(new CleanupGeneration());
 
         return doSteps();
     }

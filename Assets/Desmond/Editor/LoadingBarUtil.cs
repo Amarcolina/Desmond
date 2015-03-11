@@ -65,7 +65,7 @@ public class LoadingBarUtil : MonoBehaviour {
 
     public static void recordProgress(string infoString = "") {
         progress[progress.Count - 1]++;
-        if (stopwatch.ElapsedMilliseconds > 0) {
+        if (stopwatch.ElapsedMilliseconds > 17) {
             displayBar(infoString);
             stopwatch.Reset();
             stopwatch.Start();

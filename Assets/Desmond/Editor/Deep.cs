@@ -24,29 +24,45 @@ public static class Deep {
 
     public static Dictionary<Object, Object> copy(){
         Dictionary<Object, Object> oldToNew = new Dictionary<Object, Object>();
-        foreach (Object ownedObject in ownedObjects) {
-            Object newObj = Object.Instantiate(ownedObject);
-            newObj.name = ownedObject.name;
-            oldToNew[ownedObject] = newObj;
-        }
 
-        foreach (Object newObject in oldToNew.Values) {
-            SerializedObject sObj = new SerializedObject(newObject);
-            SerializedProperty it = sObj.GetIterator();
+        LoadingBarUtil.beginChunk(2, "", "", () => {
 
-            while (it.Next(true)) {
-                if (it.propertyType == SerializedPropertyType.ObjectReference) {
-                    Object reference = it.objectReferenceValue;
-                    if (reference != null && oldToNew.ContainsKey(reference)) {
-                        it.objectReferenceValue = oldToNew[it.objectReferenceValue];
+            LoadingBarUtil.beginChunk(ownedObjects.Count, "", "Copying Objects...", () => {
+                foreach (Object ownedObject in ownedObjects) {
+                    LoadingBarUtil.recordProgress();
+
+                    Object newObj = Object.Instantiate(ownedObject);
+                    newObj.name = ownedObject.name;
+                    oldToNew[ownedObject] = newObj;
+                }
+            });
+
+            LoadingBarUtil.beginChunk(ownedObjects.Count, "", "Updating object references...", () => {
+                foreach (Object newObject in oldToNew.Values) {
+                    LoadingBarUtil.recordProgress();
+
+                    SerializedObject sObj = new SerializedObject(newObject);
+                    SerializedProperty it = sObj.GetIterator();
+
+                    bool anyChanges = false;
+                    while (it.Next(true)) {
+                        if (it.propertyType == SerializedPropertyType.ObjectReference) {
+                            Object reference = it.objectReferenceValue;
+                            if (reference != null && oldToNew.ContainsKey(reference)) {
+                                it.objectReferenceValue = oldToNew[it.objectReferenceValue];
+                                anyChanges = true;
+                            }
+                        }
+                    }
+
+                    if (anyChanges) {
+                        sObj.ApplyModifiedProperties();
                     }
                 }
-            }
+            });
 
-            sObj.ApplyModifiedProperties();
-        }
-
-        ownedObjects.Clear();
+            ownedObjects.Clear();
+        });
 
         return oldToNew;
     }

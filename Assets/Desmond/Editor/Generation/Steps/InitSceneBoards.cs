@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Desmond { 
 
@@ -14,11 +15,27 @@ public class InitSceneBoards : GenerationStep {
             }
         });
 
-        boards = BoardHandler.getSceneBoards();
+        List<DesmondBoard> sceneBoards = BoardHandler.getSceneBoards();
+        LoadingBarUtil.beginChunk(2, "", "Copying boards...", () => {
+            foreach (DesmondBoard sceneBoard in sceneBoards) {
+                Deep.collectOwnedObjects(sceneBoard);
+            }
+            LoadingBarUtil.recordProgress("");
 
-        foreach (DesmondBoard board in boards) {
-            nodes.AddRange(board.nodesInBoard);
-        }
+            Dictionary<Object, Object> originalToCopy = Deep.copy();
+            LoadingBarUtil.recordProgress("");
+
+            foreach (Object copiedObj in originalToCopy.Values) {
+                DesmondBoard copiedBoard = copiedObj as DesmondBoard;
+                if (copiedBoard != null) {
+                    boards.Add(copiedBoard);
+                }
+            }
+
+            foreach (DesmondBoard board in boards) {
+                nodes.AddRange(board.nodesInBoard);
+            }
+        });
     }
 }
 
