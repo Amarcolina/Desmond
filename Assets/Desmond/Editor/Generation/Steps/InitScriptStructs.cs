@@ -13,6 +13,19 @@ public class InitScriptStruct : GenerationStep {
         script = new ScriptStruct();
         script.scriptName = "TestScript";
         script.nodes.AddRange(nodes);
+
+        List<Node> defaultValueNodes = new List<Node>();
+        foreach (Node node in nodes) {
+            foreach (Element e in node.elements) {
+                InputWithDefaultInfo defaultInfo = e as InputWithDefaultInfo;
+                if (defaultInfo != null && defaultInfo.defaultValue != null) {
+                    defaultValueNodes.Add(defaultInfo.defaultValue);
+                    break;
+                }
+            }
+            
+        }
+        nodes.AddRange(defaultValueNodes);
     }
 }
 
