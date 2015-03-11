@@ -11,11 +11,8 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObjec
 
     public Rect rect;
 
-    public bool isGameObject;
     public bool isVisible = true;
     public bool isMinimized = false;
-
-    public GameObject gameObjectInstance = null;
 
     public List<Element> elements = new List<Element>();
     private Dictionary<string, Element> _idToElement = null;
@@ -224,11 +221,13 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObjec
             needsToUpdateLayout = false;
         }
 
+        /*
         if (!isMinimized && isGameObject) {
             DesmondBoard currentBoard = BoardList.getSelectedBoard();
             bool allowSceneObject = currentBoard.boardType == DesmondBoardType.SCENE_BOARD;
             gameObjectInstance = (GameObject)EditorGUI.ObjectField(new Rect(LINE, LINE, SIDE, LINE), gameObjectInstance, typeof(GameObject), allowSceneObject);
         }
+         * */
 
         foreach (Element e in elements) {
             if (!e.visible) {

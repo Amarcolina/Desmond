@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Desmond { 
-    //
+    
 public class InitMethodStructs : GenerationStep{
     public override void doStep() {
         LoadingBarUtil.beginChunk(nodes.Count, "", "Initializing Methods : ", () => {
@@ -30,7 +30,7 @@ public class InitMethodStructs : GenerationStep{
     }
 
     private void addMethod(GenericMethodStruct genericMethod) {
-        getScript(genericMethod.structKey.parentNode.gameObjectInstance).methods[genericMethod.structKey] = genericMethod;
+        script.methods[genericMethod.structKey] = genericMethod;
     }
 }
 

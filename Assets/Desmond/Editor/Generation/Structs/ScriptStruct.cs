@@ -14,8 +14,6 @@ public enum InlineBehavior {
  * It belongs to a node, and belongs on a specific game object
  */
 public class ScriptStruct{
-    public GameObject parentObject;
-
     public List<Node> nodes = new List<Node>();
 
     public Dictionary<ScriptElementKey, GenericMethodStruct> methods = new Dictionary<ScriptElementKey, GenericMethodStruct>();

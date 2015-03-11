@@ -13,7 +13,7 @@ public class BoardBuilder {
         steps.Clear();
 
         steps.Add(new InitSceneBoards());
-        steps.Add(new InitScriptStructs());
+        steps.Add(new InitScriptStruct());
         steps.Add(new RecordNamespaceImports());
         steps.Add(new GenerateStaticNodes());
         steps.Add(new InitMethodStructs());

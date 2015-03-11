@@ -7,17 +7,12 @@ namespace Desmond {
 public class FinalizeExpressionMethods : GenerationStep {
 
     public override void doStep() {
-        LoadingBarUtil.beginChunk(scriptCount, "", "", () => {
-            foreach (ScriptStruct script in scripts) {
-                LoadingBarUtil.beginChunk(script.methods.Values.Count, "", "", () => {
-                    foreach (GenericMethodStruct genericMethod in script.methods.Values) {
-                        LoadingBarUtil.recordProgress("Finalizing expression method : " + genericMethod.ToString());
-                        forEveryExpressionLink(genericMethod, linkedExpression => {
-                            return calculateExpressionText(linkedExpression);
-                        });
-                    }
+        LoadingBarUtil.beginChunk(script.methods.Values.Count, "", "", () => {
+            foreach (GenericMethodStruct genericMethod in script.methods.Values) {
+                LoadingBarUtil.recordProgress("Finalizing expression method : " + genericMethod.ToString());
+                forEveryExpressionLink(genericMethod, linkedExpression => {
+                    return calculateExpressionText(linkedExpression);
                 });
-
             }
         });
 

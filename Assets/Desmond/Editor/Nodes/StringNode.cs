@@ -27,7 +27,6 @@ public class StringNode : Node{
 
     public override void generateElements() {
         base.generateElements();
-        isGameObject = descriptor.isGameObject;
 
         HashSet<string> methodIDsSoFar = new HashSet<string>();
         foreach (List<MethodDescriptor> list in descriptor.methods.Values) {

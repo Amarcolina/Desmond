@@ -5,22 +5,21 @@ using System.Collections.Generic;
 namespace Desmond {
 
 public class GenerateStaticNodes : GenerationStep {
-    private Dictionary<string, Node> unanchoredStaticNodes = new Dictionary<string, Node>();
-    private Dictionary<GameObject, Dictionary<string, Node>> anchoredStaticNodes = new Dictionary<GameObject, Dictionary<string, Node>>();
+    private Dictionary<string, Node> staticNodes = new Dictionary<string, Node>();
 
     private Dictionary<string, NodeFactory> nameToFactory = new Dictionary<string, NodeFactory>();
 
     public override void doStep() {
-
         foreach (NodeFactory factory in StringNodeFactory.getStaticStringNodeFactories()) {
             StringNodeFactory stringNodeFactory = factory as StringNodeFactory;
             nameToFactory[stringNodeFactory.nodeDescriptor.descriptorName] = stringNodeFactory;
         }
+
         LoadingBarUtil.beginChunk(nodes.Count, "", "Generating Static Nodes : ", () => {
             foreach (Node node in nodes) {
                 foreach (MethodStruct method in node.getMethodStructs()) {
                     if (method.staticReference != null) {
-                        Node staticNode = getStaticNode(node.gameObjectInstance, method.staticReference);
+                        Node staticNode = getStaticNode(method.staticReference);
                         Element destinationElement = node.getElement(method.structKey.id);
                         ConnectableElement originElement = staticNode.getElement(method.structKey.id) as ConnectableElement;
                         Assert.that(originElement is ConnectableElement, "Static element " + method.structKey.id + " could not be found in node " + method.staticReference);
@@ -33,7 +32,7 @@ public class GenerateStaticNodes : GenerationStep {
                 
                 foreach (ExpressionMethodStruct expression in node.getExpressionStructs()) {
                     if (expression.staticReference != null) {
-                        Node staticNode = getStaticNode(node.gameObjectInstance, expression.staticReference);
+                        Node staticNode = getStaticNode(expression.staticReference);
                         Element destinationElement = staticNode.getElement("out");
                         ConnectableElement originElement = node.getElement(expression.structKey.id) as ConnectableElement;
                         Assert.that(originElement != null, "Element must exist and be of type ConnectableElement");
@@ -47,29 +46,14 @@ public class GenerateStaticNodes : GenerationStep {
             }
         });
 
-        nodes.AddRange(unanchoredStaticNodes.Values);
-        foreach (var d in anchoredStaticNodes) {
-            nodes.AddRange(d.Value.Values);
-        }
-
+        nodes.AddRange(staticNodes.Values);
     }
 
-    private Node getStaticNode(GameObject anchor, string staticReference) {
-        Dictionary<string, Node> nameToNode;
-        if (anchor == null) {
-            nameToNode = unanchoredStaticNodes;
-        } else {
-            if (!anchoredStaticNodes.TryGetValue(anchor, out nameToNode)) {
-                nameToNode = new Dictionary<string, Node>();
-                anchoredStaticNodes[anchor] = nameToNode;
-            }
-        }
-
+    private Node getStaticNode(string staticReference) {
         Node node;
-        if (!nameToNode.TryGetValue(staticReference, out node)) {
+        if (!staticNodes.TryGetValue(staticReference, out node)) {
             node = nameToFactory[staticReference].createNode();
-            node.gameObjectInstance = anchor;
-            nameToNode[staticReference] = node;
+            staticNodes[staticReference] = node;
         }
         return node;
     }

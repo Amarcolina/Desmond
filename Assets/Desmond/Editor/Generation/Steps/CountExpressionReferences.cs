@@ -8,19 +8,12 @@ namespace Desmond {
 public class CountExpressionReferences : GenerationStep {
 
     public override void doStep() {
-        LoadingBarUtil.beginChunk(scriptCount, "", "", () => {
-            foreach (ScriptStruct script in scripts) {
-                LoadingBarUtil.beginChunk(script.methods.Values.Count, "", "Initializing Expression Method : ", () => {
-                    foreach (GenericMethodStruct method in script.methods.Values.Where(m => m.shouldBeWritten())) {
-                        forEveryExpressionLink(method, expression => {
-                            expression.references++;
-                            if (method.structKey.parentNode.gameObjectInstance != expression.structKey.parentNode.gameObjectInstance) {
-                                expression.isPublic = true;
-                            }
-                        });
-                        LoadingBarUtil.recordProgress(method.ToString());
-                    }
+        LoadingBarUtil.beginChunk(script.methods.Values.Count, "", "Initializing Expression Method : ", () => {
+            foreach (GenericMethodStruct method in script.methods.Values.Where(m => m.shouldBeWritten())) {
+                forEveryExpressionLink(method, expression => {
+                    expression.references++;
                 });
+                LoadingBarUtil.recordProgress(method.ToString());
             }
         });
 

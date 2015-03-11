@@ -117,7 +117,6 @@ public class NodeDescriptor : IPathable{
 
     public string descriptorName;
     public bool isStatic = false;
-    public bool isGameObject = false;
 
     public string getPath() {
         return descriptorName;
@@ -192,9 +191,6 @@ public class NodeDescriptor : IPathable{
                 for (int i = 1; i < splitLine.Length; i++) {
                     if (splitLine[i].ToLower() == "static") {
                         current.isStatic = true;
-                    }
-                    if (splitLine[i].ToLower() == "gameobject") {
-                        current.isGameObject = true;
                     }
                 }
 
