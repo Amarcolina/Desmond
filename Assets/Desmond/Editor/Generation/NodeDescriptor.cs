@@ -25,12 +25,10 @@ public class FieldDescriptor{
 public class DataInDescriptor {
     public string dataType;
     public string id;
-    public string staticReference;
 
-    public DataInDescriptor(string dataType, string id, string staticReference) {
+    public DataInDescriptor(string dataType, string id) {
         this.dataType = dataType;
         this.id = id;
-        this.staticReference = staticReference;
     }
 }
 
@@ -64,18 +62,24 @@ public class GenericMethodDescriptor {
     public HashSet<string> methodLocalNames = new HashSet<string>();
 }
 
+public class MessageMethodDescriptor : GenericMethodDescriptor {
+    public string messageName;
+
+    public MessageMethodDescriptor(string messageName) {
+        this.messageName = messageName;
+    }
+}
+
 /* Describes a method defined by a node.  Multiple MethodDescriptors
  * can be tied to the same execution input
  */
 public class MethodDescriptor : GenericMethodDescriptor {
     public string id;
-    public string staticReference = null;
     public HashSet<string> withouts = new HashSet<string>();
     public InlineBehavior inlineBehavior;
 
-    public MethodDescriptor(string i, string staticReference, HashSet<string> withouts, InlineBehavior inlineBehavior) {
+    public MethodDescriptor(string i, HashSet<string> withouts, InlineBehavior inlineBehavior) {
         id = i;
-        this.staticReference = staticReference;
         this.withouts = withouts;
         this.inlineBehavior = inlineBehavior;
     }
@@ -98,6 +102,10 @@ public class MethodDescriptor : GenericMethodDescriptor {
  * $in inType inName (static reference)
  * 
  * $method inputName (static reference) (forceInline | preventInline | auto) (without arg arg arg)
+ *     code
+ *     code
+ *     
+ * $inMessage messageName
  *     code
  *     code
  *     
@@ -133,6 +141,7 @@ public class NodeDescriptor : IPathable{
     public HashSet<string> namespaceImports = new HashSet<string>();
 
     public List<GenericMethodDescriptor> functions = new List<GenericMethodDescriptor>();
+    public List<MessageMethodDescriptor> messageFunctions = new List<MessageMethodDescriptor>();
 
     public static Dictionary<string, NodeDescriptor> descriptors {
         get {
@@ -171,7 +180,8 @@ public class NodeDescriptor : IPathable{
         MethodDescriptor method = null;
         GenericMethodDescriptor genericMethod = null;
         DataOutDescriptor expression = null;
-        
+        MessageMethodDescriptor messageMethod = null;
+
         NodeDescriptor current = null;
 
         string[] lines = System.IO.File.ReadAllLines(filename);
@@ -213,10 +223,11 @@ public class NodeDescriptor : IPathable{
                 method = null;
                 expression = null;
                 genericMethod = null;
+                messageMethod = null;
 
                 switch (command) {
                     case "$in": {
-                        current.dataIns[splitLine[2]] = new DataInDescriptor(splitLine[1], splitLine[2], parseStaticOption(splitLine));
+                        current.dataIns[splitLine[2]] = new DataInDescriptor(splitLine[1], splitLine[2]);
                         break;
                     }
                     case "$def": {
@@ -229,9 +240,13 @@ public class NodeDescriptor : IPathable{
                         current.functions.Add(genericMethod);
                         break;
                     }
+                    case "$inMessage": {
+                        messageMethod = new MessageMethodDescriptor(splitLine[1]);
+                        current.messageFunctions.Add(messageMethod);
+                        break;
+                    }
                     case "$method": {
                         method = new MethodDescriptor(splitLine[1],
-                                                parseStaticOption(splitLine),
                                                 parseWithoutOption(splitLine),
                                                 parseInlineOption(splitLine, InlineBehavior.AUTO));
 
@@ -269,6 +284,9 @@ public class NodeDescriptor : IPathable{
                 if (genericMethod != null) {
                     genericMethod.methodLocalNames.Add(match[1]);
                 }
+                if (messageMethod != null) {
+                    messageMethod.methodLocalNames.Add(match[1]);
+                }
             }
 
             //Matching ->id data out points
@@ -284,6 +302,10 @@ public class NodeDescriptor : IPathable{
                 continue;
             }
 
+            if (messageMethod != null) {
+                messageMethod.codeBlock.Add(trimmedLine);
+            }
+
             if (expression != null) {
                 expression.expressionCode = trimmedLine;
                 expression = null;
@@ -295,15 +317,6 @@ public class NodeDescriptor : IPathable{
                 continue;
             }
         }
-    }
-
-    private static string parseStaticOption(string[] s) {
-        for (int i = 0; i < s.Length; i++) {
-            if (s[i] == "static") {
-                return s[i + 1];
-            }
-        }
-        return null;
     }
 
     private static InlineBehavior parseInlineOption(string[] s, InlineBehavior def) {

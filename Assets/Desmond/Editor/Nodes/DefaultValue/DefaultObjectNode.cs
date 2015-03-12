@@ -8,8 +8,8 @@ namespace Desmond {
 public class ObjectFieldStruct : FieldStruct {
     public Object value;
 
-    public ObjectFieldStruct(ScriptElementKey key, string type, string name, Object value)
-        : base(key, type, name) {
+    public ObjectFieldStruct(ScriptElementKey key, string type, Object value)
+        : base(key, type) {
         this.value = value;
     }
 }
@@ -17,15 +17,12 @@ public class ObjectFieldStruct : FieldStruct {
 public class DefaultObjectNode : DefaultValueNode {
     public Object value;
 
+    string fieldName = "defaultObject";
+
     public override List<FieldStruct> getFieldStructs() {
         List<FieldStruct> list = new List<FieldStruct>();
 
-        string name = "default" + getValueType().Name;
-        if (value != null) {
-            name = StringHelper.toClassName(value.name, false);
-        }
-
-        ObjectFieldStruct s = new ObjectFieldStruct(getKey(), type, name, value);
+        ObjectFieldStruct s = new ObjectFieldStruct(new ScriptElementKey(this, fieldName), type, value);
         s.isPublic = true;
         list.Add(s);
         return list;
@@ -34,8 +31,8 @@ public class DefaultObjectNode : DefaultValueNode {
     public override List<ExpressionMethodStruct> getExpressionStructs() {
         List<ExpressionMethodStruct> list = new List<ExpressionMethodStruct>();
 
-        ExpressionMethodStruct s = new ExpressionMethodStruct(getKey(), "default", type);
-        s.addCode("<out>");
+        ExpressionMethodStruct s = new ExpressionMethodStruct(getKey(), fieldName, type);
+        s.addCode("<" + fieldName + ">");
         s.inlineBehavior = InlineBehavior.FORCE_INLINE;
         list.Add(s);
 

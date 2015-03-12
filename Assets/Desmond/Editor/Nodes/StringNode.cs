@@ -38,7 +38,6 @@ public class StringNode : Node{
 
                 ExecutionInputInfo element = ScriptableObject.CreateInstance<ExecutionInputInfo>();
                 element.init(a.id, "void", this);
-                element.visible = a.staticReference == null || a.staticReference == "";
                 elements.Add(element);
             }
         }
@@ -65,7 +64,7 @@ public class StringNode : Node{
         
         foreach (FieldDescriptor d in descriptor.fields.Values) {
             ScriptElementKey key = new ScriptElementKey(this, d.id);
-            list.Add(new FieldStruct(key, d.fieldType, d.id, d.defaultValue));
+            list.Add(new FieldStruct(key, d.fieldType, d.defaultValue));
         }
 
         return list;
@@ -105,7 +104,6 @@ public class StringNode : Node{
             ScriptElementKey key = new ScriptElementKey(this, bestMethod.id);
             MethodStruct s = new MethodStruct(key, name + StringHelper.capitalize(bestMethod.id));
             s.addCode(bestMethod.codeBlock);
-            s.staticReference = bestMethod.staticReference;
             list.Add(s);
         }
 
@@ -137,6 +135,10 @@ public class StringNode : Node{
         }
 
         return list;
+    }
+
+    public override List<MessageMethodDescriptor> getMessageMethods() {
+        return descriptor.messageFunctions;
     }
 
     public override HashSet<string> getNamespaceImports() {

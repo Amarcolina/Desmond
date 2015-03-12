@@ -7,7 +7,7 @@ namespace Desmond {
 public class AnimationCurveFieldStruct : FieldStruct {
     public AnimationCurve value;
 
-    public AnimationCurveFieldStruct(ScriptElementKey key, string type, string name, AnimationCurve value) : base(key, type, name){
+    public AnimationCurveFieldStruct(ScriptElementKey key, string type, AnimationCurve value) : base(key, type){
         this.value = value;
         this.defaultValue = value;
     }
@@ -21,7 +21,7 @@ public class DefaultAnimationCurveNode : DefaultValueNode {
 
         string name = "defaultCurve";
 
-        AnimationCurveFieldStruct s = new AnimationCurveFieldStruct(new ScriptElementKey(this, name), type, name, value);
+        AnimationCurveFieldStruct s = new AnimationCurveFieldStruct(new ScriptElementKey(this, name), type, value);
         s.isPublic = true;
         list.Add(s);
         return list;

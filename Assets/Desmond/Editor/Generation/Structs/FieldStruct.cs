@@ -6,15 +6,14 @@ namespace Desmond {
 
 public class FieldStruct : ScriptElementStruct{
     public string type;
-    public string name;
+    public string name = "UNINITIALIZED_FIELD_NAME";
     public object defaultValue;
     public int references;
 
     public bool isPublic = false;
 
-    public FieldStruct(ScriptElementKey key, string type, string name, object defaultValue = null) : base(key){
+    public FieldStruct(ScriptElementKey key, string type, object defaultValue = null) : base(key){
         this.type = type;
-        this.name = "fooooy";
         this.defaultValue = defaultValue;
     }
 

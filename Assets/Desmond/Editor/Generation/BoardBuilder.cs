@@ -15,7 +15,7 @@ public class BoardBuilder {
         steps.Add(new InitSceneBoards());
         steps.Add(new InitScriptStruct());
         steps.Add(new RecordNamespaceImports());
-        steps.Add(new GenerateStaticNodes());
+        steps.Add(new GenerateMessageMethods());
         steps.Add(new InitMethodStructs());
         steps.Add(new InitFields());
         steps.Add(new CountMethodReferences());

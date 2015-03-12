@@ -13,15 +13,19 @@ $method onAwakeEvent static Awake
 $method onStartEvent static Start
 	->onStart
 
-#Events/OnMouseDown gameObject
+#Events/OnMouseDown
+!UnityEngine
 
-$method onMouseDownEvent static Update
+$in UnityEngine.GameObject mouseDownGameObject
+$classLocalName mouseDownListener
+
+$inMessage OnEnable
+	attatchMessageListener<OnMouseDownMessageListener>(<mouseDownGameObject>, <mouseDownListener>);
+	
+$inMessage OnDisable
+	detatchMessageListener<OnMouseDownMessageListener>(<mouseDownGameObject>, <mouseDownListener>);
+	
+$customMethod
+private void <mouseDownListener>(){
 	->onMouseDown
-	
-#Events/OnTriggerEnter gameObject
-
-$method onTriggerEnterEvent static OnTriggerEnter
-	->onTriggerEnter
-	
-$out savedCollider static OnTriggerEnter
-	<savedCollider>
+}

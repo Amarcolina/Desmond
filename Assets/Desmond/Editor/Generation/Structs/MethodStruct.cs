@@ -6,7 +6,6 @@ namespace Desmond {
 
 public class MethodStruct : GenericMethodStruct {
     public InlineBehavior inlineBehavior;
-    public string staticReference = null;
 
     //Not part of original definition, but defined during script generation
     public bool isPublic = false;

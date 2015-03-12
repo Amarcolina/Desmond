@@ -31,6 +31,10 @@ public static class Deep {
                 foreach (Object ownedObject in ownedObjects) {
                     LoadingBarUtil.recordProgress();
 
+                    if (ownedObject == null) {
+                        continue;
+                    }
+
                     Object newObj = Object.Instantiate(ownedObject);
                     newObj.name = ownedObject.name;
                     oldToNew[ownedObject] = newObj;

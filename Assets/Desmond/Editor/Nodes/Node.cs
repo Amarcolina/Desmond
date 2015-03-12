@@ -73,6 +73,10 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObjec
         return null;
     }
 
+    public virtual List<MessageMethodDescriptor> getMessageMethods() {
+        return new List<MessageMethodDescriptor>();
+    }
+
     public virtual List<FieldStruct> getFieldStructs() {
         return new List<FieldStruct>();
     }
