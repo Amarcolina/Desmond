@@ -4,7 +4,7 @@ using System.Collections;
 public class DesmondEventBase : MonoBehaviour {
     private DesmondSceneBase sceneScript;
 
-    protected void attatchMessageListener<T>(GameObject gameObject, object listener) where T : DesmondMessageListener{
+    protected void attatchMessageListener<T,K>(GameObject gameObject, K listener) where T : DesmondMessageListener{
         if (gameObject == null) {
             return;
         }
@@ -17,7 +17,7 @@ public class DesmondEventBase : MonoBehaviour {
         t.attatchListener(listener);
     }
 
-    protected void detatchMessageListener<T>(GameObject gameObject, object listener) where T : DesmondMessageListener {
+    protected void detatchMessageListener<T,K>(GameObject gameObject, K listener) where T : DesmondMessageListener {
         if (gameObject == null) {
             return;
         }

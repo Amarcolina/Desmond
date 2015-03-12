@@ -10,6 +10,7 @@ public abstract class DesmondMessageListenerSingle<T> : DesmondMessageListener {
     private event System.Action<T> e;
 
     public override void attatchListener(object listener) {
+        Debug.Log(listener);
         e += (listener as System.Action<T>);
     }
 
