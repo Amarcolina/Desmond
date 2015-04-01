@@ -29,7 +29,7 @@ public class FieldStruct : ScriptElementStruct{
         line += name;
 
         if (defaultValue != null && defaultValue.GetType() == typeof(string)) {
-            line += " " + (string)defaultValue + ";";
+            line += " = " + (string)defaultValue + ";";
         }else{
             line += ";";
         }

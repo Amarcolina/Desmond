@@ -1,31 +1,15 @@
 #Events/Update
 
-$method onUpdateEvent static Update
+$inMessage Update
 	->onUpdate
 
 #Events/Awake
 
-$method onAwakeEvent static Awake
+$inMessage Awake
 	->onAwake
 
 #Events/Start
 
-$method onStartEvent static Start
+$inMessage Start
 	->onStart
-
-#Events/OnMouseDown
-!UnityEngine
-
-$in UnityEngine.GameObject mouseDownGameObject
-$classLocalName mouseDownListener
-
-$inMessage OnEnable
-	attatchMessageListener<OnMouseDownMessageListener>(<mouseDownGameObject>, <mouseDownListener>);
 	
-$inMessage OnDisable
-	detatchMessageListener<OnMouseDownMessageListener>(<mouseDownGameObject>, <mouseDownListener>);
-	
-$customMethod
-private void <mouseDownListener>(){
-	->onMouseDown
-}
