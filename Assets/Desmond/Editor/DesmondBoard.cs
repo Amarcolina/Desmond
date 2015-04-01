@@ -18,6 +18,23 @@ public class DesmondBoard : ScriptableObject, IPathable, IDeepObject, IValidatab
     public List<Node> nodesInBoard = new List<Node>();
     public string scriptName;
 
+    public List<PropertyValue> scriptProperties = new List<PropertyValue>();
+
+    public class PropertyValue {
+        public object propertyValue;
+        public List<string> propertyPath;
+
+        public PropertyValue(object propertyValue, params string[] propertyPath) {
+            this.propertyValue = propertyValue;
+            this.propertyPath = new List<string>(propertyPath);
+        }
+
+        public PropertyValue(object propertyValue, List<string> propertyPath) {
+            this.propertyValue = propertyValue;
+            this.propertyPath = new List<string>(propertyPath);
+        }
+    }
+
     public string getPath() {
         switch (boardType) {
             case DesmondBoardType.SCENE_BOARD:
