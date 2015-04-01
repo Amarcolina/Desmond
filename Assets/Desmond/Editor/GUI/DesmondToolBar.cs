@@ -16,13 +16,10 @@ public class DesmondToolbar {
     public const float height = 18;
     public ScriptBuildState buildStatus = ScriptBuildState.NONE;
 
-    public List<PostCompilationJob> jobsToDo = null;
-
     private static bool wasJustReloaded = true;
 
     public void doTopBar(Rect rect) {
         if (wasJustReloaded) {
-            doJobs();
             wasJustReloaded = false;
         }
 
@@ -36,14 +33,9 @@ public class DesmondToolbar {
 
         if (board != null) {
             if (board.boardType == DesmondBoardType.SCENE_BOARD) {
-                EditorGUI.BeginDisabledGroup(jobsToDo != null);
                 if (GUILayout.Button("Generate All Scene Boards", EditorStyles.toolbarButton)) {
-                    jobsToDo = BoardBuilder.buildSceneBoards();
-                    if (!EditorApplication.isCompiling) {
-                        doJobs();
-                    }
+                    BoardBuilder.buildSceneBoards();
                 }
-                EditorGUI.EndDisabledGroup();
             } else if(board.boardType == DesmondBoardType.PREFAB_BOARD){
                 if (GUILayout.Button("Generate Prefab Script", EditorStyles.toolbarButton)) {
                     Debug.LogWarning("Not implemented right now!");
@@ -58,16 +50,6 @@ public class DesmondToolbar {
 
         GUILayout.EndHorizontal();
         GUILayout.EndArea();
-    }
-
-    private void doJobs() {
-        if (jobsToDo != null) {
-            foreach (PostCompilationJob job in jobsToDo) {
-                job.doJob();
-                GameObject.DestroyImmediate(job);
-            }
-            jobsToDo = null;
-        }
     }
 }
 

@@ -9,7 +9,7 @@ public class BoardBuilder {
 
     public static List<GenerationStep> steps = new List<GenerationStep>();
 
-    public static List<PostCompilationJob> buildSceneBoards() {
+    public static void buildSceneBoards() {
         steps.Clear();
 
         steps.Add(new InitSceneBoards());
@@ -30,10 +30,10 @@ public class BoardBuilder {
         steps.Add(new WriteScriptFile());
         steps.Add(new CleanupGeneration());
 
-        return doSteps();
+        doSteps();
     }
 
-    private static List<PostCompilationJob> doSteps() {
+    private static void doSteps() {
         LoadingBarUtil.beginChunk(steps.Count, "Building Scripts: ", "", () => {
             GenerationStep previousStep = null;
             foreach (GenerationStep step in steps) {
@@ -46,8 +46,6 @@ public class BoardBuilder {
                 previousStep = step;
             }
         });
-
-        return null;
     }
 }
 
