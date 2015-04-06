@@ -5,7 +5,7 @@ using System.Collections;
 namespace Desmond {
 
 public class StringProperty : GenericPropertyValue<string> {
-    public override void assignToProperty(SerializedProperty property) {
+    public override void applyTo(SerializedProperty property) {
         property.stringValue = value;
     }
 }

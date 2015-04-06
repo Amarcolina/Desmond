@@ -7,11 +7,11 @@ using System.Collections.Generic;
 namespace Desmond {
 
 public abstract class PropertyValue : ScriptableObject {
-    public abstract void assignToProperty(SerializedProperty property);
+    public abstract void applyTo(SerializedProperty property);
 
     public abstract void init(object obj);
 
-    public static PropertyValue getPropertyValue(object value) {
+    public static PropertyValue create(object value) {
         PropertyValue v = null;
         if (value == null || value is UnityEngine.Object) v = ScriptableObject.CreateInstance<ObjectProperty>();
 
