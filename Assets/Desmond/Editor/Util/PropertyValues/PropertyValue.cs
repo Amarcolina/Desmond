@@ -32,14 +32,46 @@ public abstract class PropertyValue : ScriptableObject {
         v.init(value);
         return v;
     }
+
+    public abstract void drawDefaultPropertyEditor(Rect rect);
+    public virtual void drawCustomPropertyEditor(Rect rect) {
+        drawDefaultPropertyEditor(rect);
+    }
 }
 
 public abstract class GenericPropertyValue<T> : PropertyValue {
     [SerializeField]
     protected T value;
 
+    protected SerializedObject _mySerializedObject = null;
+    protected SerializedProperty _serializedValue = null;
+
+    protected SerializedObject serializedObject {
+        get {
+            if (_mySerializedObject == null) {
+                _mySerializedObject = new SerializedObject(this);
+            }
+            return _mySerializedObject;
+        }
+    }
+
+    protected SerializedProperty serializedValue {
+        get {
+            if (_serializedValue == null) {
+                _serializedValue = serializedObject.FindProperty("value");
+            }
+            return _serializedValue;
+        }
+    }
+
     public override void init(object obj) {
         value = (T)obj;
+    }
+
+    public override void drawDefaultPropertyEditor(Rect rect) {
+        serializedObject.UpdateIfDirtyOrScript();
+        EditorGUI.PropertyField(rect, serializedValue, GUIContent.none);
+        serializedObject.ApplyModifiedProperties();
     }
 }
 
