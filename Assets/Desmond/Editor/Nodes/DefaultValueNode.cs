@@ -59,7 +59,7 @@ public class DefaultValueNode : Node, IDeepObject {
     }
 
     public ScriptElementKey getKey() {
-        return new ScriptElementKey(this, FIELD_NAME);
+        return new ScriptElementKey(this, "out");
     }
 
     public IEnumerable<Object> getOwnedObjects() {

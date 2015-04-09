@@ -11,7 +11,7 @@ public class StringProperty : GenericPropertyValue<string> {
     }
 
     public override bool tryGetStringRepresentation(out string representation) {
-        representation = value;
+        representation = "\"" + value + "\"";
         return true;
     }
 }
