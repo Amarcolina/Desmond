@@ -77,6 +77,11 @@ public class EnumProperty : GenericPropertyValue<int> {
             inputString = chosenName;
         }
     }
+
+    public override bool tryGetStringRepresentation(out string representation) {
+        representation = fullTypeName + "." + enumNames[value];
+        return true;
+    }
 }
 
 }

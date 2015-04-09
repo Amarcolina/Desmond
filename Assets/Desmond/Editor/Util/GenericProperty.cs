@@ -12,7 +12,7 @@ public class GenericProperty : ScriptableObject, IDeepObject {
     public static GenericProperty create(object value, params string[] path) {
         GenericProperty genericProperty = ScriptableObject.CreateInstance<GenericProperty>();
         genericProperty.propertyPath = new List<string>(path);
-        genericProperty.propertyValue = PropertyValue.create(value);
+        genericProperty.propertyValue = PropertyValue.createFromValue(value);
         return genericProperty;
     }
 

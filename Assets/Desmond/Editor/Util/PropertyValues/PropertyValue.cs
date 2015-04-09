@@ -14,31 +14,47 @@ public abstract class PropertyValue : ScriptableObject {
 
     public abstract void init(object obj);
 
-    public static PropertyValue create(object value) {
-        PropertyValue v = null;
-        if (value == null || value is UnityEngine.Object) v = ScriptableObject.CreateInstance<ObjectProperty>();
-
-        if (value is AnimationCurve) v = ScriptableObject.CreateInstance<AnimationCurveProperty>();
-        if (value is bool) v = ScriptableObject.CreateInstance<BoolProperty>();
-        if (value is Bounds) v = ScriptableObject.CreateInstance<BoundsProperty>();
-        if (value is Color) v = ScriptableObject.CreateInstance<ColorProperty>();
-        if (value is Enum) v = ScriptableObject.CreateInstance<EnumProperty>();
-        if (value is float) v = ScriptableObject.CreateInstance<FloatProperty>();
-        if (value is int) v = ScriptableObject.CreateInstance<IntProperty>();
-        if (value is Quaternion) v = ScriptableObject.CreateInstance<QuaternionProperty>();
-        if (value is Rect) v = ScriptableObject.CreateInstance<RectProperty>();
-        if (value is string) v = ScriptableObject.CreateInstance<StringProperty>();
-        if (value is Vector2) v = StringProperty.CreateInstance<Vector2Property>();
-        if (value is Vector3) v = StringProperty.CreateInstance<Vector3Property>();
-        if (value is Vector4) v = StringProperty.CreateInstance<Vector4Property>();
-
+    public static PropertyValue createFromValue(object value) {
+        PropertyValue v = createFromType(value.GetType());
+        v.fullTypeName = value.GetType().FullName;
         v.init(value);
+        return v;
+    }
+
+    public static PropertyValue createFromType(System.Type type) {
+        PropertyValue v = null;
+        if (type == typeof(UnityEngine.Object)) v = ScriptableObject.CreateInstance<ObjectProperty>();
+        if (type == typeof(AnimationCurve)) v = ScriptableObject.CreateInstance<AnimationCurveProperty>();
+        if (type == typeof(bool)) v = ScriptableObject.CreateInstance<BoolProperty>();
+        if (type == typeof(Bounds)) v = ScriptableObject.CreateInstance<BoundsProperty>();
+        if (type == typeof(Color)) v = ScriptableObject.CreateInstance<ColorProperty>();
+        if (type == typeof(Enum)) v = ScriptableObject.CreateInstance<EnumProperty>();
+        if (type == typeof(float)) v = ScriptableObject.CreateInstance<FloatProperty>();
+        if (type == typeof(int)) v = ScriptableObject.CreateInstance<IntProperty>();
+        if (type == typeof(Quaternion)) v = ScriptableObject.CreateInstance<QuaternionProperty>();
+        if (type == typeof(Rect)) v = ScriptableObject.CreateInstance<RectProperty>();
+        if (type == typeof(string)) v = ScriptableObject.CreateInstance<StringProperty>();
+        if (type == typeof(Vector2)) v = StringProperty.CreateInstance<Vector2Property>();
+        if (type == typeof(Vector3)) v = StringProperty.CreateInstance<Vector3Property>();
+        if (type == typeof(Vector4)) v = StringProperty.CreateInstance<Vector4Property>();
         return v;
     }
 
     public abstract void drawDefaultPropertyEditor(Rect rect);
     public virtual void drawCustomPropertyEditor(Rect rect) {
         drawDefaultPropertyEditor(rect);
+    }
+
+    public abstract object getValue();
+
+    public virtual bool tryGetStringRepresentation(out string representation) {
+        representation = null;
+        return false;
+    }
+
+    public bool hasStringRepresentation() {
+        string temp;
+        return tryGetStringRepresentation(out temp);
     }
 }
 
@@ -70,13 +86,16 @@ public abstract class GenericPropertyValue<T> : PropertyValue {
 
     public override void init(object obj) {
         value = (T)obj;
-        fullTypeName = obj.GetType().FullName;
     }
 
     public override void drawDefaultPropertyEditor(Rect rect) {
         serializedObject.UpdateIfDirtyOrScript();
         EditorGUI.PropertyField(rect, serializedValue, GUIContent.none);
         serializedObject.ApplyModifiedProperties();
+    }
+
+    public override object getValue() {
+        return value;
     }
 }
 
