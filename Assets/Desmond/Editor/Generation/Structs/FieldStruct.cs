@@ -23,8 +23,13 @@ public class FieldStruct : ScriptElementStruct{
 
     public override List<string> generateScriptLines() {
         List<string> scriptLines = new List<string>();
+
+        //if (defaultValue != null && defaultValue is PropertyValue) {
+        //    scriptLines.Add("[SerializeField");
+        //}
+
         string line;
-        line  = "private ";
+        line = isPublic ? "public " : "private ";
         line += type + " ";
         line += name;
 

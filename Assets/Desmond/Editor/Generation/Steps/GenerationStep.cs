@@ -109,12 +109,6 @@ public abstract class GenerationStep {
                     connectedKey.parentNode = connectedNode;
                     connectedKey.id = connectedElement.id;
 
-                    Debug.Log("#######" + connectedKey);
-                    foreach (var v in script.methods) {
-                        if (v.Key.parentNode is DefaultValueNode) {
-                            Debug.Log((v.Key.parentNode as DefaultValueNode).propertyValue.fullTypeName);
-                        }
-                    }
                     ExpressionMethodStruct expressionMethod = script.methods[connectedKey] as ExpressionMethodStruct;
 
                     if (expressionMethod == null) {

@@ -20,7 +20,6 @@ public class InitScriptStruct : GenerationStep {
                 InputWithDefaultInfo defaultInfo = e as InputWithDefaultInfo;
                 if (defaultInfo != null && defaultInfo.defaultValue != null) {
                     defaultValueNodes.Add(defaultInfo.defaultValue);
-                    break;
                 }
             }
             

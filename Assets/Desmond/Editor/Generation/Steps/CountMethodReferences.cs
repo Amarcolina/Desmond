@@ -7,13 +7,12 @@ namespace Desmond {
 public class CountMethodReferences : GenerationStep {
 
     public override void doStep() {
-        LoadingBarUtil.beginChunk(nodes.Count, "", "", () => {
-            foreach (Node node in nodes) {
-                List<CustomMethodStruct> customMethodStructs = node.getCustomMethodStructs();
-                foreach (CustomMethodStruct customMethod in customMethodStructs) {
-                    countMethodReferences(customMethod);
+        LoadingBarUtil.beginChunk(script.methods.Count, "", "", () => {
+            foreach (GenericMethodStruct m in script.methods.Values) {
+                if (m is CustomMethodStruct || m is MessageMethodStruct) {
+                    countMethodReferences(m);
                 }
-                LoadingBarUtil.recordProgress(node.ToString());
+                LoadingBarUtil.recordProgress(m.ToString());
             }
         });
     }
@@ -23,8 +22,6 @@ public class CountMethodReferences : GenerationStep {
         if (genericMethod.references > 1) {
             return;
         }
-
-        script.methods[genericMethod.structKey] = genericMethod;
 
         forEveryMethodLink(genericMethod, subMethod => countMethodReferences(subMethod));
     }
