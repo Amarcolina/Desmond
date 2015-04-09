@@ -189,8 +189,10 @@ public class DesmondWindow : EditorWindow {
 
     public void duplicateNode(object node) {
         Assert.that(node is Node);
-        Node newNode = Deep.copy(node as Node);
-        board.nodesInBoard.Add(newNode);
+        for (int i = 0; i < 20; i++) {
+            Node newNode = Deep.copy(node as Node);
+            board.nodesInBoard.Add(newNode);
+        }
     }
 
     public void drawNodes() {

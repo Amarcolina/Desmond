@@ -33,7 +33,7 @@ public class InputWithDefaultInfo : ConnectableElement, IDeepObject{
         }
 
         if (defaultValue != null) {
-            if (defaultConnection.connectedNode == null || defaultConnection.connectedElement == null) {
+            if (defaultConnection.destinationNode == null || defaultConnection.destinationNode == null) {
                 return false;
             }
 
@@ -55,8 +55,8 @@ public class InputWithDefaultInfo : ConnectableElement, IDeepObject{
     }
 
     public override bool canConnectTo(ElementConnection connection) {
-        return (connection.connectedElement is DataOutInfo) && ((type == connection.connectedElement.type) ||
-               TypeConversion.canConvertTo(connection.connectedElement.type, type)); 
+        return (connection.destinationElement is DataOutInfo) && ((type == connection.destinationElement.type) ||
+               TypeConversion.canConvertTo(connection.destinationElement.type, type)); 
     }
 
     public override int getMaxConnections() {
@@ -112,7 +112,7 @@ public class InputWithDefaultInfo : ConnectableElement, IDeepObject{
         GUI.Label(rect, id, _style);
 
         if (defaultValue != null && connections[0].Equals(defaultConnection)) {
-            defaultValue.drawDefaultProperty(new Rect(rect.x, rect.y + Node.LINE, rect.width, rect.height));
+            defaultValue.propertyValue.drawCustomPropertyEditor(new Rect(rect.x, rect.y + Node.LINE, rect.width, rect.height));
         }
     }
 

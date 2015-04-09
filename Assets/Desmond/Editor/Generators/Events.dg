@@ -1,29 +1,15 @@
 #Events/Update
 
-void Update
+$inMessage Update
 	->onUpdate
 
 #Events/Awake
 
-void Awake
+$inMessage Awake
 	->onAwake
 
 #Events/Start
 
-void Start
+$inMessage Start
 	->onStart
-
-#Events/OnMouseDown gameObject
-
-void OnMouseDown
-	->onMouseDown
 	
-#Events/OnTriggerEnter gameObject
-
-void OnTriggerEnter
-	->onTriggerEnter
-	
-#Events/OnTriggerExit gameObject
-
-void OnTriggerExit
-	->onTriggerExit

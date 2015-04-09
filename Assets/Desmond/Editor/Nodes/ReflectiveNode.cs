@@ -25,7 +25,7 @@ public class ReflectiveNode : Node {
     }
 
     private void loadMethodInfos() {
-        System.Type type = DefaultValueNode.searchForType(typeName);
+        System.Type type = TypeUtil.searchForType(typeName);
         name = type.Name;
 
         _methodInfos = new List<MethodInfo>();
@@ -100,21 +100,13 @@ public class ReflectiveNode : Node {
         List<ExpressionMethodStruct> list = new List<ExpressionMethodStruct>();
 
         if (!returnsVoid()) {
-            ScriptStructKey key = new ScriptStructKey(this, methodDisplayName);
+            ScriptElementKey key = new ScriptElementKey(this, methodDisplayName);
             ExpressionMethodStruct s = new ExpressionMethodStruct(key, methodDisplayName, returnType);
             s.addCode(getExpressionCode());
             list.Add(s);
         }
 
         return list;
-    }
-
-    public override List<FieldStruct> getFieldStructs() {
-        return new List<FieldStruct>();
-    }
-
-    public override List<GenericCodeStruct> getGenericCodeStructs() {
-        return new List<GenericCodeStruct>();
     }
 
     public override List<MethodStruct> getMethodStructs() {
@@ -124,7 +116,7 @@ public class ReflectiveNode : Node {
         //  call method with args
         //  ->out to exit
         if (returnsVoid()) {
-            ScriptStructKey key = new ScriptStructKey(this, methodDisplayName);
+            ScriptElementKey key = new ScriptElementKey(this, methodDisplayName);
             MethodStruct s = new MethodStruct(key, methodDisplayName);
             s.addCode(getExpressionCode() + ";");
             s.addCode("->out");
@@ -155,7 +147,7 @@ public class ReflectiveNode : Node {
         if (isStatic) {
             expression = typeName + ".";
         } else {
-            expression = "<" + typeName + " instance>.";
+            expression = "<instance>.";
         }
 
         expression += methodName + "(" + getCommaDelimitedArguments(chosenMethod) + ")";
@@ -169,7 +161,7 @@ public class ReflectiveNode : Node {
         if (isStatic) {
             expression = typeName + ".";
         } else {
-            expression = "<" + typeName + " instance>.";
+            expression = "<instance>.";
         }
 
         expression += methodName.Substring(4);
@@ -250,7 +242,7 @@ public class ReflectiveNode : Node {
             expression += getParameterExpression(parameterInfo);
 
             if (i != parameters.Length - 1) {
-                expression += ",";
+                expression += ", ";
             }
         }
 
@@ -258,7 +250,7 @@ public class ReflectiveNode : Node {
     }
 
     public string getParameterExpression(ParameterInfo parameter) {
-        return "<" + parameter.ParameterType.FullName + " " + parameter.Name + ">";
+        return "<" + parameter.Name + ">";
     }
 
     public string getImplicitOperator() {

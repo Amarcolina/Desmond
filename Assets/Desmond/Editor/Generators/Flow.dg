@@ -1,30 +1,32 @@
 #Flow/Conditional
 
-in
-	if(<System.Boolean condition>){
+$in System.Boolean condition
+
+$method in
+	if(<condition>){
 		->ifTrue
 	}else{
 		->ifFalse
 	}
 	->finally
 	
-in
-	if(<System.Boolean condition>){
+$method in without ifFalse
+	if(<condition>){
 		->ifTrue
 	}
 	->finally
 	
-in
-	if(!<System.Boolean condition>){
+$method in without ifTrue
+	if(!<condition>){
 		->ifFalse
 	}
 	->finally
 	
 #Flow/Flip-Flop
 
-def System.Boolean flipFlopState false
+$def System.Boolean flipFlopState false
 
-in
+$method in
 	<flipFlopState> = !<flipFlopState>;
 	if(<flipFlopState>){
 		->outA
@@ -33,14 +35,14 @@ in
 	}
 	->finally
 	
-in
+$method in without outB
 	<flipFlopState> = !<flipFlopState>;
 	if(<flipFlopState>){
 		->outA
 	}
 	->finally
 	
-in
+$method in without outA
 	<flipFlopState> = !<flipFlopState>;
 	if(!<flipFlopState>){
 		->outB
@@ -49,9 +51,9 @@ in
 	
 #Flow/Latch
 
-def System.Boolean latchState false
+$def System.Boolean latchState false
 
-toggle
+$method toggle
 	<latchState> = !<latchState>;
 	if(<latchState>){
 		->onSet
@@ -60,41 +62,43 @@ toggle
 	}
 	->finally
 	
-set
+$method set
 	<latchState> = true;
 	->onSet
 	->finally
 	
-reset
+$method reset
 	<latchState> = false;
 	->onReset
 	->finally
 	
-System.Boolean state
+$out System.Boolean state
 	<latchState>
 	
 #Flow/While
 
-in
-	while(<System.Boolean condition>){
+$in System.Boolean condition
+
+$method in
+	while(<condition>){
 		->do
 	}
 	->finally
 	
 #Flow/For
 
-def System.Int32 forLoopIndex 0
+$def System.Int32 forLoopIndex 0
 
-in
-	for(<forLoopIndex> = <System.Int32 start>; <forLoopIndex>  <System.Int32 ceiling>; <forLoopIndex>++){
+$in System.Int32 start
+$in System.Int32 end
+
+$method in
+	for(<forLoopIndex> = <start>; <forLoopIndex> < <ceiling>; <forLoopIndex>++){
 		->do
 	}
 	->finally
 	
-System.Int32 index
+$out System.Int32 index
 	<forLoopIndex>
-	
-	
-	
 	
 	

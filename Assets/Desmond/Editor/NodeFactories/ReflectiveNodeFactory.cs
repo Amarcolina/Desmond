@@ -119,7 +119,7 @@ public class ReflectiveNodeFactory : NodeFactory {
     }
 
     public override string getPath() {
-        System.Type type = DefaultValueNode.searchForType(typeName);
+        System.Type type = TypeUtil.searchForType(typeName);
         if (isStatic) {
             if (isGetSet) {
                 return "Reflective/" + type.Name + "/Static/GetSet/" + methodDisplayName;

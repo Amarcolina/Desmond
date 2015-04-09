@@ -2,20 +2,26 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class OrderedDictionary<T, K> : IEnumerable<K> {
-    private List<K> list = new List<K>();
+public class ScriptElementSet<T> : IEnumerable<T> {
+    private List<T> list = new List<T>();
     private Dictionary<T, int> map = new Dictionary<T, int>();
 
-    public bool tryAdd(T t, K k) {
+    public bool tryAdd(T t) {
         if (!map.ContainsKey(t)) {
             map[t] = list.Count;
-            list.Add(k);
+            list.Add(t);
             return true;
         }
         return false;
     }
 
-    public bool containsKey(T t) {
+    public void addAll(ICollection<T> collection) {
+        foreach (T t in collection) {
+            tryAdd(t);
+        }
+    }
+
+    public bool contains(T t) {
         return map.ContainsKey(t);
     }
 
@@ -28,18 +34,11 @@ public class OrderedDictionary<T, K> : IEnumerable<K> {
         map.Clear();
     }
 
-    public IEnumerator<K> GetEnumerator() {
+    public IEnumerator<T> GetEnumerator() {
         return list.GetEnumerator();
     }
 
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
         return this.GetEnumerator();
     }
-
-    public K this[T t] {
-        get {
-            return list[map[t]];
-        }
-    }
-
 }

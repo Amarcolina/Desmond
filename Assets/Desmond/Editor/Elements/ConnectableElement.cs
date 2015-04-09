@@ -6,14 +6,14 @@ namespace Desmond {
 
 [System.Serializable]
 public struct ElementConnection {
-    public Element connectedElement;
+    public Element destinationElement;
     public Node originNode;
-    public Node connectedNode;
+    public Node destinationNode;
 
-    public ElementConnection(Element e, Node o, Node n) {
-        connectedElement = e;
-        originNode = o;
-        connectedNode = n;
+    public ElementConnection(Element destinationElement, Node originNode, Node destinationNode) {
+        this.destinationElement = destinationElement;
+        this.originNode = originNode;
+        this.destinationNode = destinationNode;
     }
 }
 
@@ -27,7 +27,7 @@ public class ConnectableElement : Element{
 
         for (int i = connections.Count - 1; i >= 0; i--) {
             ElementConnection c = connections[i];
-            if (c.connectedNode == null || c.connectedElement == null) {
+            if (c.destinationNode == null || c.destinationNode == null) {
                 connections.RemoveAt(i);
                 continue;
             }
@@ -48,6 +48,7 @@ public class ConnectableElement : Element{
 
     public virtual bool tryConnect(ElementConnection connection) {
         if (!canConnectTo(connection)) {
+            Debug.Log(this);
             return false;
         }
 

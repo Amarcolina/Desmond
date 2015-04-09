@@ -27,7 +27,6 @@ public class StringNode : Node{
 
     public override void generateElements() {
         base.generateElements();
-        isGameObject = descriptor.isGameObject;
 
         HashSet<string> methodIDsSoFar = new HashSet<string>();
         foreach (List<MethodDescriptor> list in descriptor.methods.Values) {
@@ -39,7 +38,6 @@ public class StringNode : Node{
 
                 ExecutionInputInfo element = ScriptableObject.CreateInstance<ExecutionInputInfo>();
                 element.init(a.id, "void", this);
-                element.visible = a.staticReference == null || a.staticReference == "";
                 elements.Add(element);
             }
         }
@@ -54,7 +52,7 @@ public class StringNode : Node{
             element.init(a.id, "void", this);
             elements.Add(element);
         }
-        foreach (ExpressionDescriptor a in descriptor.expressions.Values) {
+        foreach (DataOutDescriptor a in descriptor.expressions.Values) {
             DataOutInfo element = ScriptableObject.CreateInstance<DataOutInfo>();
             element.init(a.id, a.returnType, this);
             elements.Add(element);
@@ -65,8 +63,8 @@ public class StringNode : Node{
         List<FieldStruct> list = new List<FieldStruct>();
         
         foreach (FieldDescriptor d in descriptor.fields.Values) {
-            ScriptStructKey key = new ScriptStructKey(this, d.id);
-            list.Add(new FieldStruct(key, d.fieldType, d.id, d.defaultValue));
+            ScriptElementKey key = new ScriptElementKey(this, d.id);
+            list.Add(new FieldStruct(key, d.fieldType, d.defaultValue));
         }
 
         return list;
@@ -77,81 +75,47 @@ public class StringNode : Node{
 
         foreach (List<MethodDescriptor> methodList in descriptor.methods.Values) {
 
-            //0 is worst, negative is better
-            int bestMethodRank = -1;
             MethodDescriptor bestMethod = null;
-            bestMethod = methodList[0];
 
-            /*
             foreach (MethodDescriptor d in methodList) {
-                //for every input required, there must be a connection
-                //for every output connected, there must be an exit path
-                //preffer methods with the fewest exit paths
 
                 bool canChooseMethod = true;
+                foreach (string without in d.withouts) {
+                    ConnectableElement element = getElement(without) as ConnectableElement;
+                    Assert.that(element != null, "Element " + without + " must exist and be a connectable element");
 
-                foreach (string inputVarId in d.inputVars) {
-                    InputWithDefaultInfo inputVar = getElement(inputVarId) as InputWithDefaultInfo;
-                    if (inputVar == null) {
-                        Debug.LogError("ID's did not match up!");
-                        return null;
-                    }
-
-                    //A required input is not connected, abort
-                    if (!inputVar.isConnected()) {
-                        Debug.Log(1);
+                    if (element.isConnected()) {
                         canChooseMethod = false;
                         break;
                     }
                 }
 
-                foreach(ExitPathDescriptor exitPath in descriptor.exitPaths.Values){
-                    ExecutionOutInfo exitElement = getElement(exitPath.id) as ExecutionOutInfo;
-                    if (exitElement == null) {
-                        Debug.LogError("ID's did not match up!");
-                        return null;
-                    }
-
-                    if (exitElement.isConnected()) {
-                        if (!d.exitPaths.Contains(exitElement.id)) {
-                            canChooseMethod = false;
-                            break;
-                        }
-                    }
-                }
-
-                if(!canChooseMethod){
+                if (!canChooseMethod) {
                     continue;
                 }
 
-                if (bestMethod == null || d.exitPaths.Count < bestMethodRank) {
+                if (bestMethod == null || d.withouts.Count > bestMethod.withouts.Count) {
                     bestMethod = d;
-                    bestMethodRank = d.exitPaths.Count;
                 }
             }
 
-            if (bestMethod == null) {
-                Debug.LogError(savedDescriptorName + ": Could not find suitable method for given connection states!");
-                return new List<MethodStruct>();
-            }
-             * */
+            Assert.that(bestMethod != null, savedDescriptorName + ": Could not find suitable method for given connection states!");
 
-            ScriptStructKey key = new ScriptStructKey(this, bestMethod.id);
+            ScriptElementKey key = new ScriptElementKey(this, bestMethod.id);
             MethodStruct s = new MethodStruct(key, name + StringHelper.capitalize(bestMethod.id));
             s.addCode(bestMethod.codeBlock);
-            s.staticReference = bestMethod.staticReference;
             list.Add(s);
         }
 
         return list;
     }
 
-    public override List<GenericCodeStruct> getGenericCodeStructs() {
-        List<GenericCodeStruct> list = new List<GenericCodeStruct>();
+    public override List<CustomMethodStruct> getCustomMethodStructs() {
+        List<CustomMethodStruct> list = new List<CustomMethodStruct>();
 
-        foreach (FunctionDescriptor d in descriptor.functions) {
-            ScriptStructKey key = new ScriptStructKey(this, d.GetHashCode() + "");
-            GenericCodeStruct s = new GenericCodeStruct(key);
+        foreach (GenericMethodDescriptor d in descriptor.functions) {
+            ScriptElementKey key = new ScriptElementKey(this, d.GetHashCode() + "");
+            CustomMethodStruct s = new CustomMethodStruct(key);
             s.addCode(d.codeBlock);
 
             list.Add(s);
@@ -163,14 +127,26 @@ public class StringNode : Node{
     public override List<ExpressionMethodStruct> getExpressionStructs() {
         List<ExpressionMethodStruct> list = new List<ExpressionMethodStruct>();
 
-        foreach (ExpressionDescriptor d in descriptor.expressions.Values) {
-            ScriptStructKey key = new ScriptStructKey(this, d.id);
+        foreach (DataOutDescriptor d in descriptor.expressions.Values) {
+            ScriptElementKey key = new ScriptElementKey(this, d.id);
             ExpressionMethodStruct s = new ExpressionMethodStruct(key, name + "Get" + StringHelper.capitalize(d.id), d.returnType);
             s.addCode(d.expressionCode);
             list.Add(s);
         }
 
         return list;
+    }
+
+    public override List<MessageMethodDescriptor> getMessageMethods() {
+        return descriptor.messageFunctions;
+    }
+
+    public override HashSet<string> getNamespaceImports() {
+        return descriptor.namespaceImports;
+    }
+
+    public override HashSet<string> getUniqueNames() {
+        return descriptor.uniqueNames;
     }
 
     public override void OnBeforeSerialize() {

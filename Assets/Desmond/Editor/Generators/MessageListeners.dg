@@ -1,0 +1,41 @@
+#Events/OnMouseDown
+!UnityEngine
+!System
+
+$in UnityEngine.GameObject mouseDownGameObject
+$classLocalName mouseDownListener
+
+$inMessage OnEnable
+	attatchMessageListener<OnMouseDownMessageListener, Action>(<mouseDownGameObject>, <mouseDownListener>);
+	
+$inMessage OnDisable
+	detatchMessageListener<OnMouseDownMessageListener, Action>(<mouseDownGameObject>, <mouseDownListener>);
+	
+$customMethod
+private void <mouseDownListener>(){
+	->onMouseDown
+}
+
+#Events/OnTriggerEnter
+!UnityEngine
+!System
+
+$def Collider saved_onTriggerEnterCollider null
+
+$in UnityEngine.GameObject triggerObject
+$classLocalName triggerEnterListener
+
+$inMessage OnEnable
+	attatchMessageListener<OnTriggerEnterMessageListener, Action<Collider>>(<triggerObject>, <triggerEnterListener>);
+	
+$inMessage OnDisable
+	detatchMessageListener<OnTriggerEnterMessageListener, Action<Collider>>(<triggerObject>, <triggerEnterListener>);
+	
+$customMethod
+private void <triggerEnterListener>(Collider <methodLocalName other>){
+	<saved_onTriggerEnterCollider> = <other>;
+	->onTriggerEnter
+}
+
+$out Collider asd
+	<saved_onTriggerEnterCollider>

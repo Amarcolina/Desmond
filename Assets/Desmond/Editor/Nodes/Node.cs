@@ -11,11 +11,8 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObjec
 
     public Rect rect;
 
-    public bool isGameObject;
     public bool isVisible = true;
     public bool isMinimized = false;
-
-    public GameObject gameObjectInstance = null;
 
     public List<Element> elements = new List<Element>();
     private Dictionary<string, Element> _idToElement = null;
@@ -57,7 +54,27 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObjec
     }
 
     public virtual Element getElement(string id) {
-        return idToElement[id];
+        Element element;
+        if (idToElement.TryGetValue(id, out element)) {
+            return element;
+        }
+        return null;
+    }
+
+    public virtual List<ElementConnection> getConnections(string id) {
+        Element element;
+        if (idToElement.TryGetValue(id, out element)) {
+            ConnectableElement connectableElement = element as ConnectableElement;
+            if (connectableElement != null) {
+                return connectableElement.connections;
+            }
+        }
+        Debug.LogWarning("Could not find connectable element with id " + id);
+        return null;
+    }
+
+    public virtual List<MessageMethodDescriptor> getMessageMethods() {
+        return new List<MessageMethodDescriptor>();
     }
 
     public virtual List<FieldStruct> getFieldStructs() {
@@ -68,12 +85,20 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObjec
         return new List<MethodStruct>();
     }
 
-    public virtual List<GenericCodeStruct> getGenericCodeStructs() {
-        return new List<GenericCodeStruct>();
+    public virtual List<CustomMethodStruct> getCustomMethodStructs() {
+        return new List<CustomMethodStruct>();
     }
 
     public virtual List<ExpressionMethodStruct> getExpressionStructs() {
         return new List<ExpressionMethodStruct>();
+    }
+
+    public virtual HashSet<string> getNamespaceImports() {
+        return new HashSet<string>();
+    }
+
+    public virtual HashSet<string> getUniqueNames() {
+        return new HashSet<string>();
     }
 
     public static Rect rectSlide(Rect r, float amount) {
@@ -172,10 +197,10 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObjec
     public void drawLinks() {
         foreach (ConnectableElement a in elements.FindAll(element => element is ConnectableElement)) {
             CurveEnd endA = getCurveEnd(a);
-            foreach (ElementConnection connection in a.connections.FindAll(connection => connection.originNode == this)) {
-                if (connection.connectedNode.isVisible) {
-                    CurveEnd endB = connection.connectedNode.getCurveEnd(connection.connectedElement);
-                    a.drawLink(connection.connectedElement, endA, endB);
+            foreach(ElementConnection connection in a.connections.FindAll(connection => connection.originNode == this)){
+                if (connection.destinationNode.isVisible) {
+                    CurveEnd endB = connection.destinationNode.getCurveEnd(connection.destinationElement);
+                    a.drawLink(connection.destinationElement, endA, endB);
                 }
             }
         }
@@ -200,11 +225,13 @@ public class Node : ScriptableObject, ISerializationCallbackReceiver, IDeepObjec
             needsToUpdateLayout = false;
         }
 
+        /*
         if (!isMinimized && isGameObject) {
             DesmondBoard currentBoard = BoardList.getSelectedBoard();
             bool allowSceneObject = currentBoard.boardType == DesmondBoardType.SCENE_BOARD;
             gameObjectInstance = (GameObject)EditorGUI.ObjectField(new Rect(LINE, LINE, SIDE, LINE), gameObjectInstance, typeof(GameObject), allowSceneObject);
         }
+         * */
 
         foreach (Element e in elements) {
             if (!e.visible) {

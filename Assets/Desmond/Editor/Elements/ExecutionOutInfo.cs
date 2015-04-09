@@ -16,7 +16,7 @@ public class ExecutionOutInfo : ConnectableElement {
     }
 
     public override bool canConnectTo(ElementConnection other) {
-        return (other.connectedElement is ExecutionInputInfo);
+        return (other.destinationElement is ExecutionInputInfo);
     }
 
     public override int getMaxConnections() {
@@ -52,7 +52,7 @@ public class ExecutionOutInfo : ConnectableElement {
             drawCurve(endA, endB, sequenceLinkColor);
             int index = -1;
             for (int i = 0; i < connections.Count; i++) {
-                if (connections[i].connectedElement == elementB) {
+                if (connections[i].destinationElement == elementB) {
                     index = i;
                     break;
                 }
