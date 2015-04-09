@@ -147,7 +147,7 @@ public class ReflectiveNode : Node {
         if (isStatic) {
             expression = typeName + ".";
         } else {
-            expression = "<" + typeName + " instance>.";
+            expression = "<instance>.";
         }
 
         expression += methodName + "(" + getCommaDelimitedArguments(chosenMethod) + ")";
@@ -161,7 +161,7 @@ public class ReflectiveNode : Node {
         if (isStatic) {
             expression = typeName + ".";
         } else {
-            expression = "<" + typeName + " instance>.";
+            expression = "<instance>.";
         }
 
         expression += methodName.Substring(4);
@@ -250,7 +250,7 @@ public class ReflectiveNode : Node {
     }
 
     public string getParameterExpression(ParameterInfo parameter) {
-        return "<" + parameter.ParameterType.FullName + " " + parameter.Name + ">";
+        return "<" + parameter.Name + ">";
     }
 
     public string getImplicitOperator() {

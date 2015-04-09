@@ -16,19 +16,18 @@ public abstract class PropertyValue : ScriptableObject {
 
     public static PropertyValue createFromValue(object value) {
         PropertyValue v = createFromType(value.GetType());
-        v.fullTypeName = value.GetType().FullName;
         v.init(value);
         return v;
     }
 
     public static PropertyValue createFromType(System.Type type) {
         PropertyValue v = null;
-        if (type == typeof(UnityEngine.Object)) v = ScriptableObject.CreateInstance<ObjectProperty>();
+        if (typeof(UnityEngine.Object).IsAssignableFrom(type))  v = ScriptableObject.CreateInstance<ObjectProperty>();
         if (type == typeof(AnimationCurve)) v = ScriptableObject.CreateInstance<AnimationCurveProperty>();
         if (type == typeof(bool)) v = ScriptableObject.CreateInstance<BoolProperty>();
         if (type == typeof(Bounds)) v = ScriptableObject.CreateInstance<BoundsProperty>();
         if (type == typeof(Color)) v = ScriptableObject.CreateInstance<ColorProperty>();
-        if (type == typeof(Enum)) v = ScriptableObject.CreateInstance<EnumProperty>();
+        if (typeof(Enum).IsAssignableFrom(type)) v = ScriptableObject.CreateInstance<EnumProperty>();
         if (type == typeof(float)) v = ScriptableObject.CreateInstance<FloatProperty>();
         if (type == typeof(int)) v = ScriptableObject.CreateInstance<IntProperty>();
         if (type == typeof(Quaternion)) v = ScriptableObject.CreateInstance<QuaternionProperty>();
@@ -37,6 +36,13 @@ public abstract class PropertyValue : ScriptableObject {
         if (type == typeof(Vector2)) v = StringProperty.CreateInstance<Vector2Property>();
         if (type == typeof(Vector3)) v = StringProperty.CreateInstance<Vector3Property>();
         if (type == typeof(Vector4)) v = StringProperty.CreateInstance<Vector4Property>();
+
+        if (v == null) {
+            throw new System.Exception("PropertyValue could not be created for type " + type.FullName);
+        }
+
+        v.fullTypeName = type.FullName;
+
         return v;
     }
 

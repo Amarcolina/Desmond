@@ -32,7 +32,7 @@ public class DefaultValueNode : Node, IDeepObject {
         List<FieldStruct> list = new List<FieldStruct>();
 
         if (!propertyValue.hasStringRepresentation()) {
-            FieldStruct s = new FieldStruct(getKey(), propertyValue.fullTypeName, propertyValue);
+            FieldStruct s = new FieldStruct(new ScriptElementKey(this, FIELD_NAME), propertyValue.fullTypeName, propertyValue);
             s.isPublic = true;
             list.Add(s);
         }
