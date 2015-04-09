@@ -7,7 +7,7 @@ namespace Desmond {
 public class FieldStruct : ScriptElementStruct{
     public string type;
     public string name = "UNINITIALIZED_FIELD_NAME";
-    public object defaultValue;
+    public object defaultValue; //null if uninitializes, string if initialized with code, PropertyValue if initialized serially
     public int references;
 
     public bool isPublic = false;
@@ -28,7 +28,7 @@ public class FieldStruct : ScriptElementStruct{
         line += type + " ";
         line += name;
 
-        if (defaultValue != null && defaultValue.GetType() == typeof(string)) {
+        if (defaultValue != null && defaultValue is string) {
             line += " = " + (string)defaultValue + ";";
         }else{
             line += ";";
