@@ -6,7 +6,10 @@ using System.Collections.Generic;
 
 namespace Desmond {
 
+[System.Serializable]
 public abstract class PropertyValue : ScriptableObject {
+    public string fullTypeName;
+
     public abstract void applyTo(SerializedProperty property);
 
     public abstract void init(object obj);
@@ -39,6 +42,7 @@ public abstract class PropertyValue : ScriptableObject {
     }
 }
 
+[System.Serializable]
 public abstract class GenericPropertyValue<T> : PropertyValue {
     [SerializeField]
     protected T value;
@@ -66,6 +70,7 @@ public abstract class GenericPropertyValue<T> : PropertyValue {
 
     public override void init(object obj) {
         value = (T)obj;
+        fullTypeName = obj.GetType().FullName;
     }
 
     public override void drawDefaultPropertyEditor(Rect rect) {
