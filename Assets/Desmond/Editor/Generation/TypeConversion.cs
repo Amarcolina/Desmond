@@ -126,7 +126,7 @@ public class TypeConversion {
 
     private static void addBaseType(string typeName) {
         //Types can always be converted to their base types with no effort
-        System.Type type = DefaultValueNode.searchForType(typeName);
+        System.Type type = TypeUtil.searchForType(typeName);
         if (type == null) {
             Debug.LogError("Could not find type [" + typeName + "]");
             return;

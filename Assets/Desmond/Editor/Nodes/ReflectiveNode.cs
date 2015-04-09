@@ -25,7 +25,7 @@ public class ReflectiveNode : Node {
     }
 
     private void loadMethodInfos() {
-        System.Type type = DefaultValueNode.searchForType(typeName);
+        System.Type type = TypeUtil.searchForType(typeName);
         name = type.Name;
 
         _methodInfos = new List<MethodInfo>();

@@ -112,7 +112,7 @@ public class InputWithDefaultInfo : ConnectableElement, IDeepObject{
         GUI.Label(rect, id, _style);
 
         if (defaultValue != null && connections[0].Equals(defaultConnection)) {
-            defaultValue.drawDefaultProperty(new Rect(rect.x, rect.y + Node.LINE, rect.width, rect.height));
+            defaultValue.propertyValue.drawCustomPropertyEditor(new Rect(rect.x, rect.y + Node.LINE, rect.width, rect.height));
         }
     }
 
