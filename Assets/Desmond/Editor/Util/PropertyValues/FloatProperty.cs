@@ -11,7 +11,7 @@ public class FloatProperty : GenericPropertyValue<float> {
     }
 
     public override bool tryGetStringRepresentation(out string representation) {
-        representation = value.ToString();
+        representation = value.ToString() + "f";
         return true;
     }
 }

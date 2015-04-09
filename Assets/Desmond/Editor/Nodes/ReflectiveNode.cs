@@ -242,7 +242,7 @@ public class ReflectiveNode : Node {
             expression += getParameterExpression(parameterInfo);
 
             if (i != parameters.Length - 1) {
-                expression += ",";
+                expression += ", ";
             }
         }
 
