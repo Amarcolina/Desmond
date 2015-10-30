@@ -119,12 +119,8 @@ public class DesmondWindow : EditorWindow {
             offset += Event.current.delta;
 
             Vector2 appliedOffset = Vector2.zero;
-            if (Mathf.Abs(offset.x) >= 16.0f) {
-                appliedOffset.x = Mathf.Sign(offset.x) * 16.0f;
-            }
-            if (Mathf.Abs(offset.y) >= 16.0f) {
-                appliedOffset.y = Mathf.Sign(offset.y) * 16.0f;
-            }
+            appliedOffset.x = (float)System.Math.Round(offset.x / 16.0f, 0, System.MidpointRounding.ToEven) * 16;
+            appliedOffset.y = (float)System.Math.Round(offset.y / 16.0f, 0, System.MidpointRounding.ToEven) * 16;
 
             offset -= appliedOffset;
 
