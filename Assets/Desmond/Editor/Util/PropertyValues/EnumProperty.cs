@@ -93,7 +93,7 @@ namespace Desmond {
     }
 
     public override bool tryGetStringRepresentation(out string representation) {
-      representation = fullTypeName + "." + enumNames[value];
+      representation = fullTypeName + "." + enumContent[value].text;
       return true;
     }
   }
