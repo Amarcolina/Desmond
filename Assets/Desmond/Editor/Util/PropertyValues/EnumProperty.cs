@@ -32,7 +32,7 @@ public class EnumProperty : GenericPropertyValue<int> {
         }
 
         if (enumNames == null || enumNames.Length == 0) {
-            System.Type type = TypeUtil.searchForType(null);
+            System.Type type = TypeUtil.searchForType(fullTypeName);
             enumNames = System.Enum.GetNames(type);
             inputString = enumNames[value];
 
