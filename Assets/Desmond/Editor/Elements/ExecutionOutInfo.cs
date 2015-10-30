@@ -25,7 +25,7 @@ public class ExecutionOutInfo : ConnectableElement {
 
     public override Texture2D getButtonTexture() {
         if (_buttonTexture == null) {
-            _buttonTexture = Resources.LoadAssetAtPath<Texture2D>(DesmondWindow.EDITOR_TEXTURE_FOLDER + "OutputArrow.png");
+            _buttonTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(DesmondWindow.EDITOR_TEXTURE_FOLDER + "OutputArrow.png");
         }
         return _buttonTexture;
     }
@@ -42,7 +42,7 @@ public class ExecutionOutInfo : ConnectableElement {
     public override void drawLink(Element elementB, CurveEnd endA, CurveEnd endB) {
         if (_linkButtonStyle == null) {
             _linkButtonStyle = new GUIStyle();
-            _linkButtonStyle.normal.background = Resources.LoadAssetAtPath<Texture2D>("Assets/Desmond/Textures/Button.png");
+            _linkButtonStyle.normal.background = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Desmond/Textures/Button.png");
             _linkButtonStyle.normal.textColor = new Color(0.8f, 1.0f, 0.8f);
             _linkButtonStyle.alignment = TextAnchor.MiddleCenter;
             _linkButtonStyle.padding = new RectOffset(0, 2, 0, 2);

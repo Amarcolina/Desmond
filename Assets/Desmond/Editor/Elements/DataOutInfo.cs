@@ -20,7 +20,7 @@ public class DataOutInfo : Element{
 
     public override Texture2D getButtonTexture() {
         if (_buttonTexture == null) {
-            _buttonTexture = Resources.LoadAssetAtPath<Texture2D>(DesmondWindow.EDITOR_TEXTURE_FOLDER + "OutputDot.png");
+            _buttonTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(DesmondWindow.EDITOR_TEXTURE_FOLDER + "OutputDot.png");
         }
         return _buttonTexture;
     }

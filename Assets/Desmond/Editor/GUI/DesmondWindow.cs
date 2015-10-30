@@ -47,9 +47,9 @@ public class DesmondWindow : EditorWindow {
     }
 
     private static void createWindowStyle() {
-        gridTexture = Resources.LoadAssetAtPath<Texture2D>(EDITOR_TEXTURE_FOLDER + "Grid.bmp");
-        Texture2D normalTex = Resources.LoadAssetAtPath<Texture2D>(EDITOR_TEXTURE_FOLDER + "WindowNormal.png");
-        Texture2D highlightTex = Resources.LoadAssetAtPath<Texture2D>(EDITOR_TEXTURE_FOLDER + "WindowHighlight.png");
+        gridTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(EDITOR_TEXTURE_FOLDER + "Grid.bmp");
+        Texture2D normalTex = AssetDatabase.LoadAssetAtPath<Texture2D>(EDITOR_TEXTURE_FOLDER + "WindowNormal.png");
+        Texture2D highlightTex = AssetDatabase.LoadAssetAtPath<Texture2D>(EDITOR_TEXTURE_FOLDER + "WindowHighlight.png");
         _windowStyle = new GUIStyle();
         _windowStyle.normal.background = normalTex;
         _windowStyle.normal.textColor = Color.black;
