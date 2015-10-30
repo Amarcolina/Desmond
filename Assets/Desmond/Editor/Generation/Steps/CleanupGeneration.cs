@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System.Collections;
 
 namespace Desmond { 
@@ -13,6 +14,8 @@ public class CleanupGeneration : GenerationStep {
             Deep.collectOwnedObjects(node);
         }
         Deep.destroy();
+
+        AssetDatabase.Refresh();
     }
 }
 
